@@ -69,6 +69,9 @@ namespace TeaApp.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
                     b.Property<string>("Shop")
                         .IsRequired()
                         .HasColumnType("text");
