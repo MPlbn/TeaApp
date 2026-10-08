@@ -1,11 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using TeaApp.Api.Models;
-using EFC = Microsoft.EntityFrameworkCore;
-using TModels = TeaApp.Api.Models;
 
 namespace TeaApp.Api.Data;
 
-public class TeaDbContext : EFC.DbContext
+public class TeaDbContext : DbContext
 {
     public TeaDbContext(DbContextOptions<TeaDbContext> uOptions) : base(uOptions) {}
 
