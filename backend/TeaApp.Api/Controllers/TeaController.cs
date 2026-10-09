@@ -29,7 +29,7 @@ public class TeaController : ControllerBase
             query = query.Where(xTea => xTea.Type == uType.Value);
         }
 
-        var teas = await _dbContext.TeaDbSet.ToListAsync();
+        var teas = await query.ToListAsync();
 
         return Ok(teas);
     }
@@ -81,7 +81,7 @@ public class TeaController : ControllerBase
     {
         var tea = await _dbContext.TeaDbSet.FindAsync(uID);
 
-        if(tea == null)
+        if (tea == null)
         {
             return NotFound();
         }

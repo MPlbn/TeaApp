@@ -92,6 +92,9 @@ namespace TeaApp.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Review")
                         .IsRequired()
                         .HasColumnType("text");
