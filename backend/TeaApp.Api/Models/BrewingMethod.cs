@@ -7,4 +7,5 @@ public class BrewingMethod
     public MethodType Method {get;set;}
     public int Temperature {get;set;}
     public List<int> BrewingTimes {get;set;} = [];
+    public int? GongfuBrewingTimeIncrement {get;set;}
 }

@@ -33,6 +33,9 @@ namespace TeaApp.Api.Migrations
                         .IsRequired()
                         .HasColumnType("jsonb");
 
+                    b.Property<int?>("GongfuBrewingTimeIncrement")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Method")
                         .HasColumnType("integer");
 

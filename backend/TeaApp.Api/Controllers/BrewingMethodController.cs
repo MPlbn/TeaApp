@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TeaApp.Api.Data;
+using TeaApp.Api.DTOs;
 using TeaApp.Api.Models;
 
 namespace TeaApp.Api.Controllers;
@@ -18,7 +19,7 @@ public class BrewingMethodController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<BrewingMethod>>> GetBrewingMethods(
+    public async Task<ActionResult<IEnumerable<BrewingMethodResponseDTO>>> GetBrewingMethods(
         int? uTeaID
     )
     {
@@ -29,22 +30,73 @@ public class BrewingMethodController : ControllerBase
             query = query.Where(xBrewingMethod => xBrewingMethod.TeaId == uTeaID.Value);
         }
 
-        var brewingMethods = await query.ToListAsync();
+        var brewingMethods = await query.Select(xBrewingMethod => new BrewingMethodResponseDTO
+        {
+            ID = xBrewingMethod.ID,
+            TeaId = xBrewingMethod.TeaId,
+            Method = xBrewingMethod.Method,
+            Temperature = xBrewingMethod.Temperature,
+            BrewingTimes = xBrewingMethod.BrewingTimes,
+            GongfuBrewingTimeIncrement = xBrewingMethod.GongfuBrewingTimeIncrement
+        })
+        .ToListAsync();
 
         return Ok(brewingMethods);
     }
 
     [HttpPost]
-    //TODO
-    public async Task<ActionResult<BrewingMethod>> CreateBrewingMethod()
+    public async Task<ActionResult<BrewingMethodResponseDTO>> CreateBrewingMethod(BrewingMethodDTO uDTO)
     {
-        return NoContent();
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.ID == uDTO.TeaId!.Value);
+
+        if (!teaExists)
+        {
+            return BadRequest("The specified tea does not exist.");
+        }
+
+        var brewingMethod = new BrewingMethod
+        {
+            TeaId = uDTO.TeaId!.Value,
+            Method = uDTO.Method!.Value,
+            Temperature = uDTO.Temperature!.Value,
+            BrewingTimes = uDTO.BrewingTimes,
+            GongfuBrewingTimeIncrement = uDTO.GongfuBrewingTimeIncrement
+        };
+
+        _dbContext.BrewingMethodDbSet.Add(brewingMethod);
+        await _dbContext.SaveChangesAsync();
+
+        var response = new BrewingMethodResponseDTO
+        {
+            ID = brewingMethod.ID,
+            TeaId = brewingMethod.TeaId,
+            Method = brewingMethod.Method,
+            Temperature = brewingMethod.Temperature,
+            BrewingTimes = brewingMethod.BrewingTimes,
+            GongfuBrewingTimeIncrement = brewingMethod.GongfuBrewingTimeIncrement
+        };
+
+        return StatusCode(StatusCodes.Status201Created, response);
     }
 
-    [HttpPut]
-    //TODO
-    public async Task<IActionResult> UpdateBrewingMethod()
+    [HttpPut("{uID:int}")]
+    public async Task<IActionResult> UpdateBrewingMethod(int uID, BrewingMethodDTO uDTO)
     {
+        var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(uID);
+
+        if(brewingMethod == null)
+        {
+            return NotFound();
+        }
+
+        brewingMethod.TeaId = uDTO.TeaId!.Value;
+        brewingMethod.Method = uDTO.Method!.Value;
+        brewingMethod.Temperature = uDTO.Temperature!.Value;
+        brewingMethod.BrewingTimes = uDTO.BrewingTimes;
+        brewingMethod.GongfuBrewingTimeIncrement = uDTO.GongfuBrewingTimeIncrement;
+
+        await _dbContext.SaveChangesAsync();
+
         return NoContent();
     }
 
