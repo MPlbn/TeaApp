@@ -11,5 +11,19 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
 
+  api:
+    build:
+      context: ./backend/TeaApp.Api
+      dockerfile: Dockerfile
+    container_name: teaapp-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__TeaDatabase: "${API_CONNECTION_STRING}"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - tea-database
+
 volumes:
   postgres_data:
