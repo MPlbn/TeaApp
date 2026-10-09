@@ -88,6 +88,13 @@ public class BrewingMethodController : ControllerBase
         {
             return NotFound();
         }
+        
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.ID == uDTO.TeaId!.Value);
+
+        if (!teaExists)
+        {
+            return BadRequest("The specified tea does not exist.");
+        }
 
         brewingMethod.TeaId = uDTO.TeaId!.Value;
         brewingMethod.Method = uDTO.Method!.Value;
@@ -100,7 +107,7 @@ public class BrewingMethodController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{uID}")]
+    [HttpDelete("{uID:int}")]
     public async Task<IActionResult> DeleteBrewingMethod(int uID)
     {
         var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(uID);

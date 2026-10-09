@@ -90,6 +90,13 @@ public class TeaReviewController : ControllerBase
             return NotFound();
         }
         
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.ID == uDTO.TeaId!.Value);
+
+        if (!teaExists)
+        {
+            return BadRequest("The specified tea does not exist.");
+        }
+
         review.TeaId = uDTO.TeaId!.Value;
         review.UserId = uDTO.UserId!.Value;
         review.Review = uDTO.Review;
