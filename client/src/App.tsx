@@ -27,45 +27,7 @@ export default function App(){
       padding="xl"
     >
       <AppShell.Navbar p="md">
-        <Stack gap="lg" h="100%">
-          <Title order={3}>TeaApp-TITLE_NAVBAR</Title>
-
-          <Stack>
-            <NavLink
-              label="Lista herbat"
-              leftSection={<IconCoffee size={20}/>}
-              active={activeView === 'TeaListView'}
-              onClick={() => setActiveView('TeaListView')}
-            />
-            <NavLink
-              label="Dodanie herbaty"
-              leftSection={<IconCirclePlus size={20}/>}
-              active={activeView === 'AddTeaView'}
-              onClick={() => setActiveView('AddTeaView')}
-            />
-            <NavLink
-              label="Edycja herbaty"
-              leftSection={<IconEdit size={20}/>}
-              active={activeView === 'EditTeaView'}
-              onClick={() => setActiveView('EditTeaView')}
-            />
-            <NavLink
-              label="Usunięcie herbaty"
-              leftSection={<IconCircleMinus size={20}/>}
-              active={activeView === 'DeleteTeaView'}
-              onClick={() => setActiveView('DeleteTeaView')}
-            />            
-          </Stack>
-
-          <Stack>
-            <NavLink
-              label="Ustawienia"
-              leftSection={<IconSettings size={20}/>}
-              active={activeView === 'SettingsView'}
-              onClick={() => setActiveView('SettingsView')}
-            />
-          </Stack>
-        </Stack>
+        
       </AppShell.Navbar>
 
       <AppShell.Main>
