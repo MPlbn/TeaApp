@@ -5,7 +5,8 @@ import {
   Title
 } from '@mantine/core';
 import Sidebar from './components/Sidebar';
-import { ViewType } from './types/enums';
+import { ViewType }  from './types/enums';
+import SettingsView from './views/SettingsView';
 
 export default function App(){
   const [activeView, setActiveView] = useState('TeaListView');
@@ -26,7 +27,7 @@ export default function App(){
       </AppShell.Navbar>
 
       <AppShell.Main>
-        {activeView === 'TeaListView' && (
+        {activeView === ViewType.TeaListView && (
           <>
             <Title order={1}>Moje herbaty</Title>
             <Text c="dimmed" mt="sm">
@@ -35,20 +36,20 @@ export default function App(){
           </>
         )}
 
-        {activeView === 'AddTeaView' && (
+        {activeView === ViewType.AddTeaView && (
           <Title order={1}>Dodawanie herbaty</Title>
         )}
 
-        {activeView === 'EditTeaView' && (
-          <Title order={1}>Edycaj herbaty</Title>
+        {activeView === ViewType.EditTeaView && (
+          <Title order={1}>Edycja herbaty</Title>
         )}
 
-        {activeView === 'DeleteTeaView' && (
+        {activeView === ViewType.DeleteTeaView && (
           <Title order={1}>Usuwanie herbaty</Title>
         )}
 
-        {activeView === 'SettingsView' && (
-          <Title order={1}>Ustawienia</Title>
+        {activeView === ViewType.SettingsView && (
+          <SettingsView />
         )}
       </AppShell.Main>
 
