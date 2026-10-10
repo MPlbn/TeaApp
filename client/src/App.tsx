@@ -7,6 +7,8 @@ import {
 import Sidebar from './components/Sidebar';
 import { ViewType }  from './types/enums';
 import SettingsView from './views/SettingsView';
+import AddTeaView from './views/AddTeaView';
+import TeaListView from './views/TeaListView';
 
 export default function App(){
   const [activeView, setActiveView] = useState('TeaListView');
@@ -28,16 +30,11 @@ export default function App(){
 
       <AppShell.Main>
         {activeView === ViewType.TeaListView && (
-          <>
-            <Title order={1}>Moje herbaty</Title>
-            <Text c="dimmed" mt="sm">
-              Tutaj będzie Twoja kolekcja herbat.
-            </Text>
-          </>
+          <TeaListView onTeaSelect={ function () {} }/>
         )}
 
         {activeView === ViewType.AddTeaView && (
-          <Title order={1}>Dodawanie herbaty</Title>
+          <AddTeaView />
         )}
 
         {activeView === ViewType.EditTeaView && (
