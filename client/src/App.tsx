@@ -1,19 +1,11 @@
 import {useState} from 'react';
 import {
   AppShell,
-  NavLink,
-  Stack,
   Text,
   Title
 } from '@mantine/core';
-import {
-  IconCirclePlus,
-  IconCircleMinus,
-  IconCoffee,
-  IconEdit,
-  IconLeaf,
-  IconSettings
-} from '@tabler/icons-react';
+import Sidebar from './components/Sidebar';
+import { ViewType } from './types/enums';
 
 export default function App(){
   const [activeView, setActiveView] = useState('TeaListView');
@@ -27,7 +19,10 @@ export default function App(){
       padding="xl"
     >
       <AppShell.Navbar p="md">
-        
+        <Sidebar
+          activeView={activeView}
+          onViewChange={setActiveView}
+        />
       </AppShell.Navbar>
 
       <AppShell.Main>
