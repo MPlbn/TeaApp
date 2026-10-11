@@ -4,9 +4,9 @@ import {
     Title,
     Text
 } from "@mantine/core";
-import TeaListItem from "../components/TeaListItem";
+import TeaListItem from "../components/tea-list-comp/TeaListItem";
 import type { Tea } from "../types/Tea";
-import TeaListFilter from "../components/TeaListFilter";
+import TeaListFilter from "../components/tea-list-comp/TeaListFilter";
 import { TeaType } from "../types/enums";
 import { useState } from "react";
 
@@ -50,7 +50,6 @@ export default function TeaListView(uProp: TeaListViewProps) {
                             <TeaListItem 
                                 key={tea.ID}
                                 tea={tea}
-                                onClick={handleTeaListItemClick}
                             />
                         );
                     }

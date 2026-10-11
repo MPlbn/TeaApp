@@ -1,6 +1,6 @@
-import { Divider, Grid, Group, Paper, Stack, Text, Title } from "@mantine/core";
-import { TeaType } from "../types/enums";
-import { getTeaTypeStringVerison } from "../utils/utils";
+import { Divider, Grid, Paper, Stack, Text, Title } from "@mantine/core";
+import { TeaType } from "../../types/enums";
+import { getTeaTypeStringVerison } from "../../utils/utils";
 
 type TeaDetailsDetailFieldProps = {
     teaType: TeaType;

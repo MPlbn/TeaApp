@@ -5,10 +5,10 @@ import{
     Group,
     Divider
 } from '@mantine/core';
-import { Tea } from '../types/Tea';
-import { TeaType } from '../types/enums';
+import { Tea } from '../../types/Tea';
+import { TeaType } from '../../types/enums';
 import { useNavigate } from 'react-router';
-import { getTeaDetailsPath } from '../utils/utils';
+import { getTeaDetailsPath } from '../../utils/utils';
 
 type TeaListItemProps = {
     tea: Tea;

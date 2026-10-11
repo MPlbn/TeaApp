@@ -10,7 +10,7 @@ import {
     Paper
 } from "@mantine/core";
 import AddTeaForm from "./AddTeaForm";
-import useAddTeaForm from "../hooks/useAddTeaForm";
+import useAddTeaForm from "../../hooks/useAddTeaForm";
 
 export default function AddTeaPanel() {
     const {

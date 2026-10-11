@@ -1,6 +1,6 @@
 import { Stack } from "@mantine/core";
+import { TeaType } from "../../types/enums";
 import TeaTypeChooserSet from "./TeaTypeChooserSet";
-import { TeaType } from "../types/enums";
 
 type TeaListFilterProps = {
     selectedTeaType: TeaType | null;

@@ -1,7 +1,7 @@
 import { Button } from "@mantine/core";
 import TeaTypeChooser from "./TeaTypeChooser";
-import { TeaType } from "../types/enums";
-import { teaTypeOptions } from "../config/TeaTypeChooserOptions";
+import { TeaType } from "../../types/enums";
+import { teaTypeOptions } from "../../config/TeaTypeChooserOptions";
 
 
 type TeaTypeChooserSetProps = {

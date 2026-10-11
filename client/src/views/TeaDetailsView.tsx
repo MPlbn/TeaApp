@@ -1,10 +1,10 @@
 import { useParams } from "react-router";
 import { Stack, Text } from "@mantine/core";
-import TeaDetailsTitle from "../components/TeaDetailsTitle";
+import TeaDetailsTitle from "../components/tea-detail-comp/TeaDetailsTitle";
 import { useEffect, useState } from "react";
 import { getTeaByID } from "../services/teaService";
 import { Tea } from "../types/Tea";
-import TeaDetailsDetailField from "../components/TeaDetailsDetailField";
+import TeaDetailsDetailField from "../components/tea-detail-comp/TeaDetailsDetailField";
 
 export default function TeaDetailsView() {
     const {id} = useParams<{id: string}>();

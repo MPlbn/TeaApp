@@ -5,8 +5,8 @@ import {
     NumberInput,
     Textarea
  } from "@mantine/core";
-import { TeaType } from "../types/enums";
-import { AddTeaFormData } from "../types/AddTeaFormData";
+import { TeaType } from "../../types/enums";
+import { AddTeaFormData } from "../../types/AddTeaFormData";
 
 type AddTeaFormProps = {
     formData: AddTeaFormData;
