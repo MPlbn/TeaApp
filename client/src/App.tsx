@@ -1,7 +1,6 @@
 import {useState} from 'react';
 import {
   AppShell,
-  Text,
   Title
 } from '@mantine/core';
 import Sidebar from './components/Sidebar';
@@ -9,6 +8,8 @@ import { ViewType }  from './types/enums';
 import SettingsView from './views/SettingsView';
 import AddTeaView from './views/AddTeaView';
 import TeaListView from './views/TeaListView';
+import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router';
+import TeaDetailsView from './views/TeaDetailsView';
 
 export default function App(){
   const [activeView, setActiveView] = useState('TeaListView');
@@ -22,32 +23,59 @@ export default function App(){
       padding="xl"
     >
       <AppShell.Navbar p="md">
-        <Sidebar
-          activeView={activeView}
-          onViewChange={setActiveView}
-        />
+        <Sidebar />
       </AppShell.Navbar>
 
       <AppShell.Main>
-        {activeView === ViewType.TeaListView && (
-          <TeaListView onTeaSelect={ function () {} }/>
-        )}
+        <Routes>
+          <Route 
+            path="/"
+            element={<Navigate to={ViewType.TeaListView} replace />}
+          />
 
-        {activeView === ViewType.AddTeaView && (
-          <AddTeaView />
-        )}
+          <Route
+            path={ViewType.TeaListView}
+            element={
+              <TeaListView 
+                onTeaSelect={function () {}}
+              />
+            }
+          />
 
-        {activeView === ViewType.EditTeaView && (
-          <Title order={1}>Edycja herbaty</Title>
-        )}
+          <Route
+            path={`${ViewType.TeaListView}/:id`}
+            element={
+              <TeaDetailsView
+              
+              />
+            }
+          />
 
-        {activeView === ViewType.DeleteTeaView && (
-          <Title order={1}>Usuwanie herbaty</Title>
-        )}
+          <Route 
+            path={ViewType.AddTeaView}
+            element={<AddTeaView />}
+          />
 
-        {activeView === ViewType.SettingsView && (
-          <SettingsView />
-        )}
+          <Route 
+            path={ViewType.SettingsView}
+            element={<SettingsView />}
+          />
+
+          <Route 
+            path={ViewType.EditTeaView}
+            element={<Title order={1}>Edycja herbaty</Title>}
+          />
+
+          <Route 
+            path={ViewType.DeleteTeaView}
+            element={<Title order={1}>Usuwanie herbaty</Title>}
+          />
+
+          <Route 
+            path="*"
+            element={<Navigate to={ViewType.TeaListView} replace />}
+          />
+        </Routes>
       </AppShell.Main>
 
     </AppShell>

@@ -7,13 +7,16 @@ import{
 } from '@mantine/core';
 import { Tea } from '../types/Tea';
 import { TeaType } from '../types/enums';
+import { useNavigate } from 'react-router';
+import { getTeaDetailsPath } from '../utils/utils';
 
 type TeaListItemProps = {
     tea: Tea;
-    onClick: (xTea: Tea) => void;
 };
 
 export default function TeaListItem(uProp: TeaListItemProps) {
+    const navigate = useNavigate();
+
     function getTeaTypeLabel(uTeaType: TeaType): string {
         switch (uTeaType){
             case TeaType.White:
@@ -34,8 +37,9 @@ export default function TeaListItem(uProp: TeaListItemProps) {
     }
 
     function handleClick(): void {
-        uProp.onClick(uProp.tea);
+        navigate(getTeaDetailsPath(uProp.tea.ID))
     }
+    
     return(
         <UnstyledButton
             onClick={handleClick}
