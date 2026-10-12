@@ -69,3 +69,19 @@ export const addTea = async (tea: NewTea): Promise<Tea> => {
 export const addBrewing = null;
 
 export const addReview = null;
+
+export const editTea = async (teaID: number, tea: NewTea): Promise<void> => {
+    const response = await fetch(`${API_URL_TEA}/${teaID}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(tea)
+    });
+
+    if(!response.ok) {
+        throw new Error(`Błąd API: ${response.status}`);
+    }
+}
+
+export const deleteTea = null;

@@ -1,6 +1,6 @@
 import { TeaType } from "./enums";
 
-export type TeaAdditionFormData = {
+export type TeaFormData = {
         name: string,
         type: TeaType | null,
         origin: string,

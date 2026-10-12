@@ -1,30 +1,29 @@
 import { useState } from "react";
-import { TeaAdditionFormData } from "../types/TeaAdditionFormData";
+import { TeaFormData } from "../types/TeaFormData";
 
-const useAddTeaForm = () => {
-    const [formData, setFormData] = useState<TeaAdditionFormData>({
-        name: '',
-        type: null,
-        origin: '',
-        price: '',
-        shop: '',
-        description: ''
-    });
+const INITIAL_FORM_DATA: TeaFormData = {
+    name: "",
+    type: null,
+    origin: "",
+    price: "",
+    shop: "",
+    description: ""
+}
+
+const useTeaForm = (initialData: TeaFormData = INITIAL_FORM_DATA) => {
+    const [formData, setFormData] = useState<TeaFormData>(initialData);
 
     function clearForm(): void {
-        setFormData({
-            name: '',
-            type: null,
-            origin: '',
-            price: '',
-            shop: '',
-            description: ''
-        });
+       setFormData(INITIAL_FORM_DATA);
     }
 
-    function updateField<TKey extends keyof TeaAdditionFormData>(
+    function setFormValues(data: TeaFormData): void {
+        setFormData(data);
+    }
+
+    function updateField<TKey extends keyof TeaFormData>(
         uKey: TKey,
-        uValue: TeaAdditionFormData[TKey]
+        uValue: TeaFormData[TKey]
     ) : void {
         setFormData((uPrevious) => {return {...uPrevious, [uKey]: uValue}});
     }
@@ -41,7 +40,7 @@ const useAddTeaForm = () => {
 
         if (
             formData.price === '' ||
-            price < 0 ||
+            price <= 0 ||
             !Number.isFinite(price)
         ) {
             return false;
@@ -50,7 +49,7 @@ const useAddTeaForm = () => {
         return true;
     }
 
-    function getTeaData(): TeaAdditionFormData {
+    function getTeaData(): TeaFormData {
         return {
             name: formData.name.trim(),
             type: formData.type,
@@ -66,8 +65,9 @@ const useAddTeaForm = () => {
         updateField,
         clearForm,
         isValid,
-        getTeaData
+        getTeaData,
+        setFormValues
     };
 }
 
-export default useAddTeaForm;
+export default useTeaForm;

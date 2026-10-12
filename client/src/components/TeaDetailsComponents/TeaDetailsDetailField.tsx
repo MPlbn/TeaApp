@@ -1,5 +1,5 @@
 import { Divider, Grid, Paper, Stack, Text, Title } from "@mantine/core";
-import { getTeaTypeStringVerison } from "../../utils/utils";
+import { getTeaTypeStringVersion } from "../../utils/utils";
 import { Tea } from "../../types/Tea";
 
 type TeaDetailsDetailFieldProps = {
@@ -18,7 +18,7 @@ const TeaDetailsDetailField = (props: TeaDetailsDetailFieldProps) => {
                     <Grid.Col span={{base: 12, sm: 6}}>
                         <Stack>
                             <Text size="sm" c="dimmed">Rodzaj herbaty</Text>
-                            <Text fw={500}>{getTeaTypeStringVerison(props.tea.type)}</Text>
+                            <Text fw={500}>{getTeaTypeStringVersion(props.tea.type)}</Text>
                         </Stack>
                     </Grid.Col>
                     <Grid.Col span={{base: 12, sm: 6}}>

@@ -5,7 +5,7 @@ export function getTeaDetailsPath(uTeaID: number | string): string {
     return `${ViewType.TeaListView}/${uTeaID}`;
 }
 
-export function getTeaTypeStringVerison(uTeaType: TeaType): string {
+export function getTeaTypeStringVersion(uTeaType: TeaType): string {
     switch(uTeaType){
         case TeaType.White: return 'Biała';
         case TeaType.Green: return 'Zielona';

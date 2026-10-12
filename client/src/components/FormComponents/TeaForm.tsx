@@ -6,14 +6,14 @@ import {
     Textarea
  } from "@mantine/core";
 import { TeaType } from "../../types/enums";
-import { getTeaTypeStringVerison } from "../../utils/utils";
-import { TeaAdditionFormData } from "../../types/TeaAdditionFormData";
+import { getTeaTypeStringVersion } from "../../utils/utils";
+import { TeaFormData } from "../../types/TeaFormData";
 
-type TeaAdditionFormProps = {
-    formData: TeaAdditionFormData;
-    updateField: <TKey extends keyof TeaAdditionFormData>(
+type TeaFormProps = {
+    formData: TeaFormData;
+    updateField: <TKey extends keyof TeaFormData>(
         uKey: TKey,
-        uValue: TeaAdditionFormData[TKey]
+        uValue: TeaFormData[TKey]
     ) => void;
 };
 
@@ -21,9 +21,9 @@ const teaTypeOptions = Object.values(TeaType)
     .filter((value): value is TeaType => typeof value === 'number')
     .map((teaType) => ({
         value: String(teaType), 
-        label: getTeaTypeStringVerison(teaType)}));
+        label: getTeaTypeStringVersion(teaType)}));
                                             
-const TeaAdditionForm = (props: TeaAdditionFormProps) => {
+const TeaForm = (props: TeaFormProps) => {
     return (
         <Grid gap="md">
             <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -93,4 +93,4 @@ const TeaAdditionForm = (props: TeaAdditionFormProps) => {
         </Grid>
     );
 }
-export default TeaAdditionForm;
+export default TeaForm;

@@ -9,7 +9,7 @@ import { TablerIcon } from '@tabler/icons-react';
 import { ViewType } from '../types/enums';
 
 
-type SidebarItem = {
+export type SidebarItem = {
     label: string;
     icon: TablerIcon;
     view: ViewType

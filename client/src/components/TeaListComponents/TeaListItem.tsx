@@ -9,7 +9,7 @@ import { ShortTea } from '../../types/Tea';
 import { useNavigate } from 'react-router';
 import { 
     getTeaDetailsPath,
-    getTeaTypeStringVerison
+    getTeaTypeStringVersion
 } from '../../utils/utils';
 
 type TeaListItemProps = {
@@ -41,7 +41,7 @@ const TeaListItem = (props: TeaListItemProps) => {
                 <Divider orientation="vertical" />
 
                 <Text size="sm" c="dimmed" style={{ flex: 1 }} ta="center">
-                    {getTeaTypeStringVerison(props.shortTea.type)}
+                    {getTeaTypeStringVersion(props.shortTea.type)}
                 </Text>
 
                 <Divider orientation="vertical" />

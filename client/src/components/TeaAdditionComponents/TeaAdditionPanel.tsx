@@ -9,8 +9,8 @@ import {
     Text,
     Paper
 } from "@mantine/core";
-import TeaAdditionForm from "./TeaAdditionForm";
-import useAddTeaForm from "../../hooks/useTeaAdditionForm";
+import TeaForm from "../FormComponents/TeaForm";
+import useTeaForm from "../../hooks/useTeaForm";
 import { addTea } from "../../services/teaService";
 
 const TeaAdditionPanel = () => {
@@ -20,7 +20,7 @@ const TeaAdditionPanel = () => {
         clearForm,
         isValid,
         getTeaData
-    } = useAddTeaForm();
+    } = useTeaForm();
     //Modal
     const [isInfoPopupModalOpen, setIsInfoPopupModalOpen] = useState(false);
     const [infoPopupModalMessage, setInfoPopupModalMessage] = useState('');
@@ -48,7 +48,6 @@ const TeaAdditionPanel = () => {
             clearForm();
     
             setInfoPopupModalMessage('Poprawnie dodano herbatę!');
-            setIsInfoPopupModalOpen(true);
         } catch (error) {
             setInfoPopupModalMessage(error instanceof Error ? `Nie udało się dodać herbaty: ${error.message}` : `Wystąpił nieznany błąd`);
         }
@@ -97,7 +96,7 @@ const TeaAdditionPanel = () => {
 
             <Paper withBorder p="lg" radius="md">
                 <Stack gap="md">
-                    <TeaAdditionForm
+                    <TeaForm
                         formData={formData}
                         updateField={updateField}
                     />

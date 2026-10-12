@@ -6,7 +6,7 @@ import {
   IconSettings,
 } from '@tabler/icons-react';
 import { ViewType } from '../types/enums';
-import type { SidebarItem } from '../types/SidebarItem';
+import { SidebarItem } from '../components/Sidebar';
 
 export const navigationItems: SidebarItem[] = [
     {
@@ -18,16 +18,6 @@ export const navigationItems: SidebarItem[] = [
         label: "Dodanie herbaty",
         icon: IconCirclePlus,
         view: ViewType.AddTeaView,
-    },
-    {
-        label: "Edycja herbaty",
-        icon: IconEdit,
-        view: ViewType.EditTeaView,
-    },
-    {
-        label: "Usunięcie herbaty",
-        icon: IconCircleMinus,
-        view: ViewType.DeleteTeaView,
     },
 ];
 
