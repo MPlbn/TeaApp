@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { Stack, Text } from "@mantine/core";
+import { Loader, Stack, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { getTeaByID } from "../../services/teaService";
 import { Tea } from "../../types/Tea";
@@ -9,29 +9,48 @@ import TeaDetailsDetailField from "./TeaDetailsDetailField";
 const TeaDetailsView = () => {
     const {id} = useParams<{id: string}>();
     const [tea, setTea] = useState<Tea | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [fetchingError, setFetchingError] = useState<string | null>(null);
 
     useEffect(() => {
-            if(!id) {
-                setTea(null);
-                return;
+            const loadTea = async () => {
+                if(!id) {
+                    setFetchingError("Nie podano ID herbaty.");
+                    setIsLoading(false);
+                    return;
+                }
+
+                const teaID = Number(id);
+
+                if(!Number.isInteger(teaID) || teaID <= 0) {
+                    setFetchingError("ID herbaty ma nieprawidłową wartość.");
+                    setIsLoading(false);
+                    return;
+                }
+
+                try {
+                    const fetchedTea = await getTeaByID(teaID);
+                    setTea(fetchedTea);
+                } catch (error) {
+                    setFetchingError(error instanceof Error ? error.message : "Nie udało się pobrać herbaty.");
+                } finally {
+                    setIsLoading(false);
+                }
             }
 
-            const teaID = Number(id);
-
-            if(!Number.isInteger(teaID)){
-                setTea(null);
-                return;
-            }
-
-            const tea = getTeaByID(teaID);
-
-            setTea(tea ?? null);
+            void loadTea();
         }, [id]);
 
-    if (tea === null) {
-        return (
-            <Text>Nie znaleziono herbaty.</Text>
-        );
+    if(isLoading) {
+        return <Loader/>;
+    }
+
+    if(fetchingError !== null) {
+        return <Text c="red">Błąd: {fetchingError}</Text>;
+    }
+
+    if(tea === null) {
+        return <Text>Nie znaleziono herbaty.</Text>;
     }
 
     return (

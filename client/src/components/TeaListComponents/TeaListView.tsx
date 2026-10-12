@@ -16,7 +16,8 @@ const TeaListView = () => {
     const [teas, setTeas] = useState<Tea[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [fetchingError, setFetchingError] = useState<string | null>(null);
-
+    const [selectedTeaType, setSelectedTeaType] = useState<TeaType | null>(null);
+    
     useEffect(() => {
         const loadTeas = async () => {
             try {
@@ -40,7 +41,6 @@ const TeaListView = () => {
         return <Text c="red">Błąd: {fetchingError}</Text>
     }
 
-    const [selectedTeaType, setSelectedTeaType] = useState<TeaType | null>(null);
 
     const filteredTeas = teas.filter((tea) => selectedTeaType === null ? true : tea.type === selectedTeaType);
 

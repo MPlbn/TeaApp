@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { TeaAdditionFormData } from "../types/TeaAdditionFormData";
 
-export default function useAddTeaForm() {
+const useAddTeaForm = () => {
     const [formData, setFormData] = useState<TeaAdditionFormData>({
         name: '',
-        teaType: null,
+        type: null,
         origin: '',
         price: '',
         shop: '',
@@ -14,7 +14,7 @@ export default function useAddTeaForm() {
     function clearForm(): void {
         setFormData({
             name: '',
-            teaType: null,
+            type: null,
             origin: '',
             price: '',
             shop: '',
@@ -30,15 +30,20 @@ export default function useAddTeaForm() {
     }
 
     function isValid(): boolean {
+        const price = Number(formData.price)
         if (formData.name.trim() === '') {
             return false;
         }
 
-        if (formData.teaType === null) {
+        if (formData.type === null) {
             return false;
         }
 
-        if (formData.price === '' || Number(formData.price) < 0) {
+        if (
+            formData.price === '' ||
+            price < 0 ||
+            !Number.isFinite(price)
+        ) {
             return false;
         }
 
@@ -48,7 +53,7 @@ export default function useAddTeaForm() {
     function getTeaData(): TeaAdditionFormData {
         return {
             name: formData.name.trim(),
-            teaType: formData.teaType,
+            type: formData.type,
             origin: formData.origin.trim(),
             price: formData.price,
             shop: formData.shop.trim(),
@@ -64,3 +69,5 @@ export default function useAddTeaForm() {
         getTeaData
     };
 }
+
+export default useAddTeaForm;

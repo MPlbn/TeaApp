@@ -6,11 +6,10 @@ import {
     Textarea
  } from "@mantine/core";
 import { TeaType } from "../../types/enums";
-import { TeaAdditionFormData } from "../../types/TeaAdditionFormData";
 import { getTeaTypeStringVerison } from "../../utils/utils";
+import { TeaAdditionFormData } from "../../types/TeaAdditionFormData";
 
-
-type AddTeaFormProps = {
+type TeaAdditionFormProps = {
     formData: TeaAdditionFormData;
     updateField: <TKey extends keyof TeaAdditionFormData>(
         uKey: TKey,
@@ -24,7 +23,7 @@ const teaTypeOptions = Object.values(TeaType)
         value: String(teaType), 
         label: getTeaTypeStringVerison(teaType)}));
                                             
-const TeaAdditionForm = (props: AddTeaFormProps) => {
+const TeaAdditionForm = (props: TeaAdditionFormProps) => {
     return (
         <Grid gap="md">
             <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -42,12 +41,9 @@ const TeaAdditionForm = (props: AddTeaFormProps) => {
                     label="Rodzaj herbaty"
                     placeholder="Wybierz rodzaj"
                     data={teaTypeOptions}
-                    value={props.formData.teaType === null ? null : String(props.formData.teaType)}
+                    value={props.formData.type === null ? null : String(props.formData.type)}
                     onChange={
-                        (value) => {
-                            value === null ? 
-                            props.updateField("teaType", null) : props.updateField("teaType", Number(value) as TeaType)} 
-                    }
+                        (value) => {props.updateField("type", value === null ? null : Number(value) as TeaType)}}
                     required
                     />
             </Grid.Col>

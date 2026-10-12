@@ -10,7 +10,8 @@ import {
     Paper
 } from "@mantine/core";
 import TeaAdditionForm from "./TeaAdditionForm";
-import useAddTeaForm from "../../hooks/useAddTeaForm";
+import useAddTeaForm from "../../hooks/useTeaAdditionForm";
+import { addTea } from "../../services/teaService";
 
 const TeaAdditionPanel = () => {
     const {
@@ -24,23 +25,34 @@ const TeaAdditionPanel = () => {
     const [isInfoPopupModalOpen, setIsInfoPopupModalOpen] = useState(false);
     const [infoPopupModalMessage, setInfoPopupModalMessage] = useState('');
 
-    function handleAdd(){
+    const handleAdd = async () => {
         if (!isValid()){
             return;
         }
 
         const tea = getTeaData();
 
+        if(tea.type === null) {
+            return;
+        }
+
         const teaToAdd = {
             ...tea,
-            price: tea.price === '' ? null : Number(tea.price)
+            price: tea.price === '' ? null : Number(tea.price),
+            type: tea.type
         };
 
-        console.log('Herbata do dodania:', teaToAdd);
+        try {
+            await addTea(teaToAdd);
 
-        clearForm();
-
-        setInfoPopupModalMessage('Poprawnie dodano herbatę!');
+            clearForm();
+    
+            setInfoPopupModalMessage('Poprawnie dodano herbatę!');
+            setIsInfoPopupModalOpen(true);
+        } catch (error) {
+            setInfoPopupModalMessage(error instanceof Error ? `Nie udało się dodać herbaty: ${error.message}` : `Wystąpił nieznany błąd`);
+        }
+        
         setIsInfoPopupModalOpen(true);
     }
 
