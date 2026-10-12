@@ -5,11 +5,11 @@ import {
 } from '@mantine/core';
 import Sidebar from './components/Sidebar';
 import { ViewType }  from './types/enums';
-import SettingsView from './views/SettingsView';
-import AddTeaView from './views/AddTeaView';
-import TeaListView from './views/TeaListView';
-import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router';
-import TeaDetailsView from './views/TeaDetailsView';
+import SettingsView from './components/SettingsComponents/SettingsView';
+import TeaAdditionView from './components/TeaAdditionComponents/TeaAdditionView';
+import TeaListView from './components/TeaListComponents/TeaListView';
+import { Route, Routes, Navigate } from 'react-router';
+import TeaDetailsView from './components/TeaDetailsComponents/TeaDetailsView';
 
 export default function App(){
   const [activeView, setActiveView] = useState('TeaListView');
@@ -36,9 +36,7 @@ export default function App(){
           <Route
             path={ViewType.TeaListView}
             element={
-              <TeaListView 
-                onTeaSelect={function () {}}
-              />
+              <TeaListView />
             }
           />
 
@@ -53,7 +51,7 @@ export default function App(){
 
           <Route 
             path={ViewType.AddTeaView}
-            element={<AddTeaView />}
+            element={<TeaAdditionView />}
           />
 
           <Route 

@@ -6,7 +6,7 @@ type TeaDetailsTitleProps = {
     onBack: () => void;
 }
 
-export default function TeaDetailsTitle(uProps: TeaDetailsTitleProps){
+const TeaDetailsTitle = (uProps: TeaDetailsTitleProps) => {
     return (
         <Group gap="md" align="center">
             <ActionIcon
@@ -24,3 +24,4 @@ export default function TeaDetailsTitle(uProps: TeaDetailsTitleProps){
         </Group>
     );
 }
+export default TeaDetailsTitle;

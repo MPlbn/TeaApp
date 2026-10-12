@@ -9,7 +9,7 @@ type TeaDetailsDetailFieldProps = {
     price: number | null;
 };
 
-export default function TeaDetailsDetailField(uProps: TeaDetailsDetailFieldProps) {
+const TeaDetailsDetailField = (props: TeaDetailsDetailFieldProps) => {
     return (
         <Paper withBorder radius="md" p="lg">
             <Stack gap="md">
@@ -21,28 +21,29 @@ export default function TeaDetailsDetailField(uProps: TeaDetailsDetailFieldProps
                     <Grid.Col span={{base: 12, sm: 6}}>
                         <Stack>
                             <Text size="sm" c="dimmed">Rodzaj herbaty</Text>
-                            <Text fw={500}>{getTeaTypeStringVerison(uProps.teaType)}</Text>
+                            <Text fw={500}>{getTeaTypeStringVerison(props.teaType)}</Text>
                         </Stack>
                     </Grid.Col>
                     <Grid.Col span={{base: 12, sm: 6}}>
                         <Stack>
                             <Text size="sm" c="dimmed">Pochodzenie</Text>
-                            <Text fw={500}>{uProps.origin}</Text>
+                            <Text fw={500}>{props.origin}</Text>
                         </Stack>
                     </Grid.Col>
                     <Grid.Col span={{base: 12, sm: 6}}>    
                         <Stack>
                             <Text size="sm" c="dimmed">Cena za 50g</Text>
-                            <Text fw={500}>{uProps.price} zł</Text>
+                            <Text fw={500}>{props.price} zł</Text>
                         </Stack>
                     </Grid.Col>
                 </Grid>
                 <Divider/>
                 <Stack>
                     <Text size="sm" c="dimmed">Opis</Text>
-                    <Text style={{whiteSpace: 'pre-wrap'}}>{uProps.description || 'Brak opisu...'}</Text>
+                    <Text style={{whiteSpace: 'pre-wrap'}}>{props.description || 'Brak opisu...'}</Text>
                 </Stack>
             </Stack>
         </Paper>
     )
 }
+export default TeaDetailsDetailField;

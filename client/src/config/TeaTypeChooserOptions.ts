@@ -1,5 +1,9 @@
 import { TeaType } from "../types/enums";
-import { TeaTypeOption } from "../types/TeaTypeOption";
+
+type TeaTypeOption = {
+    label: string;
+    value: TeaType | null;
+}
 
 export const teaTypeOptions: TeaTypeOption[] = [
   { label: 'Wszystkie', value: null },

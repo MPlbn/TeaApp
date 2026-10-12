@@ -1,17 +1,16 @@
 import { useParams } from "react-router";
 import { Stack, Text } from "@mantine/core";
-import TeaDetailsTitle from "../components/tea-detail-comp/TeaDetailsTitle";
 import { useEffect, useState } from "react";
-import { getTeaByID } from "../services/teaService";
-import { Tea } from "../types/Tea";
-import TeaDetailsDetailField from "../components/tea-detail-comp/TeaDetailsDetailField";
+import { getTeaByID } from "../../services/teaService";
+import { Tea } from "../../types/Tea";
+import TeaDetailsTitle from "./TeaDetailsTitle";
+import TeaDetailsDetailField from "./TeaDetailsDetailField";
 
-export default function TeaDetailsView() {
+const TeaDetailsView = () => {
     const {id} = useParams<{id: string}>();
     const [tea, setTea] = useState<Tea | null>(null);
 
-    useEffect(
-        function () {
+    useEffect(() => {
             if(!id) {
                 setTea(null);
                 return;
@@ -24,12 +23,10 @@ export default function TeaDetailsView() {
                 return;
             }
 
-            const xTea = getTeaByID(teaID);
+            const tea = getTeaByID(teaID);
 
-            setTea(xTea ?? null);
-        }, 
-        [id]
-    );
+            setTea(tea ?? null);
+        }, [id]);
 
     if (tea === null) {
         return (
@@ -41,11 +38,7 @@ export default function TeaDetailsView() {
         <Stack>
             <TeaDetailsTitle
                 name={tea.name}
-                onBack={
-                    function (){
-                        window.history.back();
-                    }
-                }
+                onBack={() => {window.history.back()}}
             />
             <TeaDetailsDetailField 
                 teaType={tea.teaType}
@@ -56,3 +49,4 @@ export default function TeaDetailsView() {
         </Stack>
     );
 }
+export default TeaDetailsView;

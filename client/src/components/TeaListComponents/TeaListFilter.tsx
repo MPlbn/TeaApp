@@ -8,13 +8,14 @@ type TeaListFilterProps = {
 };
 
 
-export default function TeaListFilter(uProp: TeaListFilterProps) {
+const TeaListFilter = (props: TeaListFilterProps) => {
     return (
         <Stack gap="md">
             <TeaTypeChooserSet 
-                selectedTeaType={uProp.selectedTeaType}
-                onTeaTypeChange={uProp.onTeaTypeChange}
+                selectedTeaType={props.selectedTeaType}
+                onTeaTypeChange={props.onTeaTypeChange}
             />
         </Stack>
     );
 }
+export default TeaListFilter;

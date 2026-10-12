@@ -3,26 +3,31 @@ import {
     Stack,
     Title
 } from '@mantine/core';
-import type { SidebarItem } from '../types/SidebarItem';
 import { navigationItems, bottomNavigationItems } from '../config/SidebarNavigationItems';
 import { useLocation, useNavigate } from 'react-router';
+import { TablerIcon } from '@tabler/icons-react';
+import { ViewType } from '../types/enums';
 
 
-export default function Sidebar(){
+type SidebarItem = {
+    label: string;
+    icon: TablerIcon;
+    view: ViewType
+};
+
+const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  function renderNavigationItem(uItem: SidebarItem) {
-    const ItemIcon = uItem.icon
+  function renderNavigationItem(item: SidebarItem) {
+    const ItemIcon = item.icon
     return(
       <NavLink 
-        key={uItem.view}
-        label={uItem.label}
+        key={item.view}
+        label={item.label}
         leftSection={<ItemIcon size={20}/>}
-        active={location.pathname === uItem.view}
-        onClick={function () {
-          navigate(uItem.view);
-        }}
+        active={location.pathname === item.view}
+        onClick={() => {navigate(item.view)}}
       />
     );
   }
@@ -39,3 +44,4 @@ export default function Sidebar(){
       </Stack>
   );
 }
+export default Sidebar;

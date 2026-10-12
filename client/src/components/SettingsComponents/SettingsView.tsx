@@ -5,8 +5,7 @@ import {
     Paper
 } from '@mantine/core';
 
-export default function SettingsView(){
-
+const SettingsView = () => {
     return(
         <Stack gap="xl">
             <div>
@@ -36,3 +35,5 @@ export default function SettingsView(){
         </Stack>
     );
 }
+
+export default SettingsView;

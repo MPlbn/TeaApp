@@ -9,10 +9,10 @@ import {
     Text,
     Paper
 } from "@mantine/core";
-import AddTeaForm from "./AddTeaForm";
+import TeaAdditionForm from "./TeaAdditionForm";
 import useAddTeaForm from "../../hooks/useAddTeaForm";
 
-export default function AddTeaPanel() {
+const TeaAdditionPanel = () => {
     const {
         formData,
         updateField,
@@ -85,7 +85,7 @@ export default function AddTeaPanel() {
 
             <Paper withBorder p="lg" radius="md">
                 <Stack gap="md">
-                    <AddTeaForm
+                    <TeaAdditionForm
                         formData={formData}
                         updateField={updateField}
                     />
@@ -106,3 +106,4 @@ export default function AddTeaPanel() {
         </Stack>
     )
 }
+export default TeaAdditionPanel;

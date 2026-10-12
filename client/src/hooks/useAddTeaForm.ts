@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { AddTeaFormData } from "../types/AddTeaFormData";
+import { TeaAdditionFormData } from "../types/TeaAdditionFormData";
 
 export default function useAddTeaForm() {
-    const [formData, setFormData] = useState<AddTeaFormData>({
+    const [formData, setFormData] = useState<TeaAdditionFormData>({
         name: '',
         teaType: null,
         origin: '',
@@ -22,9 +22,9 @@ export default function useAddTeaForm() {
         });
     }
 
-    function updateField<TKey extends keyof AddTeaFormData>(
+    function updateField<TKey extends keyof TeaAdditionFormData>(
         uKey: TKey,
-        uValue: AddTeaFormData[TKey]
+        uValue: TeaAdditionFormData[TKey]
     ) : void {
         setFormData(
             function (uPrevious) {
@@ -52,7 +52,7 @@ export default function useAddTeaForm() {
         return true;
     }
 
-    function getTeaData(): AddTeaFormData {
+    function getTeaData(): TeaAdditionFormData {
         return {
             name: formData.name.trim(),
             teaType: formData.teaType,
