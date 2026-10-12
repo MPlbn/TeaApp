@@ -12,6 +12,17 @@ builder.Services.AddDbContext<TeaDbContext>
     builder.Configuration.GetConnectionString("TeaDatabase")
 ));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("TeaAppPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    }); 
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -23,6 +34,8 @@ if (app.Environment.IsDevelopment())
        xOptions.SwaggerEndpoint("/openapi/v1.json", "TeaApp API v1"); 
     });
 }
+
+app.UseCors("TeaAppPolicy");
 
 app.MapControllers();
 
