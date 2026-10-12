@@ -20,7 +20,7 @@ const TeaListItem = (props: TeaListItemProps) => {
     const navigate = useNavigate();
 
     function handleClick(): void {
-        navigate(getTeaDetailsPath(props.tea.ID))
+        navigate(getTeaDetailsPath(props.tea.id))
     }
     
     return(
@@ -41,7 +41,7 @@ const TeaListItem = (props: TeaListItemProps) => {
                 <Divider orientation="vertical" />
 
                 <Text size="sm" c="dimmed" style={{ flex: 1 }} ta="center">
-                    {getTeaTypeStringVerison(props.tea.teaType)}
+                    {getTeaTypeStringVerison(props.tea.type)}
                 </Text>
 
                 <Divider orientation="vertical" />

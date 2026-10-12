@@ -1,10 +1,11 @@
 import { TeaType } from "./enums";
 
 export type Tea = {
-    ID: number;
+    id: number;
     name: string;
-    teaType: TeaType;
-    origin: string;
+    type: TeaType;
     price: number | null;
+    origin: string;
+    shop: string;
     description: string;
 };

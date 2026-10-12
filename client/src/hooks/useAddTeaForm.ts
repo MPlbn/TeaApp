@@ -26,14 +26,7 @@ export default function useAddTeaForm() {
         uKey: TKey,
         uValue: TeaAdditionFormData[TKey]
     ) : void {
-        setFormData(
-            function (uPrevious) {
-                return {
-                    ...uPrevious,
-                    [uKey]: uValue
-                };
-            }
-        );
+        setFormData((uPrevious) => {return {...uPrevious, [uKey]: uValue}});
     }
 
     function isValid(): boolean {

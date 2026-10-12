@@ -6,20 +6,20 @@ type TeaDetailsTitleProps = {
     onBack: () => void;
 }
 
-const TeaDetailsTitle = (uProps: TeaDetailsTitleProps) => {
+const TeaDetailsTitle = (props: TeaDetailsTitleProps) => {
     return (
         <Group gap="md" align="center">
             <ActionIcon
                 variant="subtle"
                 size="lg"
                 aria-label="Wróć do listy herbat"
-                onClick={uProps.onBack}
+                onClick={props.onBack}
             >
                 <IconArrowLeft size={24} />
             </ActionIcon>
 
             <Title order={1}>
-                {uProps.name}
+                {props.name}
             </Title>
         </Group>
     );

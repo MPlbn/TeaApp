@@ -41,7 +41,7 @@ const TeaDetailsView = () => {
                 onBack={() => {window.history.back()}}
             />
             <TeaDetailsDetailField 
-                teaType={tea.teaType}
+                teaType={tea.type}
                 origin={tea.origin}
                 description={tea.description}
                 price={tea.price}
