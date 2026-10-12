@@ -5,7 +5,7 @@ import{
     Group,
     Divider
 } from '@mantine/core';
-import { Tea } from '../../types/Tea';
+import { ShortTea } from '../../types/Tea';
 import { useNavigate } from 'react-router';
 import { 
     getTeaDetailsPath,
@@ -13,14 +13,14 @@ import {
 } from '../../utils/utils';
 
 type TeaListItemProps = {
-    tea: Tea;
+    shortTea: ShortTea;
 };
 
 const TeaListItem = (props: TeaListItemProps) => {
     const navigate = useNavigate();
 
     function handleClick(): void {
-        navigate(getTeaDetailsPath(props.tea.id))
+        navigate(getTeaDetailsPath(props.shortTea.id))
     }
     
     return(
@@ -35,19 +35,19 @@ const TeaListItem = (props: TeaListItemProps) => {
             >
                 <Group wrap="nowrap" align="stretch" gap="xs">
                 <Text fw={600} style={{ flex: 1 }}>
-                    {props.tea.name}
+                    {props.shortTea.name}
                 </Text>
 
                 <Divider orientation="vertical" />
 
                 <Text size="sm" c="dimmed" style={{ flex: 1 }} ta="center">
-                    {getTeaTypeStringVerison(props.tea.type)}
+                    {getTeaTypeStringVerison(props.shortTea.type)}
                 </Text>
 
                 <Divider orientation="vertical" />
 
                 <Text size="sm" style={{ flex: 1 }} ta="right">
-                    {props.tea.origin}
+                    {props.shortTea.origin}
                 </Text>
                 </Group>
             </Paper>

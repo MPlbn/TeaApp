@@ -1,17 +1,17 @@
-import type { Tea } from "../types/Tea";
+import type { ShortTea, Tea } from "../types/Tea";
 
 const API_URL = "http://localhost:8080/api/Tea";
 
 export type NewTea = Omit<Tea, "id">;
 
-export const getAllTeas = async (): Promise<Tea[]> => {
+export const getAllTeasForList = async (): Promise<ShortTea[]> => {
     const response = await fetch(API_URL);
 
     if(!response.ok) {
         throw new Error(`Błąd API: ${response.status}`);
     }
 
-    return await response.json() as Tea[];
+    return await response.json() as ShortTea[];
 };
 
 export const getTeaByID = async (teaID: number): Promise<Tea> => {
@@ -23,6 +23,10 @@ export const getTeaByID = async (teaID: number): Promise<Tea> => {
 
     return await response.json() as Tea;
 }
+
+export const getReviewsByTeaID = null;
+
+export const getBrewingsByTeaID = null;
 
 export const addTea = async (tea: NewTea): Promise<Tea> => {
     const response = await fetch(API_URL, {
@@ -39,3 +43,7 @@ export const addTea = async (tea: NewTea): Promise<Tea> => {
 
     return await response.json() as Tea;
 }
+
+export const addBrewing = null;
+
+export const addReview = null;

@@ -3,17 +3,17 @@ import {
     Title,
     Text
 } from "@mantine/core";
-import { Tea } from "../../types/Tea";
+import { ShortTea, Tea } from "../../types/Tea";
 import { TeaType } from "../../types/enums";
 import { useEffect, useState } from "react";
 import { Loader } from "@mantine/core";
 import TeaListItem from "./TeaListItem";
 import TeaListFilter from "./TeaListFilter";
-import { getAllTeas } from "../../services/teaService";
+import { getAllTeasForList } from "../../services/teaService";
 
 const TeaListView = () => {
 
-    const [teas, setTeas] = useState<Tea[]>([]);
+    const [teas, setTeas] = useState<ShortTea[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [fetchingError, setFetchingError] = useState<string | null>(null);
     const [selectedTeaType, setSelectedTeaType] = useState<TeaType | null>(null);
@@ -21,7 +21,7 @@ const TeaListView = () => {
     useEffect(() => {
         const loadTeas = async () => {
             try {
-                const fetchedTeas = await getAllTeas();
+                const fetchedTeas = await getAllTeasForList();
                 setTeas(fetchedTeas);
             } catch (error) {
                 setFetchingError(error instanceof Error ? error.message : "Nie udało się pobrać herbat.")
@@ -57,7 +57,7 @@ const TeaListView = () => {
             </Text>
 
             <Stack gap="xs">
-                {filteredTeas.map((tea) => {return <TeaListItem key={tea.id} tea={tea}/>})}
+                {filteredTeas.map((tea) => {return <TeaListItem key={tea.id} shortTea={tea}/>})}
             </Stack>
         </Stack>
     );
