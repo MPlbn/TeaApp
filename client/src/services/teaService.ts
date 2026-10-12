@@ -1,11 +1,17 @@
+import { BrewingMethod } from "../types/BrewingMethod";
+import { Review } from "../types/Review";
 import type { ShortTea, Tea } from "../types/Tea";
 
-const API_URL = "http://localhost:8080/api/Tea";
+const API_URL_TEA = "http://localhost:8080/api/Tea";
+const API_URL_BREWING_METHOD = "http://localhost:8080/api/BrewingMethod";
+const API_URL_REVIEW = "http://localhost:8080/api/TeaReview";
+
+
 
 export type NewTea = Omit<Tea, "id">;
 
 export const getAllTeasForList = async (): Promise<ShortTea[]> => {
-    const response = await fetch(API_URL);
+    const response = await fetch(API_URL_TEA);
 
     if(!response.ok) {
         throw new Error(`Błąd API: ${response.status}`);
@@ -15,7 +21,7 @@ export const getAllTeasForList = async (): Promise<ShortTea[]> => {
 };
 
 export const getTeaByID = async (teaID: number): Promise<Tea> => {
-    const response = await fetch(`${API_URL}/${teaID}`);
+    const response = await fetch(`${API_URL_TEA}/${teaID}`);
 
     if(!response.ok){
         throw new Error(`Błąd API: ${response.status}`);
@@ -24,12 +30,28 @@ export const getTeaByID = async (teaID: number): Promise<Tea> => {
     return await response.json() as Tea;
 }
 
-export const getReviewsByTeaID = null;
+export const getReviewsByTeaID = async (teaID: number): Promise<Review[]> => {
+    const response = await fetch(`${API_URL_REVIEW}/?TeaID=${teaID}`);
 
-export const getBrewingsByTeaID = null;
+    if(!response.ok){
+        throw new Error(`Błąd API: ${response.status}`)
+    }
+
+    return await response.json() as Review[];
+}
+
+export const getBrewingMethodsByTeaID = async (teaID: number): Promise<BrewingMethod[]> => {
+    const response = await fetch(`${API_URL_BREWING_METHOD}/?TeaID=${teaID}`);
+
+    if(!response.ok){
+        throw new Error(`Błąd API: ${response.status}`)
+    }
+
+    return await response.json() as BrewingMethod[];
+}
 
 export const addTea = async (tea: NewTea): Promise<Tea> => {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_TEA, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

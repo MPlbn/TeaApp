@@ -14,3 +14,9 @@ export enum TeaType {
     Black = 4,
     Heicha = 5
 }
+
+export enum MethodType {
+    Gongfu = 0,
+    Western = 1,
+    Alternative = 2
+}

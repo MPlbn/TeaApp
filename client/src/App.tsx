@@ -12,7 +12,6 @@ import { Route, Routes, Navigate } from 'react-router';
 import TeaDetailsView from './components/TeaDetailsComponents/TeaDetailsView';
 
 export default function App(){
-  const [activeView, setActiveView] = useState('TeaListView');
 
   return(
     <AppShell
