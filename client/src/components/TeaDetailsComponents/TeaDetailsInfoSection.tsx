@@ -1,11 +1,12 @@
 import TeaDetailsTitle from "./TeaDetailsTitle";
 import TeaDetailsDetailField from "./TeaDetailsDetailField";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Tea } from "../../types/Tea"; 
-import { Loader, Text, Stack } from "@mantine/core";
+import { Loader, Text, Stack, Button, Group, Modal } from "@mantine/core";
 import { getTeaByID } from "../../services/teaService";
 import { useNavigate } from "react-router";
 import { ViewType } from "../../types/enums";
+import TeaEditorView from "../TeaEditorComponents/TeaEditorView";
 
 type TeaDetailsInfoSectionProps = {
     teaID: number;
@@ -15,22 +16,14 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
     const [tea, setTea] = useState<Tea | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [fetchingError, setFetchingError] = useState<string | null>(null);
+    const [isEditorOpen, setIsEditorOpen] = useState(false);
+
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const loadTea = async () => {
-            if(!props.teaID){
-                setFetchingError("Nie podano ID herbaty.");
-                setIsLoading(false);
-                return;
-            }
-    
-            if(!Number.isInteger(props.teaID) || props.teaID <= 0){
-                setFetchingError("ID herbaty ma nieprawidłową wartość.");
-                setIsLoading(false);
-                return;
-            }
-    
+    const loadTea = useCallback(async() => {
+            setIsLoading(true);
+            setFetchingError(null);
+
             try {
                 const fetcehedTea = await getTeaByID(props.teaID);
                 setTea(fetcehedTea);
@@ -39,9 +32,28 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
             } finally {
                 setIsLoading(false);
             }
-        }
-        void loadTea();
     }, [props.teaID]);
+
+    const handleEditSuccess = async () => {
+        setIsEditorOpen(false);
+        await loadTea();
+    };
+
+    useEffect(() => {  
+        if(!props.teaID){
+            setFetchingError("Nie podano ID herbaty.");
+            setIsLoading(false);
+            return;
+        }
+    
+        if(!Number.isInteger(props.teaID) || props.teaID <= 0){
+            setFetchingError("ID herbaty ma nieprawidłową wartość.");
+            setIsLoading(false);
+            return;
+        }
+        
+        void loadTea();
+    }, [loadTea, props.teaID]);
 
     if(isLoading){
         return <Loader/>
@@ -59,6 +71,19 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
         <Stack>
             <TeaDetailsTitle name={tea.name} onBack={() => navigate(ViewType.TeaListView)}/>
             <TeaDetailsDetailField tea={tea}/>
+            <Group>
+                <Button onClick={() => setIsEditorOpen(true)}>Edytuj</Button>
+                <Button c="red" variant="outline" onClick={() => {}}>Usuń</Button>
+            </Group>
+
+            <Modal
+                opened={isEditorOpen}
+                onClose={() => setIsEditorOpen(false)}
+                centered
+                size="lg"
+            >
+                <TeaEditorView tea={tea} onSuccess={handleEditSuccess}/>
+            </Modal>
         </Stack>
     );
 };

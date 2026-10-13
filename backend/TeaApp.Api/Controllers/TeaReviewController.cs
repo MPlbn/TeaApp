@@ -20,29 +20,29 @@ public class TeaReviewController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TeaReviewResponseDTO>>> GetReviews(
-        int? uTeaID,
-        int? uUserID
+        int? TeaID,
+        int? UserID
     )
     {
         var query = _dbContext.TeaReviewDbSet.AsQueryable();
 
-        if (uTeaID.HasValue)
+        if (TeaID.HasValue)
         {
-            query = query.Where(xReview => xReview.TeaId == uTeaID.Value);
+            query = query.Where(review => review.TeaId == TeaID.Value);
         }
 
-        if (uUserID.HasValue)
+        if (UserID.HasValue)
         {
-            query = query.Where(xReview => xReview.UserId == uUserID.Value);
+            query = query.Where(review => review.UserId == UserID.Value);
         }
 
-        var reviews = await query.Select(xReview => new TeaReviewResponseDTO
+        var reviews = await query.Select(review => new TeaReviewResponseDTO
         {
-            ID = xReview.ID,
-            TeaId = xReview.TeaId,
-            UserId = xReview.UserId,
-            Review = xReview.Review,
-            Rating = xReview.Rating
+            ID = review.ID,
+            TeaId = review.TeaId,
+            UserId = review.UserId,
+            Review = review.Review,
+            Rating = review.Rating
         })
         .ToListAsync();
 

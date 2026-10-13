@@ -9,19 +9,19 @@ import { TeaType } from "../../types/enums";
 import { getTeaTypeStringVersion } from "../../utils/utils";
 import { TeaFormData } from "../../types/TeaFormData";
 
-type TeaFormProps = {
-    formData: TeaFormData;
-    updateField: <TKey extends keyof TeaFormData>(
-        uKey: TKey,
-        uValue: TeaFormData[TKey]
-    ) => void;
-};
-
 const teaTypeOptions = Object.values(TeaType)
     .filter((value): value is TeaType => typeof value === 'number')
     .map((teaType) => ({
         value: String(teaType), 
         label: getTeaTypeStringVersion(teaType)}));
+
+type TeaFormProps = {
+    formData: TeaFormData;
+    updateField: <TKey extends keyof TeaFormData>(
+        key: TKey,
+        value: TeaFormData[TKey]
+    ) => void;
+};
                                             
 const TeaForm = (props: TeaFormProps) => {
     return (

@@ -9,33 +9,30 @@ import {
     Paper
 } from "@mantine/core";
 import TeaForm from "../FormComponents/TeaForm";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Tea } from "../../types/Tea";
+import { convertTeaToTeaFormData } from "../../utils/utils";
 
 type TeaEditorPanelProps = {
     tea: Tea;
     onSuccess: () => void;
 };
 
-const TeaEditorPanel = (props: TeaEditorPanelProps) => {
+const TeaEditorPanel = (props: TeaEditorPanelProps) => { 
+
+    const startingFormData = convertTeaToTeaFormData(props.tea);
+
     const {
         formData,
         updateField,
-        setFormValues,
         isValid,
         getTeaData
-    } = useTeaForm(); //initial data
+    } = useTeaForm(startingFormData);
 
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // useEffect(() => {
-    //     setFormValues({
-
-    //     });
-    // });
-
-    async function handleEdit() {
+    const handleEdit = async () => {
         if (!isValid()){
             return;
         }
@@ -57,6 +54,7 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
 
         try {
             await editTea(props.tea.id, teaToEdit);
+            props.onSuccess();
         } catch (error) {
             setError(error instanceof Error ? error.message : "Nie udało się edytować herbaty.");
         } finally {

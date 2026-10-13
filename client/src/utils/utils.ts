@@ -1,12 +1,14 @@
 import { ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
+import { TeaFormData } from "../types/TeaFormData";
+import { Tea } from "../types/Tea";
 
-export function getTeaDetailsPath(uTeaID: number | string): string {
-    return `${ViewType.TeaListView}/${uTeaID}`;
+export function getTeaDetailsPath(teaID: number | string): string {
+    return `${ViewType.TeaListView}/${teaID}`;
 }
 
-export function getTeaTypeStringVersion(uTeaType: TeaType): string {
-    switch(uTeaType){
+export function getTeaTypeStringVersion(teaType: TeaType): string {
+    switch(teaType){
         case TeaType.White: return 'Biała';
         case TeaType.Green: return 'Zielona';
         case TeaType.Yellow: return 'Żółta';
@@ -14,5 +16,16 @@ export function getTeaTypeStringVersion(uTeaType: TeaType): string {
         case TeaType.Black: return 'Czarna';
         case TeaType.Heicha: return 'Heicha';
         default: return 'Nieznany typ';
+    }
+}
+
+export function convertTeaToTeaFormData(tea: Tea): TeaFormData {
+    return {
+        name: tea.name,
+        type: tea.type,
+        origin: tea.origin,
+        price: tea.price ?? "",
+        shop: tea.shop,
+        description: tea.description
     }
 }

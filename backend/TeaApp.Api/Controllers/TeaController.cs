@@ -19,14 +19,14 @@ public class TeaController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TeaListItemResponseDTO>>> GetTeas(
-        TeaType? uType
+        TeaType? Type
     )
     {
         var query = _dbContext.TeaDbSet.AsQueryable();
 
-        if (uType.HasValue)
+        if (Type.HasValue)
         {
-            query = query.Where(tea => tea.Type == uType.Value);
+            query = query.Where(tea => tea.Type == Type.Value);
         }
 
         var teas = await query.Select(tea => new TeaListItemResponseDTO

@@ -20,24 +20,24 @@ public class BrewingMethodController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BrewingMethodResponseDTO>>> GetBrewingMethods(
-        int? uTeaID
+        int? TeaID
     )
     {
         var query = _dbContext.BrewingMethodDbSet.AsQueryable();
 
-        if (uTeaID.HasValue)
+        if (TeaID.HasValue)
         {
-            query = query.Where(xBrewingMethod => xBrewingMethod.TeaId == uTeaID.Value);
+            query = query.Where(brewingMethod => brewingMethod.TeaId == TeaID.Value);
         }
 
-        var brewingMethods = await query.Select(xBrewingMethod => new BrewingMethodResponseDTO
+        var brewingMethods = await query.Select(brewingMethod => new BrewingMethodResponseDTO
         {
-            ID = xBrewingMethod.ID,
-            TeaId = xBrewingMethod.TeaId,
-            Method = xBrewingMethod.Method,
-            Temperature = xBrewingMethod.Temperature,
-            BrewingTimes = xBrewingMethod.BrewingTimes,
-            GongfuBrewingTimeIncrement = xBrewingMethod.GongfuBrewingTimeIncrement
+            ID = brewingMethod.ID,
+            TeaId = brewingMethod.TeaId,
+            Method = brewingMethod.Method,
+            Temperature = brewingMethod.Temperature,
+            BrewingTimes = brewingMethod.BrewingTimes,
+            GongfuBrewingTimeIncrement = brewingMethod.GongfuBrewingTimeIncrement
         })
         .ToListAsync();
 
