@@ -84,4 +84,12 @@ export const editTea = async (teaID: number, tea: NewTea): Promise<void> => {
     }
 }
 
-export const deleteTea = null;
+export const deleteTea = async (teaID: number): Promise<void> => {
+    const response = await fetch(`${API_URL_TEA}/${teaID}`, {
+        method: "DELETE"
+    });
+
+    if(!response.ok) {
+        throw new Error(`Błąd API: ${response.status}`)
+    }
+}

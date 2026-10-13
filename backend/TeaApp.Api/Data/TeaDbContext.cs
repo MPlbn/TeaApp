@@ -21,14 +21,16 @@ public class TeaDbContext : DbContext
         uModelBuilder.Entity<TeaReview>()
         .HasOne(xTeaReview => xTeaReview.Tea)
         .WithMany(xTea => xTea.Reviews)
-        .HasForeignKey(xTeaReview => xTeaReview.TeaId);
+        .HasForeignKey(xTeaReview => xTeaReview.TeaId)
+        .OnDelete(DeleteBehavior.Cascade);
 
         uModelBuilder.Entity<BrewingMethod>().ToTable("BrewingMethodTable");
         uModelBuilder.Entity<BrewingMethod>().HasKey(xBrewingMethod => xBrewingMethod.ID);
         uModelBuilder.Entity<BrewingMethod>()
         .HasOne(xBrewingMethod => xBrewingMethod.Tea)
         .WithMany(xTea => xTea.BrewingMethods)
-        .HasForeignKey(xBrewingMethod => xBrewingMethod.TeaId);
+        .HasForeignKey(xBrewingMethod => xBrewingMethod.TeaId)
+        .OnDelete(DeleteBehavior.Cascade);
 
         uModelBuilder.Entity<BrewingMethod>()
         .Property(xBrewingMethod => xBrewingMethod.BrewingTimes)

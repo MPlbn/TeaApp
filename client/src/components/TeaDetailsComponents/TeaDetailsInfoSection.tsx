@@ -3,7 +3,7 @@ import TeaDetailsDetailField from "./TeaDetailsDetailField";
 import { useEffect, useState, useCallback } from "react";
 import { Tea } from "../../types/Tea"; 
 import { Loader, Text, Stack, Button, Group, Modal } from "@mantine/core";
-import { getTeaByID } from "../../services/teaService";
+import { getTeaByID, deleteTea } from "../../services/teaService";
 import { useNavigate } from "react-router";
 import { ViewType } from "../../types/enums";
 import TeaEditorView from "../TeaEditorComponents/TeaEditorView";
@@ -39,6 +39,16 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
         await loadTea();
     };
 
+    const handleDelete = async () => {
+        try {
+            await deleteTea(props.teaID);
+            navigate(ViewType.TeaListView);
+        }
+        catch(error) {
+            setFetchingError(error instanceof Error ? error.message : "Nie udało się usunąć herbaty.");
+        }
+    }
+
     useEffect(() => {  
         if(!props.teaID){
             setFetchingError("Nie podano ID herbaty.");
@@ -73,9 +83,8 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
             <TeaDetailsDetailField tea={tea}/>
             <Group>
                 <Button onClick={() => setIsEditorOpen(true)}>Edytuj</Button>
-                <Button c="red" variant="outline" onClick={() => {}}>Usuń</Button>
+                <Button c="red" variant="outline" onClick={handleDelete}>Usuń</Button>
             </Group>
-
             <Modal
                 opened={isEditorOpen}
                 onClose={() => setIsEditorOpen(false)}
