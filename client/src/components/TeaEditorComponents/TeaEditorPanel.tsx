@@ -1,4 +1,5 @@
-import useTeaForm from "../../hooks/useTeaForm";
+import useForm from "../../hooks/useForm";
+import { emptyTeaFormData, TeaFormData } from "../../types/FormDatas";
 import { editTea } from "../../services/teaService";
 import { 
     Title,
@@ -12,6 +13,7 @@ import TeaForm from "../FormComponents/TeaForm";
 import { useState } from "react";
 import { Tea } from "../../types/Tea";
 import { convertTeaToTeaFormData } from "../../utils/utils";
+import { teaFormValidator } from "../../validators/formValidators";
 
 type TeaEditorPanelProps = {
     tea: Tea;
@@ -26,8 +28,8 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
         formData,
         updateField,
         isValid,
-        getTeaData
-    } = useTeaForm(startingFormData);
+        getData
+    } = useForm<TeaFormData>(emptyTeaFormData, startingFormData, teaFormValidator);
 
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -37,7 +39,7 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
             return;
         }
 
-        const tea = getTeaData();
+        const tea = getData();
 
         if(tea.type === null){
             return;

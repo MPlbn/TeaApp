@@ -7,7 +7,7 @@ import {
  } from "@mantine/core";
 import { TeaType } from "../../types/enums";
 import { getTeaTypeStringVersion } from "../../utils/utils";
-import { TeaFormData } from "../../types/TeaFormData";
+import { TeaFormData } from "../../types/FormDatas";
 
 const teaTypeOptions = Object.values(TeaType)
     .filter((value): value is TeaType => typeof value === 'number')

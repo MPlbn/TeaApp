@@ -1,6 +1,6 @@
-import { ViewType } from "../types/enums";
+import { MethodType, ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
-import { TeaFormData } from "../types/TeaFormData";
+import { TeaFormData } from "../types/FormDatas";
 import { Tea } from "../types/Tea";
 
 export function getTeaDetailsPath(teaID: number | string): string {
@@ -27,5 +27,14 @@ export function convertTeaToTeaFormData(tea: Tea): TeaFormData {
         price: tea.price ?? "",
         shop: tea.shop,
         description: tea.description
+    }
+}
+
+export function getMethodTypeStringVersion(methodType: MethodType): string {
+    switch(methodType){
+        case MethodType.Gongfu: return "Gongfu";
+        case MethodType.Western: return "Klasyczne";
+        case MethodType.Alternative: return "Alternatywne";
+        default: return "Nieznany typ parzenia";
     }
 }

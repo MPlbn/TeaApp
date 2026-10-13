@@ -10,8 +10,10 @@ import {
     Paper
 } from "@mantine/core";
 import TeaForm from "../FormComponents/TeaForm";
-import useTeaForm from "../../hooks/useTeaForm";
+import useForm from "../../hooks/useForm";
 import { addTea } from "../../services/teaService";
+import { emptyTeaFormData, TeaFormData } from "../../types/FormDatas";
+import { teaFormValidator } from "../../validators/formValidators";
 
 const TeaAdditionPanel = () => {
     const {
@@ -19,8 +21,8 @@ const TeaAdditionPanel = () => {
         updateField,
         clearForm,
         isValid,
-        getTeaData
-    } = useTeaForm();
+        getData
+    } = useForm<TeaFormData>(emptyTeaFormData, emptyTeaFormData, teaFormValidator);
     //Modal
     const [isInfoPopupModalOpen, setIsInfoPopupModalOpen] = useState(false);
     const [infoPopupModalMessage, setInfoPopupModalMessage] = useState('');
@@ -30,7 +32,7 @@ const TeaAdditionPanel = () => {
             return;
         }
 
-        const tea = getTeaData();
+        const tea = getData();
 
         if(tea.type === null) {
             return;

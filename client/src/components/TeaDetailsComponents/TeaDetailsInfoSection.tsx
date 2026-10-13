@@ -7,6 +7,7 @@ import { getTeaByID, deleteTea } from "../../services/teaService";
 import { useNavigate } from "react-router";
 import { ViewType } from "../../types/enums";
 import TeaEditorView from "../TeaEditorComponents/TeaEditorView";
+import TeaDetailsReviewsSet from "./TeaDetailsReviewsSet";
 
 type TeaDetailsInfoSectionProps = {
     teaID: number;
@@ -79,12 +80,12 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
 
     return(
         <Stack>
-            <TeaDetailsTitle name={tea.name} onBack={() => navigate(ViewType.TeaListView)}/>
-            <TeaDetailsDetailField tea={tea}/>
             <Group>
+                <TeaDetailsTitle name={tea.name} onBack={() => navigate(ViewType.TeaListView)}/>
                 <Button onClick={() => setIsEditorOpen(true)}>Edytuj</Button>
                 <Button c="red" variant="outline" onClick={handleDelete}>Usuń</Button>
             </Group>
+            <TeaDetailsDetailField tea={tea}/>
             <Modal
                 opened={isEditorOpen}
                 onClose={() => setIsEditorOpen(false)}

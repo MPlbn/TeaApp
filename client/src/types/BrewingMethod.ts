@@ -2,9 +2,9 @@ import { MethodType } from "./enums";
 
 export type BrewingMethod = {
     id: number;
-    teaId: number;
+    teaID: number;
     method: MethodType;
     temperature: number;
-    brewingTimes: [number];
+    brewingTimes: number[];
     gongfuBrewingTimeIncrement: number | null;
 };
