@@ -1,4 +1,3 @@
-import { BrewingMethod } from "../../types/BrewingMethod";
 import BrewingMethodAdditionPanel from "./BrewingMethodAdditionPanel";
 
 type BrewingMethodAdditionViewProps = {

@@ -21,11 +21,11 @@ const BrewingMethodAdditionPanel = (props: BrewingMethodAdditionPanelProps) => {
         getData
     } = useForm<BrewingMethodFormData>(emptyBrewingMethodFormData, emptyBrewingMethodFormData, brewingMethodFormValidator);
 
-    const [isSaving, setIsSaving] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [isSaving, setIsSaving] = useState(false); // not used - add
+    const [error, setError] = useState<string | null>(null); //not used - add
 
     const handleAdd = async () => {
-        if(isValid()){
+        if(!isValid()){
             return;
         }
 

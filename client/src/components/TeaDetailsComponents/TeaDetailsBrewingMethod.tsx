@@ -25,7 +25,8 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
                 <Stack>
                     <Text c="dimmed">Czasy parzenia</Text>
                     <Group>
-                        {props.brewingMethod.brewingTimes.map((brewingTime, index) => (<Text key={index}>{brewingTime}</Text>))}
+                        {props.brewingMethod.brewingTimes.map((brewingTime, index) => 
+                            (<Text key={index}>{brewingTime}{"s"}{index < props.brewingMethod.brewingTimes.length - 1 && " ->"}</Text>))}
                     </Group>
                 </Stack>
                 <Stack>

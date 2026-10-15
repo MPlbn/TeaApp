@@ -99,6 +99,20 @@ export const editTea = async (teaID: number, tea: NewTea): Promise<void> => {
     }
 }
 
+export const editBrewingMethod = async (brewingMethodID: number, brewingMethod: NewBrewingMethod): Promise<void> => {
+    const response = await fetch(`${API_URL_BREWING_METHOD}/${brewingMethodID}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(brewingMethod)
+    });
+
+    if(!response.ok){
+        throw new Error(`Błąd API: ${response.status}`);
+    }
+}
+
 export const deleteTea = async (teaID: number): Promise<void> => {
     const response = await fetch(`${API_URL_TEA}/${teaID}`, {
         method: "DELETE"

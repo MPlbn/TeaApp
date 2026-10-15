@@ -1,7 +1,7 @@
 import { MethodType } from "../../types/enums";
 import { BrewingMethodFormData } from "../../types/FormDatas";
 import { getMethodTypeStringVersion } from "../../utils/utils";
-import { Grid, NumberInput, Select, TagsInput, ActionIcon, Group, Badge, TextInput} from "@mantine/core";
+import { Grid, NumberInput, Select, ActionIcon, Group, Badge, TextInput} from "@mantine/core";
 import { IconPlus, IconX } from "@tabler/icons-react";
 import { useState } from "react";
 
