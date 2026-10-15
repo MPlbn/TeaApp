@@ -59,7 +59,7 @@ const TeaAdditionPanel = () => {
 
     
         
-    function handleClear(){
+    const handleClear = () => {
         clearForm();
     }
 

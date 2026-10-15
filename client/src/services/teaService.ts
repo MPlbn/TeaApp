@@ -9,6 +9,7 @@ const API_URL_REVIEW = "http://localhost:8080/api/TeaReview";
 
 
 export type NewTea = Omit<Tea, "id">;
+export type NewBrewingMethod = Omit<BrewingMethod, "id">;
 
 export const getAllTeasForList = async (): Promise<ShortTea[]> => {
     const response = await fetch(API_URL_TEA);
@@ -66,7 +67,21 @@ export const addTea = async (tea: NewTea): Promise<Tea> => {
     return await response.json() as Tea;
 }
 
-export const addBrewing = null;
+export const addBrewing = async (brewingMethod: NewBrewingMethod): Promise<BrewingMethod> => {
+    const response = await fetch(API_URL_BREWING_METHOD, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(brewingMethod)
+    });
+
+    if(!response.ok) {
+        throw new Error(`Błąd API: ${response.status}`);
+    }
+
+    return await response.json() as BrewingMethod;
+};
 
 export const addReview = null;
 

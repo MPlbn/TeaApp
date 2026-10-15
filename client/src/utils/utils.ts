@@ -1,6 +1,8 @@
+import { NewBrewingMethod } from "../services/teaService";
+import { BrewingMethod } from "../types/BrewingMethod";
 import { MethodType, ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
-import { TeaFormData } from "../types/FormDatas";
+import { BrewingMethodFormData, TeaFormData } from "../types/FormDatas";
 import { Tea } from "../types/Tea";
 
 export function getTeaDetailsPath(teaID: number | string): string {
@@ -37,4 +39,55 @@ export function getMethodTypeStringVersion(methodType: MethodType): string {
         case MethodType.Alternative: return "Alternatywne";
         default: return "Nieznany typ parzenia";
     }
+}
+
+export function convertBrewingMethodFormDataToNewBrewingMethod(brewingMethodFormData: BrewingMethodFormData, teaID: number): NewBrewingMethod | null {
+    if (
+        brewingMethodFormData.method === null ||
+        brewingMethodFormData.temperature === "" ||
+        !Number.isFinite(Number(brewingMethodFormData.temperature))
+    ) {
+        return null;
+    }
+
+    let gongfuIncrement: number | null = null;
+
+    if (brewingMethodFormData.method === MethodType.Gongfu) {
+        if (
+            brewingMethodFormData.gongfuBrewingTimeIncrement === "" ||
+            !Number.isFinite(Number(brewingMethodFormData.gongfuBrewingTimeIncrement)) ||
+            Number(brewingMethodFormData.gongfuBrewingTimeIncrement) <= 0
+        ) {
+            return null;
+        }
+
+        gongfuIncrement = Number(brewingMethodFormData.gongfuBrewingTimeIncrement);
+    }
+
+    if (
+        brewingMethodFormData.brewingTimes.length === 0 ||
+        brewingMethodFormData.brewingTimes.some(
+            (time) => !Number.isFinite(time) || time <= 0
+        )
+    ) {
+        return null;
+    }
+
+    return {
+        teaID: teaID,
+        method: brewingMethodFormData.method,
+        temperature: Number(brewingMethodFormData.temperature),
+        brewingTimes: brewingMethodFormData.brewingTimes,
+        gongfuBrewingTimeIncrement: gongfuIncrement
+    };
+}
+
+export function convertBrewingMethodToBrewingMethodFormData(brewingMethod: BrewingMethod) : BrewingMethodFormData {
+    return {
+        teaID: brewingMethod.teaID,
+        method: brewingMethod.method,
+        temperature: brewingMethod.temperature,
+        brewingTimes: [...brewingMethod.brewingTimes],
+        gongfuBrewingTimeIncrement: brewingMethod.gongfuBrewingTimeIncrement ?? ""
+    };
 }

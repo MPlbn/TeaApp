@@ -2,13 +2,13 @@ import { BrewingMethod } from "../../types/BrewingMethod";
 import BrewingMethodAdditionPanel from "./BrewingMethodAdditionPanel";
 
 type BrewingMethodAdditionViewProps = {
-    brewingMethod: BrewingMethod;
-    onSuccess(): () => void;
+    teaID: number;
+    onSuccess: () => void;
 };
 
 const BrewingMethodAdditionView = (props: BrewingMethodAdditionViewProps) => {
     return(
-        <BrewingMethodAdditionPanel brewingMethod={props.brewingMethod} onSuccess={props.onSuccess}/>
+        <BrewingMethodAdditionPanel teaID={props.teaID} onSuccess={props.onSuccess}/>
     );
 };
 export default BrewingMethodAdditionView;

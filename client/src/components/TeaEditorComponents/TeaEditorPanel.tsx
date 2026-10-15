@@ -52,7 +52,7 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
         }
 
         setIsSaving(true);
-        setError(null)
+        setError(null);
 
         try {
             await editTea(props.tea.id, teaToEdit);

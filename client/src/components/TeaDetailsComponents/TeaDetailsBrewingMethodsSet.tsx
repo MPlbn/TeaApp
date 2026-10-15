@@ -3,6 +3,7 @@ import { getBrewingMethodsByTeaID } from "../../services/teaService";
 import { useEffect, useState } from "react";
 import { BrewingMethod } from "../../types/BrewingMethod";
 import TeaDetailsBrewingMethod from "./TeaDetailsBrewingMethod";
+import BrewingMethodAdditionView from "../BrewingMethodAdditionComponents/BrewingMethodAdditionView";
 
 type TeaDetailsBrewingMethodsSetProps = {
     teaID: number
@@ -37,26 +38,34 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
         return <Text c="red">Błąd: {fetchingError}</Text>
     }
 
-    return(<Text>test</Text>
-        // <Paper withBorder radius="md">
-        //     <Stack>
-        //         {brewingMethods.map((brewingMethod) => {
-        //             return <TeaDetailsBrewingMethod 
-        //                 key={brewingMethod.id} 
-        //                 brewingMethod={brewingMethod} 
-        //                 handleEdit={() => {}} 
-        //                 handleDelete={() => {}}
-        //             />
-        //         })}
-        //         <Button onClick={() => setIsBrewingMethodAdditionOpen(true)}>Dodaj</Button>
-        //     </Stack>
-        // </Paper>
+    return(
+        <>
+        <Text>test</Text>
+            <Paper withBorder radius="md">
+                <Stack>
+                    {brewingMethods.map((brewingMethod) => {
+                        return <TeaDetailsBrewingMethod 
+                            key={brewingMethod.id} 
+                            brewingMethod={brewingMethod} 
+                            handleEdit={() => {}} 
+                            handleDelete={() => {}}
+                        />
+                    })}
+                    <Button onClick={() => setIsBrewingMethodAdditionOpen(true)}>Dodaj</Button>
+                </Stack>
+            </Paper>
 
-        // <Modal
-        
-        // >
-        //     <BrewingMethodAdditionView/>
-        // </Modal>
+        <Modal
+            opened={isBrewingMethodAdditionOpen}
+            onClose={() => setIsBrewingMethodAdditionOpen(false)}
+            title=""
+            centered
+            closeOnClickOutside={false}
+            closeOnEscape={false}
+        >
+            <BrewingMethodAdditionView teaID={props.teaID} onSuccess={() => {setIsBrewingMethodAdditionOpen(false)}}/>
+        </Modal>
+        </>
     );
 };
 export default TeaDetailsBrewingMethodsSet;
