@@ -7,15 +7,19 @@ import { BrewingMethod } from "../../types/BrewingMethod";
 import { convertBrewingMethodFormDataToNewBrewingMethod, convertBrewingMethodToBrewingMethodFormData } from "../../utils/utils";
 import { useState } from "react";
 import { editBrewingMethod } from "../../services/teaService";
+import { useAppDispatch } from "../../store/hooks";
+import { openInfoModal } from "../../store/uiSlice";
+
 const BREWING_EDIT_SUCCESS_MESSAGE = "Poprawnie edytowano sposób parzenia";
 const BREWING_EDIT_FAIL_MESSAGE = "Nie udało się edytować sposobu parzenia.";
 
 type BrewingMethodEditorPanelProps = {
     brewingMethod: BrewingMethod;
-    onFinish: (message: string) => void;
+    onFinish: () => void;
 }
 
 const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
+    const dispatch = useAppDispatch();
     const startingFormData = convertBrewingMethodToBrewingMethodFormData(props.brewingMethod)
 
     const {
@@ -44,11 +48,16 @@ const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
 
         try {
             await editBrewingMethod(props.brewingMethod.id, brewingMethodToEdit);
-            props.onFinish(BREWING_EDIT_SUCCESS_MESSAGE);
+            dispatch(openInfoModal({
+                message: BREWING_EDIT_SUCCESS_MESSAGE
+            })); 
         } catch (error) {
-            props.onFinish(error instanceof Error ? error.message : BREWING_EDIT_FAIL_MESSAGE);
+            dispatch(openInfoModal({
+                message: error instanceof Error ? error.message : BREWING_EDIT_FAIL_MESSAGE
+            })); 
         } finally {
             setIsSaving(false);
+            props.onFinish();
         }
     }
 

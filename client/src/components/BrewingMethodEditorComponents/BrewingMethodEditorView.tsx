@@ -2,7 +2,7 @@ import { BrewingMethod } from "../../types/BrewingMethod";
 import BrewingMethodEditorPanel from "./BrewingMethodEditorPanel";
 type BrewingMethodEditorViewProps = {
     brewingMethod: BrewingMethod
-    onFinish: (message: string) => void;
+    onFinish: () => void;
 }
 
 const BrewingMethodEditorView = (props: BrewingMethodEditorViewProps) => {

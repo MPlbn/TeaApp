@@ -16,7 +16,7 @@ const uiSlice = createSlice({
     name: "ui",
     initialState,
     reducers: {
-        showInfoModal: (
+        openInfoModal: (
             state,
             action: PayloadAction<InfoModalData>
         ) => {
@@ -29,6 +29,6 @@ const uiSlice = createSlice({
     }
 });
 
-export const { showInfoModal, closeInfoModal } = uiSlice.actions;
+export const { openInfoModal, closeInfoModal } = uiSlice.actions;
 
 export default uiSlice.reducer;

@@ -4,30 +4,38 @@ import { getMethodTypeStringVersion } from "../../../utils/utils";
 import { useState } from "react";
 import BrewingMethodEditorView from "../../BrewingMethodEditorComponents/BrewingMethodEditorView";
 import { deleteBrewingMethod } from "../../../services/teaService";
+import { useAppDispatch } from "../../../store/hooks";
+import { openInfoModal } from "../../../store/uiSlice";
 
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto sposób parzenia";
 const DELETE_FAIL_MESSAGE = "Nie udało się usunąć sposobu parzenia"
 
 type TeaDetailsBrewingMethodProps = {
     brewingMethod: BrewingMethod;
-    onFinish: (message: string) => void;
+    onFinish: () => void;
 };
 
 const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
     const [isBrewingMethodEditorOpen, setIsBrewingMethodEditorOpen] = useState(false);
-    
+    const dispatch = useAppDispatch();
+
     const handleDelete = async () => {
         try {
             await deleteBrewingMethod(props.brewingMethod.id);
-            props.onFinish(DELETE_SUCCESS_MESSAGE);
+            dispatch(openInfoModal({
+                message: DELETE_SUCCESS_MESSAGE
+            }));
+            props.onFinish();            
         } catch (error) {
-            props.onFinish(error instanceof Error ? error.message : DELETE_FAIL_MESSAGE);
+            dispatch(openInfoModal({
+                message: error instanceof Error ? error.message : DELETE_FAIL_MESSAGE
+            })); 
         }
     };
     
-    const handleEditFinish = (message: string) => {
+    const handleEditFinish = () => {
         setIsBrewingMethodEditorOpen(false);
-        props.onFinish(message);
+        props.onFinish();
     }
     
     return(

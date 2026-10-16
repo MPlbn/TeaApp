@@ -3,7 +3,7 @@ import { Tea } from "../../types/Tea";
 
 type TeaEditorViewProps = {
     tea: Tea;
-    onFinish: (message: string) => void;
+    onFinish: () => void;
 };
 
 const TeaEditorView = (props: TeaEditorViewProps) => {

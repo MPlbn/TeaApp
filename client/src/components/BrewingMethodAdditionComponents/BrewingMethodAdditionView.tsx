@@ -2,7 +2,7 @@ import BrewingMethodAdditionPanel from "./BrewingMethodAdditionPanel";
 
 type BrewingMethodAdditionViewProps = {
     teaID: number;
-    onFinish: (message: string) => void;
+    onFinish: () => void;
 };
 
 const BrewingMethodAdditionView = (props: BrewingMethodAdditionViewProps) => {

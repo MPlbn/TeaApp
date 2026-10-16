@@ -14,6 +14,8 @@ import { useState } from "react";
 import { Tea } from "../../types/Tea";
 import { convertTeaToTeaFormData } from "../../utils/utils";
 import { teaFormValidator } from "../../validators/formValidators";
+import { useAppDispatch } from "../../store/hooks";
+import { openInfoModal } from "../../store/uiSlice";
 
 const TEA_EDIT_FAIL_MESSAGE = "Nie udało się edytować herbaty.";
 const TEA_EDIT_SUCCESS_MESSAGE = "Poprawnie edytowano herbatę!";
@@ -21,10 +23,12 @@ const TEA_EDIT_SUCCESS_MESSAGE = "Poprawnie edytowano herbatę!";
 
 type TeaEditorPanelProps = {
     tea: Tea;
-    onFinish: (message: string) => void;
+    onFinish: () => void;
 };
 
 const TeaEditorPanel = (props: TeaEditorPanelProps) => { 
+    const dispatch = useAppDispatch();
+
     const startingFormData = convertTeaToTeaFormData(props.tea);
 
     const {
@@ -57,11 +61,16 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
 
         try {
             await editTea(props.tea.id, teaToEdit);
-            props.onFinish(TEA_EDIT_SUCCESS_MESSAGE);
+            dispatch(openInfoModal({
+                message: TEA_EDIT_SUCCESS_MESSAGE
+            }));
         } catch (error) {
-            props.onFinish(error instanceof Error ? error.message : TEA_EDIT_FAIL_MESSAGE);
+            dispatch(openInfoModal({
+                message: error instanceof Error ? error.message : TEA_EDIT_FAIL_MESSAGE
+            }));
         } finally {
             setIsSaving(false);
+            props.onFinish();
         }
     }
 

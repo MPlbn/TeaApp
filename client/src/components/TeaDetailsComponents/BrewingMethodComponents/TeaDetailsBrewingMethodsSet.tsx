@@ -4,13 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import { BrewingMethod } from "../../../types/BrewingMethod";
 import TeaDetailsBrewingMethod from "./TeaDetailsBrewingMethod";
 import BrewingMethodAdditionView from "../../BrewingMethodAdditionComponents/BrewingMethodAdditionView";
+import { useAppDispatch } from "../../../store/hooks";
+import { openInfoModal } from "../../../store/uiSlice";
 
 const BREWING_FAIL_TO_LOAD_MESSAGE = "Nie udało się pobrać sposobów parzenia.";
 
 
 type TeaDetailsBrewingMethodsSetProps = {
-    teaID: number,
-    openInfoModalWithMessage: (message: string) => void;
+    teaID: number
 };
 
 const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) => {
@@ -18,6 +19,7 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
     const [isBrewingMethodAdditionOpen, setIsBrewingMethodAdditionOpen] = useState(false);
+    const dispatch = useAppDispatch();
 
     const loadBrewingMethods = useCallback(async () => {
         setIsLoading(true);
@@ -28,20 +30,22 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
                 setBrewingMethods(fetchedBrewingMethods);
             } catch (error) {
                 setIsError(true);
-                props.openInfoModalWithMessage(error instanceof Error ? error.message : BREWING_FAIL_TO_LOAD_MESSAGE);
+                dispatch(openInfoModal({
+                    message: error instanceof Error ? error.message : BREWING_FAIL_TO_LOAD_MESSAGE
+                }));
+
             } finally {
                 setIsLoading(false);
             }        
-    }, [props.teaID, props.openInfoModalWithMessage])
+    }, [props.teaID, dispatch])
 
-    const handleFinish = async (message: string) => {
+    const handleFinish = async () => {
         await loadBrewingMethods();
-        props.openInfoModalWithMessage(message);
     }
 
-    const handleAddFinish = async (message: string) => {
+    const handleAddFinish = async () => {
         setIsBrewingMethodAdditionOpen(false);
-        handleFinish(message);
+        handleFinish();
     }
 
     useEffect(() => {

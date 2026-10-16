@@ -7,16 +7,18 @@ import { getTeaByID, deleteTea } from "../../../services/teaService";
 import { useNavigate } from "react-router";
 import { ViewType } from "../../../types/enums";
 import TeaEditorView from "../../TeaEditorComponents/TeaEditorView";
+import { useAppDispatch } from "../../../store/hooks";
+import { openInfoModal } from "../../../store/uiSlice";
 
 const TEA_LOAD_FAIL_MESSAGE = "Nie udało się pobrać herbaty.";
 const TEA_NO_ID_MESSAGE = "Nie podano ID herbaty.";
 const TEA_WRONG_ID_MESSAGE = "ID herbaty ma nieprawidłową wartość.";
 const TEA_NOT_FOUND_MESSAGE = "Nie znaleziono herbaty.";
 const TEA_DELETE_FAIL_MESSAGE = "Nie udało się usunąć herbaty.";
+const TEA_DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto herbatę!";
 
 type TeaDetailsInfoSectionProps = {
     teaID: number;
-    openInfoModalWithMessage: (message: string) => void
 };
 
 const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
@@ -24,7 +26,7 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
     const [isEditorOpen, setIsEditorOpen] = useState(false);
-
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     const loadTea = useCallback(async() => {
@@ -37,53 +39,65 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
                 if(fetcehedTea === null){
                     setTea(null);
                     setIsError(true);
-                    props.openInfoModalWithMessage(TEA_NOT_FOUND_MESSAGE);
+                    dispatch(openInfoModal({
+                        message: TEA_NOT_FOUND_MESSAGE
+                    }));
                     return;
                 }
 
                 setTea(fetcehedTea);
             } catch (error) {
                 setIsError(true);
-                props.openInfoModalWithMessage(error instanceof Error ? error.message : TEA_LOAD_FAIL_MESSAGE);
+                dispatch(openInfoModal({
+                    message: error instanceof Error ? error.message : TEA_LOAD_FAIL_MESSAGE
+                }));
             } finally {
                 setIsLoading(false);
             }
-    }, [props.teaID, props.openInfoModalWithMessage]);
+    }, [props.teaID, dispatch]);
 
-    const handleEditFinish = async (message: string) => {
+    const handleEditFinish = async () => {
         await loadTea();
         setIsEditorOpen(false);
-        props.openInfoModalWithMessage(message);
     };
 
     const handleDelete = async () => {
         try {
             await deleteTea(props.teaID);
             navigate(ViewType.TeaListView);
+            dispatch(openInfoModal({
+                message: TEA_DELETE_SUCCESS_MESSAGE
+            }));
         }
         catch(error) {
             setIsError(true);
-            props.openInfoModalWithMessage(error instanceof Error ? error.message : TEA_DELETE_FAIL_MESSAGE);
+            dispatch(openInfoModal({
+                message: error instanceof Error ? error.message : TEA_DELETE_FAIL_MESSAGE
+            }));
         }
     }
 
     useEffect(() => {  
         if(!props.teaID){
             setIsError(true);
-            props.openInfoModalWithMessage(TEA_NO_ID_MESSAGE);
+            dispatch(openInfoModal({
+                message: TEA_NO_ID_MESSAGE
+            }));
             setIsLoading(false);
             return;
         }
     
         if(!Number.isInteger(props.teaID) || props.teaID <= 0){
             setIsError(true);
-            props.openInfoModalWithMessage(TEA_WRONG_ID_MESSAGE);
+            dispatch(openInfoModal({
+                message: TEA_WRONG_ID_MESSAGE
+            }));
             setIsLoading(false);
             return;
         }
         
         void loadTea();
-    }, [loadTea, props.teaID, props.openInfoModalWithMessage]);
+    }, [loadTea, props.teaID, dispatch]);
     
     
     if(isLoading){

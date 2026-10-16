@@ -6,6 +6,8 @@ import { brewingMethodFormValidator } from "../../validators/formValidators";
 import { useState } from "react";
 import BrewingMethodForm from "../FormComponents/BrewingMethodForm";
 import { Button, Group, Stack, Paper, Title, Text } from "@mantine/core";
+import { useAppDispatch } from "../../store/hooks";
+import { openInfoModal } from "../../store/uiSlice";
 
 const BREWING_ADD_SUCCESS_MESSAGE = "Poprawnie dodano sposób parzenia!";
 const BREWING_ADD_FAIL_MESSAGE = "Nie udało się dodać sposobu parzenia";
@@ -14,9 +16,10 @@ const BREWING_INVALID_METHOD_TYPE = "Sprawdź poprawność danych sposobu parzen
 
 type BrewingMethodAdditionPanelProps = {
     teaID: number;
-    onFinish: (message: string) => void;
+    onFinish: () => void;
 }
 const BrewingMethodAdditionPanel = (props: BrewingMethodAdditionPanelProps) => {
+    const dispatch = useAppDispatch();
 
     const {
         formData,
@@ -50,11 +53,16 @@ const BrewingMethodAdditionPanel = (props: BrewingMethodAdditionPanelProps) => {
 
         try {
             await addBrewing(brewingMethodToAdd);
-            props.onFinish(BREWING_ADD_SUCCESS_MESSAGE);
+            dispatch(openInfoModal({
+                message: BREWING_ADD_SUCCESS_MESSAGE
+            }));
         } catch (error) {
-            props.onFinish(error instanceof Error ? error.message : BREWING_ADD_FAIL_MESSAGE);
+            dispatch(openInfoModal({
+                message: error instanceof Error ? error.message : BREWING_ADD_FAIL_MESSAGE
+            }));
         } finally {
             setIsSaving(false);
+            props.onFinish();
         }
     }
 

@@ -9,6 +9,7 @@ import TeaAdditionView from './components/TeaAdditionComponents/TeaAdditionView'
 import TeaListView from './components/TeaListComponents/TeaListView';
 import { Route, Routes, Navigate } from 'react-router';
 import TeaDetailsView from './components/TeaDetailsComponents/TeaDetailsView';
+import InfoModal from './components/InfoModal';
 
 export default function App(){
 
@@ -20,6 +21,8 @@ export default function App(){
       }}
       padding="xl"
     >
+      <InfoModal/>
+
       <AppShell.Navbar p="md">
         <Sidebar />
       </AppShell.Navbar>
