@@ -7,9 +7,14 @@ import { useState } from "react";
 import BrewingMethodForm from "../FormComponents/BrewingMethodForm";
 import { Button, Group, Stack, Paper, Title, Text } from "@mantine/core";
 
+const BREWING_ADD_SUCCESS_MESSAGE = "Poprawnie dodano sposób parzenia!";
+const BREWING_ADD_FAIL_MESSAGE = "Nie udało się dodać sposobu parzenia";
+const BREWING_INVALID_FORM_DATA = "Niepoprawne dane formularza...";
+const BREWING_INVALID_METHOD_TYPE = "Sprawdź poprawność danych sposobu parzenia";
+
 type BrewingMethodAdditionPanelProps = {
     teaID: number;
-    onSuccess: () => void;
+    onFinish: (message: string) => void;
 }
 const BrewingMethodAdditionPanel = (props: BrewingMethodAdditionPanelProps) => {
 
@@ -28,7 +33,7 @@ const BrewingMethodAdditionPanel = (props: BrewingMethodAdditionPanelProps) => {
         formData.teaId = props.teaID;
 
         if(!isValid()){
-            setError("Niepoprawne dane formularza...")
+            setError(BREWING_INVALID_FORM_DATA);
             return;
         }
 
@@ -36,7 +41,7 @@ const BrewingMethodAdditionPanel = (props: BrewingMethodAdditionPanelProps) => {
         const brewingMethodToAdd = convertBrewingMethodFormDataToNewBrewingMethod(getData(), props.teaID);
 
         if(brewingMethodToAdd === null) {
-            setError("Sprawdź poprawność danych sposobu parzenia")
+            setError(BREWING_INVALID_METHOD_TYPE);
             return;
         }
 
@@ -45,13 +50,12 @@ const BrewingMethodAdditionPanel = (props: BrewingMethodAdditionPanelProps) => {
 
         try {
             await addBrewing(brewingMethodToAdd);
-            props.onSuccess();
+            props.onFinish(BREWING_ADD_SUCCESS_MESSAGE);
         } catch (error) {
-            setError(error instanceof Error ? error.message : "Nie udało się dodać sposobu parzenia");
+            props.onFinish(error instanceof Error ? error.message : BREWING_ADD_FAIL_MESSAGE);
         } finally {
             setIsSaving(false);
         }
-        props.onSuccess();
     }
 
     const handleClear = () => {

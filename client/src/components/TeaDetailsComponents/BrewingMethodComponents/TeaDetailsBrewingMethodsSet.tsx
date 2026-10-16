@@ -1,62 +1,71 @@
 import { Button, Loader, Modal, Paper, Stack, Text } from "@mantine/core";
-import { getBrewingMethodsByTeaID } from "../../services/teaService";
+import { getBrewingMethodsByTeaID } from "../../../services/teaService";
 import { useCallback, useEffect, useState } from "react";
-import { BrewingMethod } from "../../types/BrewingMethod";
+import { BrewingMethod } from "../../../types/BrewingMethod";
 import TeaDetailsBrewingMethod from "./TeaDetailsBrewingMethod";
-import BrewingMethodAdditionView from "../BrewingMethodAdditionComponents/BrewingMethodAdditionView";
-import BrewingMethodEditorView from "../BrewingMethodEditorComponents/BrewingMethodEditorView";
+import BrewingMethodAdditionView from "../../BrewingMethodAdditionComponents/BrewingMethodAdditionView";
+
+const BREWING_FAIL_TO_LOAD_MESSAGE = "Nie udało się pobrać sposobów parzenia.";
+
 
 type TeaDetailsBrewingMethodsSetProps = {
-    teaID: number
+    teaID: number,
+    openInfoModalWithMessage: (message: string) => void;
 };
 
 const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) => {
     const [brewingMethods, setBrewingMethods] = useState<BrewingMethod[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [fetchingError, setFetchingError] = useState<string | null>(null);
-
+    const [isError, setIsError] = useState(false);
     const [isBrewingMethodAdditionOpen, setIsBrewingMethodAdditionOpen] = useState(false);
 
     const loadBrewingMethods = useCallback(async () => {
         setIsLoading(true);
-        setFetchingError(null);
+        setIsError(false);
+
             try {
                 const fetchedBrewingMethods = await getBrewingMethodsByTeaID(props.teaID);
                 setBrewingMethods(fetchedBrewingMethods);
             } catch (error) {
-                setFetchingError(error instanceof Error ? error.message : "Nie udało się pobrać sposobów parzenia."); //Możem ożna throw tu bez useStatu
+                setIsError(true);
+                props.openInfoModalWithMessage(error instanceof Error ? error.message : BREWING_FAIL_TO_LOAD_MESSAGE);
             } finally {
                 setIsLoading(false);
             }        
-    }, [props.teaID])
+    }, [props.teaID, props.openInfoModalWithMessage])
 
-    const handleSuccess = async () => {
-        setIsBrewingMethodAdditionOpen(false);
+    const handleFinish = async (message: string) => {
         await loadBrewingMethods();
+        props.openInfoModalWithMessage(message);
+    }
+
+    const handleAddFinish = async (message: string) => {
+        setIsBrewingMethodAdditionOpen(false);
+        handleFinish(message);
     }
 
     useEffect(() => {
         void loadBrewingMethods();
-    }, [props.teaID]);
+    }, [loadBrewingMethods]);
 
     if(isLoading){
         return <Loader/>
     }
 
-    if(fetchingError !== null){
-        return <Text c="red">Błąd: {fetchingError}</Text>
+    if(isError){
+        return <Text c="red">Błąd</Text>
     }
 
     return(
         <>
-        <Text>test</Text>
+        <Text>Sposoby parzenia</Text>
             <Paper withBorder radius="md">
                 <Stack>
                     {brewingMethods.map((brewingMethod) => {
                         return <TeaDetailsBrewingMethod 
                             key={brewingMethod.id} 
                             brewingMethod={brewingMethod}
-                            onSuccess={handleSuccess} 
+                            onFinish={handleFinish} 
                         />
                     })}
                     <Button onClick={() => setIsBrewingMethodAdditionOpen(true)}>Dodaj</Button>
@@ -71,7 +80,7 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
             closeOnClickOutside={false}
             closeOnEscape={false}
         >
-            <BrewingMethodAdditionView teaID={props.teaID} onSuccess={handleSuccess}/>
+            <BrewingMethodAdditionView teaID={props.teaID} onFinish={handleAddFinish}/>
         </Modal>
         </>
     );

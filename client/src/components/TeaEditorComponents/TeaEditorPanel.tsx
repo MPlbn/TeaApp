@@ -15,9 +15,13 @@ import { Tea } from "../../types/Tea";
 import { convertTeaToTeaFormData } from "../../utils/utils";
 import { teaFormValidator } from "../../validators/formValidators";
 
+const TEA_EDIT_FAIL_MESSAGE = "Nie udało się edytować herbaty.";
+const TEA_EDIT_SUCCESS_MESSAGE = "Poprawnie edytowano herbatę!";
+
+
 type TeaEditorPanelProps = {
     tea: Tea;
-    onSuccess: () => void;
+    onFinish: (message: string) => void;
 };
 
 const TeaEditorPanel = (props: TeaEditorPanelProps) => { 
@@ -31,7 +35,6 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
     } = useForm<TeaFormData>(teaFormValidator, emptyTeaFormData, startingFormData);
 
     const [isSaving, setIsSaving] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     const handleEdit = async () => {
         if (!isValid()){
@@ -51,13 +54,12 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
         }
 
         setIsSaving(true);
-        setError(null);
 
         try {
             await editTea(props.tea.id, teaToEdit);
-            props.onSuccess();
+            props.onFinish(TEA_EDIT_SUCCESS_MESSAGE);
         } catch (error) {
-            setError(error instanceof Error ? error.message : "Nie udało się edytować herbaty.");
+            props.onFinish(error instanceof Error ? error.message : TEA_EDIT_FAIL_MESSAGE);
         } finally {
             setIsSaving(false);
         }
@@ -75,7 +77,6 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
             <Paper withBorder p="lg" radius="md">
                 <Stack gap="md">
                     <TeaForm formData={formData} updateField={updateField}/>
-                    {error && <Text c="red">{error}</Text>}
                     <Group justify='flex-end' mt="sm">
                         <Button 
                             variant='gradient'

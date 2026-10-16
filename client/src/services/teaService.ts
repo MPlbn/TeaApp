@@ -119,6 +119,16 @@ export const deleteTea = async (teaID: number): Promise<void> => {
     });
 
     if(!response.ok) {
-        throw new Error(`Błąd API: ${response.status}`)
+        throw new Error(`Błąd API: ${response.status}`);
+    }
+}
+
+export const deleteBrewingMethod = async (brewingMethodID: number): Promise<void> => {
+    const response = await fetch(`${API_URL_BREWING_METHOD}/${brewingMethodID}`, {
+        method: "DELETE"
+    });
+
+    if(!response.ok){
+        throw new Error(`Błąd API: ${response.status}`);
     }
 }

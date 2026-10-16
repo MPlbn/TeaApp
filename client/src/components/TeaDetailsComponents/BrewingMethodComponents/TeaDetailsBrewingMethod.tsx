@@ -1,27 +1,35 @@
 import { Button, Group, Paper, Stack, Text, Modal } from "@mantine/core";
-import { BrewingMethod } from "../../types/BrewingMethod";
-import { getMethodTypeStringVersion } from "../../utils/utils";
+import { BrewingMethod } from "../../../types/BrewingMethod";
+import { getMethodTypeStringVersion } from "../../../utils/utils";
 import { useState } from "react";
-import BrewingMethodEditorView from "../BrewingMethodEditorComponents/BrewingMethodEditorView";
+import BrewingMethodEditorView from "../../BrewingMethodEditorComponents/BrewingMethodEditorView";
+import { deleteBrewingMethod } from "../../../services/teaService";
+
+const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto sposób parzenia";
+const DELETE_FAIL_MESSAGE = "Nie udało się usunąć sposobu parzenia"
 
 type TeaDetailsBrewingMethodProps = {
     brewingMethod: BrewingMethod;
-    onSuccess: () => void;
+    onFinish: (message: string) => void;
 };
 
 const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
-    const handleDelete = (id: number) => {
-        
+    const [isBrewingMethodEditorOpen, setIsBrewingMethodEditorOpen] = useState(false);
+    
+    const handleDelete = async () => {
+        try {
+            await deleteBrewingMethod(props.brewingMethod.id);
+            props.onFinish(DELETE_SUCCESS_MESSAGE);
+        } catch (error) {
+            props.onFinish(error instanceof Error ? error.message : DELETE_FAIL_MESSAGE);
+        }
     };
     
-    const handleEditSuccess = () => {
-        props.onSuccess();
+    const handleEditFinish = (message: string) => {
         setIsBrewingMethodEditorOpen(false);
+        props.onFinish(message);
     }
-
-    const [isBrewingMethodEditorOpen, setIsBrewingMethodEditorOpen] = useState(false);
-
-
+    
     return(
         <>
         <Paper withBorder radius="md">
@@ -49,7 +57,7 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
             </Stack>
             <Group>
                 <Button onClick={() => setIsBrewingMethodEditorOpen(true)}>Edytuj</Button>
-                <Button c="red" onClick={() => handleDelete(props.brewingMethod.id)}>Usuń</Button>
+                <Button c="red" onClick={handleDelete}>Usuń</Button>
             </Group>
         </Paper>
 
@@ -61,7 +69,7 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
             closeOnClickOutside={false}
             closeOnEscape={false}
         >
-            <BrewingMethodEditorView brewingMethod={props.brewingMethod} onSuccess={handleEditSuccess}/>
+            <BrewingMethodEditorView brewingMethod={props.brewingMethod} onFinish={handleEditFinish}/>
         </Modal>
         </>
     );

@@ -1,6 +1,6 @@
 import { Divider, Grid, Paper, Stack, Text, Title } from "@mantine/core";
-import { getTeaTypeStringVersion } from "../../utils/utils";
-import { Tea } from "../../types/Tea";
+import { getTeaTypeStringVersion } from "../../../utils/utils";
+import { Tea } from "../../../types/Tea";
 
 type TeaDetailsDetailFieldProps = {
     tea: Tea

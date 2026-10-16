@@ -1,43 +1,59 @@
-import TeaDetailsTitle from "./TeaDetailsTitle";
+import TeaDetailsTitle from "../TeaDetailsTitle";
 import TeaDetailsDetailField from "./TeaDetailsDetailField";
 import { useEffect, useState, useCallback } from "react";
-import { Tea } from "../../types/Tea"; 
+import { Tea } from "../../../types/Tea"; 
 import { Loader, Text, Stack, Button, Group, Modal } from "@mantine/core";
-import { getTeaByID, deleteTea } from "../../services/teaService";
+import { getTeaByID, deleteTea } from "../../../services/teaService";
 import { useNavigate } from "react-router";
-import { ViewType } from "../../types/enums";
-import TeaEditorView from "../TeaEditorComponents/TeaEditorView";
-import TeaDetailsReviewsSet from "./TeaDetailsReviewsSet";
+import { ViewType } from "../../../types/enums";
+import TeaEditorView from "../../TeaEditorComponents/TeaEditorView";
+
+const TEA_LOAD_FAIL_MESSAGE = "Nie udało się pobrać herbaty.";
+const TEA_NO_ID_MESSAGE = "Nie podano ID herbaty.";
+const TEA_WRONG_ID_MESSAGE = "ID herbaty ma nieprawidłową wartość.";
+const TEA_NOT_FOUND_MESSAGE = "Nie znaleziono herbaty.";
+const TEA_DELETE_FAIL_MESSAGE = "Nie udało się usunąć herbaty.";
 
 type TeaDetailsInfoSectionProps = {
     teaID: number;
+    openInfoModalWithMessage: (message: string) => void
 };
 
 const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
     const [tea, setTea] = useState<Tea | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [fetchingError, setFetchingError] = useState<string | null>(null);
+    const [isError, setIsError] = useState(false);
     const [isEditorOpen, setIsEditorOpen] = useState(false);
 
     const navigate = useNavigate();
 
     const loadTea = useCallback(async() => {
             setIsLoading(true);
-            setFetchingError(null);
+            setIsError(false);
 
             try {
                 const fetcehedTea = await getTeaByID(props.teaID);
+
+                if(fetcehedTea === null){
+                    setTea(null);
+                    setIsError(true);
+                    props.openInfoModalWithMessage(TEA_NOT_FOUND_MESSAGE);
+                    return;
+                }
+
                 setTea(fetcehedTea);
             } catch (error) {
-                setFetchingError(error instanceof Error ? error.message : "Nie udało się pobrać herbaty.");
+                setIsError(true);
+                props.openInfoModalWithMessage(error instanceof Error ? error.message : TEA_LOAD_FAIL_MESSAGE);
             } finally {
                 setIsLoading(false);
             }
-    }, [props.teaID]);
+    }, [props.teaID, props.openInfoModalWithMessage]);
 
-    const handleEditSuccess = async () => {
-        setIsEditorOpen(false);
+    const handleEditFinish = async (message: string) => {
         await loadTea();
+        setIsEditorOpen(false);
+        props.openInfoModalWithMessage(message);
     };
 
     const handleDelete = async () => {
@@ -46,36 +62,40 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
             navigate(ViewType.TeaListView);
         }
         catch(error) {
-            setFetchingError(error instanceof Error ? error.message : "Nie udało się usunąć herbaty.");
+            setIsError(true);
+            props.openInfoModalWithMessage(error instanceof Error ? error.message : TEA_DELETE_FAIL_MESSAGE);
         }
     }
 
     useEffect(() => {  
         if(!props.teaID){
-            setFetchingError("Nie podano ID herbaty.");
+            setIsError(true);
+            props.openInfoModalWithMessage(TEA_NO_ID_MESSAGE);
             setIsLoading(false);
             return;
         }
     
         if(!Number.isInteger(props.teaID) || props.teaID <= 0){
-            setFetchingError("ID herbaty ma nieprawidłową wartość.");
+            setIsError(true);
+            props.openInfoModalWithMessage(TEA_WRONG_ID_MESSAGE);
             setIsLoading(false);
             return;
         }
         
         void loadTea();
-    }, [loadTea, props.teaID]);
-
+    }, [loadTea, props.teaID, props.openInfoModalWithMessage]);
+    
+    
     if(isLoading){
         return <Loader/>
     }
-
-    if(fetchingError !== null){
-        return <Text c="red">Błąd: {fetchingError}</Text>
+    
+    if(isError){
+        return <Text c="red">Błąd</Text>
     }
-
+    
     if(tea === null){
-        return <Text>Nie znaleziono herbaty.</Text>
+        return <Text c="red">{TEA_NOT_FOUND_MESSAGE}</Text>;
     }
 
     return(
@@ -92,7 +112,7 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
                 centered
                 size="lg"
             >
-                <TeaEditorView tea={tea} onSuccess={handleEditSuccess}/>
+                <TeaEditorView tea={tea} onFinish={handleEditFinish}/>
             </Modal>
         </Stack>
     );

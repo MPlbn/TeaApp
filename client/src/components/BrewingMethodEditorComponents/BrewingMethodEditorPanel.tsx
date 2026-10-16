@@ -7,10 +7,12 @@ import { BrewingMethod } from "../../types/BrewingMethod";
 import { convertBrewingMethodFormDataToNewBrewingMethod, convertBrewingMethodToBrewingMethodFormData } from "../../utils/utils";
 import { useState } from "react";
 import { editBrewingMethod } from "../../services/teaService";
+const BREWING_EDIT_SUCCESS_MESSAGE = "Poprawnie edytowano sposób parzenia";
+const BREWING_EDIT_FAIL_MESSAGE = "Nie udało się edytować sposobu parzenia.";
 
 type BrewingMethodEditorPanelProps = {
     brewingMethod: BrewingMethod;
-    onSuccess: () => void;
+    onFinish: (message: string) => void;
 }
 
 const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
@@ -42,9 +44,9 @@ const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
 
         try {
             await editBrewingMethod(props.brewingMethod.id, brewingMethodToEdit);
-            props.onSuccess();
+            props.onFinish(BREWING_EDIT_SUCCESS_MESSAGE);
         } catch (error) {
-            setError(error instanceof Error ? error.message : "Nie udało się edytować sposobu parzenia.");
+            props.onFinish(error instanceof Error ? error.message : BREWING_EDIT_FAIL_MESSAGE);
         } finally {
             setIsSaving(false);
         }

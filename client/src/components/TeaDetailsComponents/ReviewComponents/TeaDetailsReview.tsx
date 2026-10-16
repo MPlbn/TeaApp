@@ -1,5 +1,5 @@
 import { Stack, Text } from "@mantine/core";
-import { Review } from "../../types/Review";
+import { Review } from "../../../types/Review";
 
 type TeaDetailsReviewProps = {
     review: Review

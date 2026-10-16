@@ -1,7 +1,7 @@
 import { Loader, Paper, Stack, Text } from "@mantine/core";
-import { Review } from "../../types/Review";
+import { Review } from "../../../types/Review";
 import { useEffect, useState } from "react";
-import { getReviewsByTeaID } from "../../services/teaService";
+import { getReviewsByTeaID } from "../../../services/teaService";
 import TeaDetailsReview from "./TeaDetailsReview";
 
 type TeaDetailsReviewsSetProps = {
