@@ -26,15 +26,15 @@ public class TeaController : ControllerBase
 
         if (Type.HasValue)
         {
-            query = query.Where(tea => tea.Type == Type.Value);
+            query = query.Where(tea => tea.type == Type.Value);
         }
 
         var teas = await query.Select(tea => new TeaListItemResponseDTO
         {
-            ID = tea.ID,
-            Name = tea.Name,
-            Type = tea.Type,
-            Origin = tea.Origin,
+            id = tea.id,
+            name = tea.name,
+            type = tea.type,
+            origin = tea.origin,
         })
         .ToListAsync();
 
@@ -45,16 +45,16 @@ public class TeaController : ControllerBase
     public async Task<ActionResult<TeaResponseDTO>> GetTea(int uID)
     {
         var tea = await _dbContext.TeaDbSet
-        .Where(xTea => xTea.ID == uID)
+        .Where(xTea => xTea.id == uID)
         .Select(xTea => new TeaResponseDTO
         {
-            ID = xTea.ID,
-            Name = xTea.Name,
-            Type = xTea.Type,
-            Price = xTea.Price,
-            Origin = xTea.Origin,
-            Shop = xTea.Shop,
-            Description = xTea.Description
+            id = xTea.id,
+            name = xTea.name,
+            type = xTea.type,
+            price = xTea.price,
+            origin = xTea.origin,
+            shop = xTea.shop,
+            description = xTea.description
         })
         .FirstOrDefaultAsync();
 
@@ -71,12 +71,12 @@ public class TeaController : ControllerBase
     {
         var tea = new Tea
         {
-            Name = uDTO.Name,
-            Type = uDTO.Type!.Value,
-            Price = uDTO.Price!.Value,
-            Origin = uDTO.Origin,
-            Shop = uDTO.Shop,
-            Description = uDTO.Description
+            name = uDTO.name,
+            type = uDTO.type!.Value,
+            price = uDTO.price!.Value,
+            origin = uDTO.origin,
+            shop = uDTO.shop,
+            description = uDTO.description
         };
 
         _dbContext.TeaDbSet.Add(tea);
@@ -84,18 +84,18 @@ public class TeaController : ControllerBase
 
         var response = new TeaResponseDTO
         {
-            ID = tea.ID,
-            Name = tea.Name,
-            Type = tea.Type,
-            Price = tea.Price,
-            Origin = tea.Origin,
-            Shop = tea.Shop,
-            Description = tea.Description    
+            id = tea.id,
+            name = tea.name,
+            type = tea.type,
+            price = tea.price,
+            origin = tea.origin,
+            shop = tea.shop,
+            description = tea.description    
         };
 
         return CreatedAtAction(
             nameof(GetTea),
-            new {uID = tea.ID},
+            new {uID = tea.id},
             response
         );
     }
@@ -110,12 +110,12 @@ public class TeaController : ControllerBase
             return NotFound();
         }
 
-        tea.Name = uDTO.Name;        
-        tea.Type = uDTO.Type!.Value;        
-        tea.Price = uDTO.Price!.Value;        
-        tea.Origin = uDTO.Origin;        
-        tea.Shop = uDTO.Shop;        
-        tea.Description = uDTO.Description;        
+        tea.name = uDTO.name;        
+        tea.type = uDTO.type!.Value;        
+        tea.price = uDTO.price!.Value;        
+        tea.origin = uDTO.origin;        
+        tea.shop = uDTO.shop;        
+        tea.description = uDTO.description;        
 
         await _dbContext.SaveChangesAsync();
 

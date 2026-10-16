@@ -22,7 +22,7 @@ const TeaAdditionPanel = () => {
         clearForm,
         isValid,
         getData
-    } = useForm<TeaFormData>(emptyTeaFormData, emptyTeaFormData, teaFormValidator);
+    } = useForm<TeaFormData>(teaFormValidator, emptyTeaFormData);
     //Modal
     const [isInfoPopupModalOpen, setIsInfoPopupModalOpen] = useState(false);
     const [infoPopupModalMessage, setInfoPopupModalMessage] = useState('');

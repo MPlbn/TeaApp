@@ -1,6 +1,9 @@
 import { useState } from "react";
 
-function useForm<TFormData extends object>(emptyData: TFormData, initialData: TFormData = emptyData, validationFunction: (data: TFormData) => boolean) {
+function useForm<TFormData extends object>(
+    validationFunction: (data: TFormData) => boolean,
+    emptyData: TFormData, 
+    initialData: TFormData = emptyData) {
     const [formData, setFormData] = useState<TFormData>(initialData);
 
     function clearForm(): void {

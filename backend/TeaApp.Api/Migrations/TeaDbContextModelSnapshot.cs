@@ -23,125 +23,125 @@ namespace TeaApp.Api.Migrations
 
             modelBuilder.Entity("TeaApp.Api.Models.BrewingMethod", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
 
-                    b.PrimitiveCollection<string>("BrewingTimes")
+                    b.PrimitiveCollection<string>("brewingTimes")
                         .IsRequired()
                         .HasColumnType("jsonb");
 
-                    b.Property<int?>("GongfuBrewingTimeIncrement")
+                    b.Property<int?>("gongfuBrewingTimeIncrement")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Method")
+                    b.Property<int>("method")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TeaId")
+                    b.Property<int>("teaId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Temperature")
+                    b.Property<int>("temperature")
                         .HasColumnType("integer");
 
-                    b.HasKey("ID");
+                    b.HasKey("id");
 
-                    b.HasIndex("TeaId");
+                    b.HasIndex("teaId");
 
                     b.ToTable("BrewingMethodTable", (string)null);
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.Tea", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
 
-                    b.Property<string>("Description")
+                    b.Property<string>("description")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Origin")
+                    b.Property<string>("origin")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal>("price")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("Shop")
+                    b.Property<string>("shop")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Type")
+                    b.Property<int>("type")
                         .HasColumnType("integer");
 
-                    b.HasKey("ID");
+                    b.HasKey("id");
 
                     b.ToTable("TeaTable", (string)null);
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.TeaReview", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
 
-                    b.Property<int>("Rating")
+                    b.Property<int>("rating")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Review")
+                    b.Property<string>("review")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("TeaId")
+                    b.Property<int>("teaId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("userId")
                         .HasColumnType("integer");
 
-                    b.HasKey("ID");
+                    b.HasKey("id");
 
-                    b.HasIndex("TeaId");
+                    b.HasIndex("teaId");
 
                     b.ToTable("TeaReviewTable", (string)null);
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.BrewingMethod", b =>
                 {
-                    b.HasOne("TeaApp.Api.Models.Tea", "Tea")
-                        .WithMany("BrewingMethods")
-                        .HasForeignKey("TeaId")
+                    b.HasOne("TeaApp.Api.Models.Tea", "tea")
+                        .WithMany("brewingMethods")
+                        .HasForeignKey("teaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Tea");
+                    b.Navigation("tea");
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.TeaReview", b =>
                 {
-                    b.HasOne("TeaApp.Api.Models.Tea", "Tea")
-                        .WithMany("Reviews")
-                        .HasForeignKey("TeaId")
+                    b.HasOne("TeaApp.Api.Models.Tea", "tea")
+                        .WithMany("reviews")
+                        .HasForeignKey("teaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Tea");
+                    b.Navigation("tea");
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.Tea", b =>
                 {
-                    b.Navigation("BrewingMethods");
+                    b.Navigation("brewingMethods");
 
-                    b.Navigation("Reviews");
+                    b.Navigation("reviews");
                 });
 #pragma warning restore 612, 618
         }

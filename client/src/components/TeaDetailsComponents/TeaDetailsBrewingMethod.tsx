@@ -1,16 +1,29 @@
-import { Button, Group, Paper, Stack, Text } from "@mantine/core";
+import { Button, Group, Paper, Stack, Text, Modal } from "@mantine/core";
 import { BrewingMethod } from "../../types/BrewingMethod";
 import { getMethodTypeStringVersion } from "../../utils/utils";
+import { useState } from "react";
+import BrewingMethodEditorView from "../BrewingMethodEditorComponents/BrewingMethodEditorView";
 
 type TeaDetailsBrewingMethodProps = {
-    brewingMethod: BrewingMethod,
-    handleEdit: (brewingMethodId: number) => undefined;
-    handleDelete: (brewingMethodId: number) => undefined;
+    brewingMethod: BrewingMethod;
+    onSuccess: () => void;
 };
 
 const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
+    const handleDelete = (id: number) => {
+        
+    };
     
+    const handleEditSuccess = () => {
+        props.onSuccess();
+        setIsBrewingMethodEditorOpen(false);
+    }
+
+    const [isBrewingMethodEditorOpen, setIsBrewingMethodEditorOpen] = useState(false);
+
+
     return(
+        <>
         <Paper withBorder radius="md">
             <Stack>
                 <Stack>
@@ -35,10 +48,22 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
                 </Stack>
             </Stack>
             <Group>
-                <Button onClick={props.handleEdit(props.brewingMethod.id)}>Edytuj</Button>
-                <Button c="red" onClick={props.handleDelete(props.brewingMethod.id)}>Usuń</Button>
+                <Button onClick={() => setIsBrewingMethodEditorOpen(true)}>Edytuj</Button>
+                <Button c="red" onClick={() => handleDelete(props.brewingMethod.id)}>Usuń</Button>
             </Group>
         </Paper>
+
+        <Modal
+            opened={isBrewingMethodEditorOpen}
+            onClose={() => setIsBrewingMethodEditorOpen(false)}
+            title=""
+            centered
+            closeOnClickOutside={false}
+            closeOnEscape={false}
+        >
+            <BrewingMethodEditorView brewingMethod={props.brewingMethod} onSuccess={handleEditSuccess}/>
+        </Modal>
+        </>
     );
 };
 export default TeaDetailsBrewingMethod;

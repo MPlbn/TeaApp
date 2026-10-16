@@ -61,7 +61,7 @@ export function convertBrewingMethodFormDataToNewBrewingMethod(brewingMethodForm
             return null;
         }
 
-        gongfuIncrement = Number(brewingMethodFormData.gongfuBrewingTimeIncrement);
+        gongfuIncrement = Number(brewingMethodFormData.gongfuBrewingTimeIncrement); //Maybe this could be null, no need to check??
     }
 
     if (
@@ -74,7 +74,7 @@ export function convertBrewingMethodFormDataToNewBrewingMethod(brewingMethodForm
     }
 
     return {
-        teaID: teaID,
+        teaId: teaID,
         method: brewingMethodFormData.method,
         temperature: Number(brewingMethodFormData.temperature),
         brewingTimes: brewingMethodFormData.brewingTimes,
@@ -84,7 +84,7 @@ export function convertBrewingMethodFormDataToNewBrewingMethod(brewingMethodForm
 
 export function convertBrewingMethodToBrewingMethodFormData(brewingMethod: BrewingMethod) : BrewingMethodFormData {
     return {
-        teaID: brewingMethod.teaID,
+        teaId: brewingMethod.teaId,
         method: brewingMethod.method,
         temperature: brewingMethod.temperature,
         brewingTimes: [...brewingMethod.brewingTimes],

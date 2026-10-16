@@ -4,8 +4,8 @@ namespace TeaApp.Api.DTOs;
 
 public class TeaListItemResponseDTO
 {
-    public int ID {get;set;}
-    public string Name {get;set;} = "";
-    public TeaType Type {get;set;}
-    public string Origin {get;set;} = "";
+    public int id {get;set;}
+    public string name {get;set;} = "";
+    public TeaType type {get;set;}
+    public string origin {get;set;} = "";
 }

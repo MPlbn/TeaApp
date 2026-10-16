@@ -1,7 +1,7 @@
 export type Review = {
     id: number;
-    teaID: number;
-    userID: number;
+    teaId: number;
+    userId: number;
     review: string;
     rating: number;
 };

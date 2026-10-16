@@ -14,26 +14,26 @@ public class TeaDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder uModelBuilder)
     {
         uModelBuilder.Entity<Tea>().ToTable("TeaTable");
-        uModelBuilder.Entity<Tea>().HasKey(xTea => xTea.ID);
+        uModelBuilder.Entity<Tea>().HasKey(xTea => xTea.id);
 
         uModelBuilder.Entity<TeaReview>().ToTable("TeaReviewTable");
-        uModelBuilder.Entity<TeaReview>().HasKey(xTeaReview => xTeaReview.ID);
+        uModelBuilder.Entity<TeaReview>().HasKey(xTeaReview => xTeaReview.id);
         uModelBuilder.Entity<TeaReview>()
-        .HasOne(xTeaReview => xTeaReview.Tea)
-        .WithMany(xTea => xTea.Reviews)
-        .HasForeignKey(xTeaReview => xTeaReview.TeaId)
+        .HasOne(xTeaReview => xTeaReview.tea)
+        .WithMany(xTea => xTea.reviews)
+        .HasForeignKey(xTeaReview => xTeaReview.teaId)
         .OnDelete(DeleteBehavior.Cascade);
 
         uModelBuilder.Entity<BrewingMethod>().ToTable("BrewingMethodTable");
-        uModelBuilder.Entity<BrewingMethod>().HasKey(xBrewingMethod => xBrewingMethod.ID);
+        uModelBuilder.Entity<BrewingMethod>().HasKey(xBrewingMethod => xBrewingMethod.id);
         uModelBuilder.Entity<BrewingMethod>()
-        .HasOne(xBrewingMethod => xBrewingMethod.Tea)
-        .WithMany(xTea => xTea.BrewingMethods)
-        .HasForeignKey(xBrewingMethod => xBrewingMethod.TeaId)
+        .HasOne(xBrewingMethod => xBrewingMethod.tea)
+        .WithMany(xTea => xTea.brewingMethods)
+        .HasForeignKey(xBrewingMethod => xBrewingMethod.teaId)
         .OnDelete(DeleteBehavior.Cascade);
 
         uModelBuilder.Entity<BrewingMethod>()
-        .Property(xBrewingMethod => xBrewingMethod.BrewingTimes)
+        .Property(xBrewingMethod => xBrewingMethod.brewingTimes)
         .HasColumnType("jsonb");
     }
 }

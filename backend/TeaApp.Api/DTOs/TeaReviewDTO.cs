@@ -6,18 +6,18 @@ public class TeaReviewDTO
 {
     [Required]
     [Range(1, int.MaxValue)]
-    public int? TeaId {get;set;}
+    public int? teaId {get;set;}
 
     //User will be changed once Users are implemented
     [Required]
     [Range(1, int.MaxValue)]
-    public int? UserId {get;set;}
+    public int? userId {get;set;}
 
     [Required]
     [MinLength(1)]
-    public string Review {get;set;} = "";
+    public string review {get;set;} = "";
 
     [Required]
     [Range(typeof(int), "1", "10")]
-    public int Rating {get;set;}
+    public int rating {get;set;}
 }

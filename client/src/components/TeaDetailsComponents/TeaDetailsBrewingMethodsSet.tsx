@@ -1,9 +1,10 @@
 import { Button, Loader, Modal, Paper, Stack, Text } from "@mantine/core";
 import { getBrewingMethodsByTeaID } from "../../services/teaService";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BrewingMethod } from "../../types/BrewingMethod";
 import TeaDetailsBrewingMethod from "./TeaDetailsBrewingMethod";
 import BrewingMethodAdditionView from "../BrewingMethodAdditionComponents/BrewingMethodAdditionView";
+import BrewingMethodEditorView from "../BrewingMethodEditorComponents/BrewingMethodEditorView";
 
 type TeaDetailsBrewingMethodsSetProps = {
     teaID: number
@@ -16,17 +17,25 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
 
     const [isBrewingMethodAdditionOpen, setIsBrewingMethodAdditionOpen] = useState(false);
 
-    useEffect(() => {
-        const loadBrewingMethods = async () => {
+    const loadBrewingMethods = useCallback(async () => {
+        setIsLoading(true);
+        setFetchingError(null);
             try {
                 const fetchedBrewingMethods = await getBrewingMethodsByTeaID(props.teaID);
                 setBrewingMethods(fetchedBrewingMethods);
             } catch (error) {
-                setFetchingError(error instanceof Error ? error.message : "Nie udało się pobrać sposobów parzenia.");
+                setFetchingError(error instanceof Error ? error.message : "Nie udało się pobrać sposobów parzenia."); //Możem ożna throw tu bez useStatu
             } finally {
                 setIsLoading(false);
-            }
-        }
+            }        
+    }, [props.teaID])
+
+    const handleSuccess = async () => {
+        setIsBrewingMethodAdditionOpen(false);
+        await loadBrewingMethods();
+    }
+
+    useEffect(() => {
         void loadBrewingMethods();
     }, [props.teaID]);
 
@@ -46,9 +55,8 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
                     {brewingMethods.map((brewingMethod) => {
                         return <TeaDetailsBrewingMethod 
                             key={brewingMethod.id} 
-                            brewingMethod={brewingMethod} 
-                            handleEdit={() => {}} 
-                            handleDelete={() => {}}
+                            brewingMethod={brewingMethod}
+                            onSuccess={handleSuccess} 
                         />
                     })}
                     <Button onClick={() => setIsBrewingMethodAdditionOpen(true)}>Dodaj</Button>
@@ -63,7 +71,7 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
             closeOnClickOutside={false}
             closeOnEscape={false}
         >
-            <BrewingMethodAdditionView teaID={props.teaID} onSuccess={() => {setIsBrewingMethodAdditionOpen(false)}}/>
+            <BrewingMethodAdditionView teaID={props.teaID} onSuccess={handleSuccess}/>
         </Modal>
         </>
     );

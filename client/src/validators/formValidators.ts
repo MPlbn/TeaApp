@@ -17,7 +17,7 @@ export function teaFormValidator(formData: TeaFormData): boolean {
 }
 export function brewingMethodFormValidator(formData: BrewingMethodFormData): boolean {
     
-    if(formData.teaID === 0 || formData.teaID === null){
+    if(formData.teaId === 0 || formData.teaId === null){
         return false;
     }
 

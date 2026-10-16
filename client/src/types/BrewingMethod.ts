@@ -2,7 +2,7 @@ import { MethodType } from "./enums";
 
 export type BrewingMethod = {
     id: number;
-    teaID: number;
+    teaId: number;
     method: MethodType;
     temperature: number;
     brewingTimes: number[];

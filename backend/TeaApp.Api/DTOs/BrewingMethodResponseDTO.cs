@@ -4,10 +4,10 @@ namespace TeaApp.Api.DTOs;
 
 public class BrewingMethodResponseDTO
 {
-    public int ID {get;set;}
-    public int TeaId {get;set;}
-    public MethodType Method {get;set;}
-    public int Temperature {get;set;}
-    public List<int> BrewingTimes {get;set;} = [];
-    public int? GongfuBrewingTimeIncrement {get;set;}
+    public int id {get;set;}
+    public int teaId {get;set;}
+    public MethodType method {get;set;}
+    public int temperature {get;set;}
+    public List<int> brewingTimes {get;set;} = [];
+    public int? gongfuBrewingTimeIncrement {get;set;}
 }

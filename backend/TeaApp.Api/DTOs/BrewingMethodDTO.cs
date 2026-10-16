@@ -7,53 +7,53 @@ public class BrewingMethodDTO : IValidatableObject
 {
     [Required]
     [Range(1, int.MaxValue)]
-    public int? TeaId {get;set;}
+    public int? teaId {get;set;}
 
     [Required]
     [EnumDataType(typeof(MethodType))]
-    public MethodType? Method {get;set;}
+    public MethodType? method {get;set;}
 
     [Required]
     [Range(typeof(int), "-100", "100")]
-    public int? Temperature {get;set;}
+    public int? temperature {get;set;}
 
     [Required]
     [MinLength(1)]
-    public List<int> BrewingTimes {get;set;} = [];
+    public List<int> brewingTimes {get;set;} = [];
 
-    public int? GongfuBrewingTimeIncrement {get;set;}
+    public int? gongfuBrewingTimeIncrement {get;set;}
 
     public IEnumerable<ValidationResult> Validate(ValidationContext uValidationContext)
     {
         //Brewing times
-        if(BrewingTimes.Any(uTime => uTime <= 0))
+        if(brewingTimes.Any(uTime => uTime <= 0))
         {
             yield return new ValidationResult(
                 "Every brewing time must be greater than zero.",
-                [nameof(BrewingTimes)]
+                [nameof(brewingTimes)]
             );
         }
-        if(BrewingTimes.Count > 10)
+        if(brewingTimes.Count > 10)
         {
             yield return new ValidationResult(
                 "Brewing times list cannot contain more than 10 values",
-                [nameof(BrewingTimes)]
+                [nameof(brewingTimes)]
             );
         }
 
         //Gongfu time increments
-        if(GongfuBrewingTimeIncrement.HasValue && GongfuBrewingTimeIncrement.Value <= 0)
+        if(gongfuBrewingTimeIncrement.HasValue && gongfuBrewingTimeIncrement.Value <= 0)
         {
             yield return new ValidationResult(
                 "Gongfu brewing time increment must be greater than zero.",
-                [nameof(GongfuBrewingTimeIncrement)]
+                [nameof(gongfuBrewingTimeIncrement)]
             );
         }
-        if(Method != MethodType.Gongfu && GongfuBrewingTimeIncrement.HasValue)
+        if(method != MethodType.Gongfu && gongfuBrewingTimeIncrement.HasValue)
         {
             yield return new ValidationResult(
                 "Gongfu brewing time increment can only be set for Gongfu methods.",
-                [nameof(GongfuBrewingTimeIncrement)]
+                [nameof(gongfuBrewingTimeIncrement)]
             );
         }
     }

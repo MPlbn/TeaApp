@@ -27,17 +27,17 @@ public class BrewingMethodController : ControllerBase
 
         if (TeaID.HasValue)
         {
-            query = query.Where(brewingMethod => brewingMethod.TeaId == TeaID.Value);
+            query = query.Where(brewingMethod => brewingMethod.teaId == TeaID.Value);
         }
 
         var brewingMethods = await query.Select(brewingMethod => new BrewingMethodResponseDTO
         {
-            ID = brewingMethod.ID,
-            TeaId = brewingMethod.TeaId,
-            Method = brewingMethod.Method,
-            Temperature = brewingMethod.Temperature,
-            BrewingTimes = brewingMethod.BrewingTimes,
-            GongfuBrewingTimeIncrement = brewingMethod.GongfuBrewingTimeIncrement
+            id = brewingMethod.id,
+            teaId = brewingMethod.teaId,
+            method = brewingMethod.method,
+            temperature = brewingMethod.temperature,
+            brewingTimes = brewingMethod.brewingTimes,
+            gongfuBrewingTimeIncrement = brewingMethod.gongfuBrewingTimeIncrement
         })
         .ToListAsync();
 
@@ -47,7 +47,7 @@ public class BrewingMethodController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<BrewingMethodResponseDTO>> CreateBrewingMethod(BrewingMethodDTO uDTO)
     {
-        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.ID == uDTO.TeaId!.Value);
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.id == uDTO.teaId!.Value);
 
         if (!teaExists)
         {
@@ -56,11 +56,11 @@ public class BrewingMethodController : ControllerBase
 
         var brewingMethod = new BrewingMethod
         {
-            TeaId = uDTO.TeaId!.Value,
-            Method = uDTO.Method!.Value,
-            Temperature = uDTO.Temperature!.Value,
-            BrewingTimes = uDTO.BrewingTimes,
-            GongfuBrewingTimeIncrement = uDTO.GongfuBrewingTimeIncrement
+            teaId = uDTO.teaId!.Value,
+            method = uDTO.method!.Value,
+            temperature = uDTO.temperature!.Value,
+            brewingTimes = uDTO.brewingTimes,
+            gongfuBrewingTimeIncrement = uDTO.gongfuBrewingTimeIncrement
         };
 
         _dbContext.BrewingMethodDbSet.Add(brewingMethod);
@@ -68,12 +68,12 @@ public class BrewingMethodController : ControllerBase
 
         var response = new BrewingMethodResponseDTO
         {
-            ID = brewingMethod.ID,
-            TeaId = brewingMethod.TeaId,
-            Method = brewingMethod.Method,
-            Temperature = brewingMethod.Temperature,
-            BrewingTimes = brewingMethod.BrewingTimes,
-            GongfuBrewingTimeIncrement = brewingMethod.GongfuBrewingTimeIncrement
+            id = brewingMethod.id,
+            teaId = brewingMethod.teaId,
+            method = brewingMethod.method,
+            temperature = brewingMethod.temperature,
+            brewingTimes = brewingMethod.brewingTimes,
+            gongfuBrewingTimeIncrement = brewingMethod.gongfuBrewingTimeIncrement
         };
 
         return StatusCode(StatusCodes.Status201Created, response);
@@ -89,18 +89,18 @@ public class BrewingMethodController : ControllerBase
             return NotFound();
         }
         
-        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.ID == uDTO.TeaId!.Value);
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.id == uDTO.teaId!.Value);
 
         if (!teaExists)
         {
             return BadRequest("The specified tea does not exist.");
         }
 
-        brewingMethod.TeaId = uDTO.TeaId!.Value;
-        brewingMethod.Method = uDTO.Method!.Value;
-        brewingMethod.Temperature = uDTO.Temperature!.Value;
-        brewingMethod.BrewingTimes = uDTO.BrewingTimes;
-        brewingMethod.GongfuBrewingTimeIncrement = uDTO.GongfuBrewingTimeIncrement;
+        brewingMethod.teaId = uDTO.teaId!.Value;
+        brewingMethod.method = uDTO.method!.Value;
+        brewingMethod.temperature = uDTO.temperature!.Value;
+        brewingMethod.brewingTimes = uDTO.brewingTimes;
+        brewingMethod.gongfuBrewingTimeIncrement = uDTO.gongfuBrewingTimeIncrement;
 
         await _dbContext.SaveChangesAsync();
 

@@ -16,10 +16,10 @@ export const emptyTeaFormData = {
     price:"",
     shop:"",
     description:""
-};
+} as TeaFormData;
 
 export type BrewingMethodFormData = {
-    teaID: number | null;
+    teaId: number | null;
     method: MethodType | null;
     temperature: string | number;
     brewingTimes: number[];
@@ -27,27 +27,27 @@ export type BrewingMethodFormData = {
 };
 
 export const emptyBrewingMethodFormData = {
-    teaID: null,
+    teaId: null,
     method: null,
     temperature: "",
     brewingTimes: [],
     gongfuBrewingTimeIncrement: ""
-};
+} as BrewingMethodFormData;
 
 export type ReviewFormData = {
-    teaID: number;
+    teaId: number;
     userID: number;
     review: string;
     rating: number;
 };
 
 export const emptyReviewFormData = {
-    teaID: 0,
+    teaId: 0,
     userID: 0,
     review: "",
     rating: 0
-};
+} as ReviewFormData;
 
 export type UserFormData = {
-    
+    //TODO later
 };

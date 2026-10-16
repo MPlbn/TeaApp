@@ -9,7 +9,7 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
 
     return(
         <Stack>
-            <Text>userID: {props.review.userID}</Text>
+            <Text>userID: {props.review.userId}</Text>
             <Text>Review: {props.review.review}</Text>
             <Text>Rating: {props.review.rating}</Text>
         </Stack>

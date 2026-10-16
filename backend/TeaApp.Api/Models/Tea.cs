@@ -1,13 +1,13 @@
 namespace TeaApp.Api.Models;
 public class Tea
 {
-    public int ID {get;set;}
-    public string Name {get;set;} = "";
-    public TeaType Type {get;set;}
-    public decimal Price {get;set;}
-    public string Origin {get;set;} = ""; //country
-    public string Shop {get;set;} = "";
-    public string Description {get;set;} = "";
-    public ICollection<TeaReview> Reviews {get;set;} = [];
-    public ICollection<BrewingMethod> BrewingMethods {get;set;} = [];
+    public int id {get;set;}
+    public string name {get;set;} = "";
+    public TeaType type {get;set;}
+    public decimal price {get;set;}
+    public string origin {get;set;} = ""; //country
+    public string shop {get;set;} = "";
+    public string description {get;set;} = "";
+    public ICollection<TeaReview> reviews {get;set;} = [];
+    public ICollection<BrewingMethod> brewingMethods {get;set;} = [];
 }

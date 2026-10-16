@@ -19,18 +19,21 @@ const BrewingMethodAdditionPanel = (props: BrewingMethodAdditionPanelProps) => {
         clearForm,
         isValid,
         getData
-    } = useForm<BrewingMethodFormData>(emptyBrewingMethodFormData, emptyBrewingMethodFormData, brewingMethodFormValidator);
+    } = useForm<BrewingMethodFormData>(brewingMethodFormValidator, emptyBrewingMethodFormData);
 
-    const [isSaving, setIsSaving] = useState(false); // not used - add
-    const [error, setError] = useState<string | null>(null); //not used - add
+    const [isSaving, setIsSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleAdd = async () => {
+        formData.teaId = props.teaID;
+
         if(!isValid()){
+            setError("Niepoprawne dane formularza...")
             return;
         }
 
-        const brewingMethod = getData();
-        const brewingMethodToAdd = convertBrewingMethodFormDataToNewBrewingMethod(brewingMethod, props.teaID);
+
+        const brewingMethodToAdd = convertBrewingMethodFormDataToNewBrewingMethod(getData(), props.teaID);
 
         if(brewingMethodToAdd === null) {
             setError("Sprawdź poprawność danych sposobu parzenia")
@@ -67,9 +70,10 @@ const BrewingMethodAdditionPanel = (props: BrewingMethodAdditionPanelProps) => {
             <Paper withBorder p="lg" radius="md">
                 <Stack gap="md">
                     <BrewingMethodForm formData={formData} updateField={updateField}/>
+                    {error && <Text c="red">{error}</Text>}
                     <Group justify="flex-end" mt="sm">
                         <Button variant="default" onClick={handleClear}>Wyczyść</Button>
-                        <Button variant="gradient" onClick={handleAdd} disabled={!isValid}>Dodaj</Button>
+                        <Button variant="gradient" onClick={handleAdd} disabled={!isValid || isSaving} loading={isSaving}>Dodaj</Button>
                     </Group>
                 </Stack>
             </Paper>

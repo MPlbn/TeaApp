@@ -8,10 +8,9 @@ import { convertBrewingMethodFormDataToNewBrewingMethod, convertBrewingMethodToB
 import { useState } from "react";
 import { editBrewingMethod } from "../../services/teaService";
 
-
-// ID needed - whole BrewingMethod
 type BrewingMethodEditorPanelProps = {
     brewingMethod: BrewingMethod;
+    onSuccess: () => void;
 }
 
 const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
@@ -22,7 +21,7 @@ const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
         updateField,
         isValid,
         getData
-    } = useForm<BrewingMethodFormData>(emptyBrewingMethodFormData, startingFormData, brewingMethodFormValidator)
+    } = useForm<BrewingMethodFormData>(brewingMethodFormValidator, emptyBrewingMethodFormData, startingFormData);
 
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -33,13 +32,7 @@ const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
             return;
         }
 
-        const brewingMethod = getData();
-        const teaID = brewingMethod.teaID
-        if(teaID === null){
-            return;
-        }
-
-        const brewingMethodToEdit = convertBrewingMethodFormDataToNewBrewingMethod(brewingMethod, teaID);
+        const brewingMethodToEdit = convertBrewingMethodFormDataToNewBrewingMethod(getData(), props.brewingMethod.teaId);
         if(brewingMethodToEdit === null){
             return;
         }
@@ -49,12 +42,12 @@ const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
 
         try {
             await editBrewingMethod(props.brewingMethod.id, brewingMethodToEdit);
+            props.onSuccess();
         } catch (error) {
             setError(error instanceof Error ? error.message : "Nie udało się edytować sposobu parzenia.");
         } finally {
             setIsSaving(false);
         }
-
     }
 
     return(
@@ -72,10 +65,10 @@ const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
                     {error && <Text c="red">{error}</Text>}
                     <Group justify="flex-end" mt="sm">
                         <Button 
-                        variant="gradient" 
-                        onClick={handleEdit} 
-                        disabled={!isValid || isSaving} 
-                        loading={isSaving}
+                            variant="gradient" 
+                            onClick={handleEdit} 
+                            disabled={!isValid() || isSaving} 
+                            loading={isSaving}
                         >
                             Zapisz zmiany
                         </Button>

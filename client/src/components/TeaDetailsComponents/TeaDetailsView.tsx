@@ -5,7 +5,7 @@ import TeaDetailsReviewsSet from "./TeaDetailsReviewsSet";
 import TeaDetailsInfoSection from "./TeaDetailsInfoSection";
 
 const TeaDetailsView = () => {
-    const {id} = useParams<{id: string}>();
+    const {id} = useParams<{id: string}>(); // TODO other way
     const teaID = Number(id);
 
     if(!id ||

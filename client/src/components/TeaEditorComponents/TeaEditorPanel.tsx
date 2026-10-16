@@ -21,7 +21,6 @@ type TeaEditorPanelProps = {
 };
 
 const TeaEditorPanel = (props: TeaEditorPanelProps) => { 
-
     const startingFormData = convertTeaToTeaFormData(props.tea);
 
     const {
@@ -29,7 +28,7 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
         updateField,
         isValid,
         getData
-    } = useForm<TeaFormData>(emptyTeaFormData, startingFormData, teaFormValidator);
+    } = useForm<TeaFormData>(teaFormValidator, emptyTeaFormData, startingFormData);
 
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -75,13 +74,8 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
 
             <Paper withBorder p="lg" radius="md">
                 <Stack gap="md">
-                    <TeaForm
-                        formData={formData}
-                        updateField={updateField}
-                    />
-
+                    <TeaForm formData={formData} updateField={updateField}/>
                     {error && <Text c="red">{error}</Text>}
-
                     <Group justify='flex-end' mt="sm">
                         <Button 
                             variant='gradient'
