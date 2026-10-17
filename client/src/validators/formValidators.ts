@@ -13,13 +13,9 @@ export function teaFormValidator(formData: TeaFormData): boolean {
             !Number.isFinite(price)
         ) return false;
 
-        return true;
+    return true;
 }
 export function brewingMethodFormValidator(formData: BrewingMethodFormData): boolean {
-    
-    if(formData.teaId === 0 || formData.teaId === null){
-        return false;
-    }
 
     if(formData.method === null) return false;
 

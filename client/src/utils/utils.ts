@@ -3,7 +3,7 @@ import { MethodType, ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
 import { BrewingMethodFormData, ReviewFormData, TeaFormData } from "../types/FormDatas";
 import { Tea } from "../types/Tea";
-import { NewBrewingMethod, NewReview } from "../services/teaApi";
+import { NewBrewingMethod, NewReview, NewTea } from "../services/teaApi";
 import { Review } from "../types/Review";
 
 export function getTeaDetailsPath(teaID: number | string): string {
@@ -22,6 +22,34 @@ export function getTeaTypeStringVersion(teaType: TeaType): string {
     }
 }
 
+export function getMethodTypeStringVersion(methodType: MethodType): string {
+    switch(methodType){
+        case MethodType.Gongfu: return "Gongfu";
+        case MethodType.Western: return "Klasyczne";
+        case MethodType.Alternative: return "Alternatywne";
+        default: return "Nieznany typ parzenia";
+    }
+}
+
+export function convertTeaFormDataToNewTea(teaFormData: TeaFormData): NewTea | null {
+    if(teaFormData.type === null){
+        return null;
+    }
+
+    if(typeof teaFormData.price === "string"){
+        return null;
+    }
+
+    return {
+        name: teaFormData.name,
+        type: teaFormData.type,
+        origin: teaFormData.origin,
+        price: teaFormData.price,
+        shop: teaFormData.shop,
+        description: teaFormData.description
+    }
+}
+
 export function convertTeaToTeaFormData(tea: Tea): TeaFormData {
     return {
         name: tea.name,
@@ -30,15 +58,6 @@ export function convertTeaToTeaFormData(tea: Tea): TeaFormData {
         price: tea.price ?? "",
         shop: tea.shop,
         description: tea.description
-    }
-}
-
-export function getMethodTypeStringVersion(methodType: MethodType): string {
-    switch(methodType){
-        case MethodType.Gongfu: return "Gongfu";
-        case MethodType.Western: return "Klasyczne";
-        case MethodType.Alternative: return "Alternatywne";
-        default: return "Nieznany typ parzenia";
     }
 }
 

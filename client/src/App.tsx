@@ -5,7 +5,7 @@ import {
 import Sidebar from './components/Sidebar';
 import { ViewType }  from './types/enums';
 import SettingsView from './components/SettingsComponents/SettingsView';
-import TeaAdditionView from './components/TeaAdditionComponents/TeaAdditionView';
+import TeaAdditionView from './components/AdditionComponents/TeaAdditionView';
 import TeaListView from './components/TeaListComponents/TeaListView';
 import { Route, Routes, Navigate } from 'react-router';
 import TeaDetailsView from './components/TeaDetailsComponents/TeaDetailsView';

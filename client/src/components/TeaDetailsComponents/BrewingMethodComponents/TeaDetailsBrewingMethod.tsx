@@ -2,7 +2,7 @@ import { Button, Group, Paper, Stack, Text, Modal } from "@mantine/core";
 import { BrewingMethod } from "../../../types/BrewingMethod";
 import { getMethodTypeStringVersion } from "../../../utils/utils";
 import { useState } from "react";
-import BrewingMethodEditorView from "../../BrewingMethodEditorComponents/BrewingMethodEditorView";
+import BrewingMethodEditorView from "../../EditorComponents/BrewingMethodEditorView";
 import { useAppDispatch } from "../../../store/hooks";
 import { openInfoModal } from "../../../store/uiSlice";
 import { useDeleteBrewingMethodMutation } from "../../../services/teaApi";

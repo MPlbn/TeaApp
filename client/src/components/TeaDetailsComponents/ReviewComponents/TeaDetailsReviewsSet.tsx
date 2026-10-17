@@ -3,7 +3,7 @@ import { useState } from "react";
 import TeaDetailsReview from "./TeaDetailsReview";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { useGetReviewsByTeaIDQuery } from "../../../services/teaApi";
-import ReviewAdditionView from "../../ReviewAdditionComponents/ReviewAdditionView";
+import ReviewAdditionView from "../../AdditionComponents/ReviewAdditionView";
 
 type TeaDetailsReviewsSetProps = {
     teaID: number;

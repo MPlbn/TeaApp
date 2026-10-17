@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Loader, Text, Stack, Button, Group, Modal } from "@mantine/core";
 import { useNavigate } from "react-router";
 import { ViewType } from "../../../types/enums";
-import TeaEditorView from "../../TeaEditorComponents/TeaEditorView";
+import TeaEditorView from "../../EditorComponents/TeaEditorView";
 import { useAppDispatch } from "../../../store/hooks";
 import { openInfoModal } from "../../../store/uiSlice";
 import { useDeleteTeaMutation, useGetTeaByIDQuery } from "../../../services/teaApi";

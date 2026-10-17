@@ -5,8 +5,7 @@ import { useAppDispatch } from "../../../store/hooks";
 import { useDeleteReviewMutation } from "../../../services/teaApi";
 import { openInfoModal } from "../../../store/uiSlice";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
-import ReviewEditorView from "../../ReviewEditorComponents/ReviewEditorView";
-
+import ReviewEditorView from "../../EditorComponents/ReviewEditorView";
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto recenzję!";
 
 type TeaDetailsReviewProps = {

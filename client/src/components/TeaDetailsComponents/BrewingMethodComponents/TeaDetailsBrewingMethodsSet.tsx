@@ -1,7 +1,7 @@
 import { Button, Loader, Modal, Paper, Stack, Text } from "@mantine/core";
 import { useState } from "react";
 import TeaDetailsBrewingMethod from "./TeaDetailsBrewingMethod";
-import BrewingMethodAdditionView from "../../BrewingMethodAdditionComponents/BrewingMethodAdditionView";
+import BrewingMethodAdditionView from "../../AdditionComponents/BrewingMethodAdditionView";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { useGetBrewingMethodsByTeaIDQuery } from "../../../services/teaApi";
 
