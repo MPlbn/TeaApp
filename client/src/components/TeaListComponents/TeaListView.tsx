@@ -3,46 +3,34 @@ import {
     Title,
     Text
 } from "@mantine/core";
-import { ShortTea, Tea } from "../../types/Tea";
 import { TeaType } from "../../types/enums";
-import { useEffect, useState } from "react";
 import { Loader } from "@mantine/core";
 import TeaListItem from "./TeaListItem";
 import TeaListFilter from "./TeaListFilter";
-import { getAllTeasForList } from "../../services/teaService";
+import { useGetAllTeasForListQuery } from "../../services/teaApi";
+import { useState } from "react";
+import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 
 const TeaListView = () => {
-
-    const [teas, setTeas] = useState<ShortTea[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [fetchingError, setFetchingError] = useState<string | null>(null);
     const [selectedTeaType, setSelectedTeaType] = useState<TeaType | null>(null);
     
-    useEffect(() => {
-        const loadTeas = async () => {
-            try {
-                const fetchedTeas = await getAllTeasForList();
-                setTeas(fetchedTeas);
-            } catch (error) {
-                setFetchingError(error instanceof Error ? error.message : "Nie udało się pobrać herbat.")
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    const {
+        data: teas,
+        error: fetchingError,
+        isLoading
+    } = useGetAllTeasForListQuery();
 
-        void loadTeas();
-    }, []);
 
     if(isLoading) {
         return <Loader/>;
     }
     
-    if(fetchingError !== null) {
-        return <Text c="red">Błąd: {fetchingError}</Text>
+    if(fetchingError) {
+        return <Text c="red">Błąd: {getApiErrorMessage(fetchingError)}</Text>
     }
 
 
-    const filteredTeas = teas.filter((tea) => selectedTeaType === null ? true : tea.type === selectedTeaType);
+    const filteredTeas = (teas ?? []).filter((tea) => selectedTeaType === null ? true : tea.type === selectedTeaType);
 
     return (
         <Stack gap="md">

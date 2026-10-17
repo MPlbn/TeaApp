@@ -1,6 +1,5 @@
 import useForm from "../../hooks/useForm";
 import { emptyTeaFormData, TeaFormData } from "../../types/FormDatas";
-import { editTea } from "../../services/teaService";
 import { 
     Title,
     Stack,
@@ -16,6 +15,8 @@ import { convertTeaToTeaFormData } from "../../utils/utils";
 import { teaFormValidator } from "../../validators/formValidators";
 import { useAppDispatch } from "../../store/hooks";
 import { openInfoModal } from "../../store/uiSlice";
+import { useEditTeaMutation } from "../../services/teaApi";
+import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 
 const TEA_EDIT_FAIL_MESSAGE = "Nie udało się edytować herbaty.";
 const TEA_EDIT_SUCCESS_MESSAGE = "Poprawnie edytowano herbatę!";
@@ -28,7 +29,6 @@ type TeaEditorPanelProps = {
 
 const TeaEditorPanel = (props: TeaEditorPanelProps) => { 
     const dispatch = useAppDispatch();
-
     const startingFormData = convertTeaToTeaFormData(props.tea);
 
     const {
@@ -38,7 +38,7 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
         getData
     } = useForm<TeaFormData>(teaFormValidator, emptyTeaFormData, startingFormData);
 
-    const [isSaving, setIsSaving] = useState(false);
+    const [editTea, {isLoading: isSaving}] = useEditTeaMutation();
 
     const handleEdit = async () => {
         if (!isValid()){
@@ -57,21 +57,17 @@ const TeaEditorPanel = (props: TeaEditorPanelProps) => {
             type: tea.type
         }
 
-        setIsSaving(true);
-
         try {
-            await editTea(props.tea.id, teaToEdit);
+            await editTea({teaId: props.tea.id, tea: teaToEdit}).unwrap();
             dispatch(openInfoModal({
                 message: TEA_EDIT_SUCCESS_MESSAGE
             }));
+            props.onFinish();
         } catch (error) {
             dispatch(openInfoModal({
-                message: error instanceof Error ? error.message : TEA_EDIT_FAIL_MESSAGE
+                message: getApiErrorMessage(error)
             }));
-        } finally {
-            setIsSaving(false);
-            props.onFinish();
-        }
+        } 
     }
 
     return(

@@ -1,9 +1,8 @@
 import { useParams } from "react-router";
-import { Button, Stack, Text, Modal } from "@mantine/core";
+import { Stack, Text, Modal } from "@mantine/core";
 import TeaDetailsBrewingMethodsSet from "./BrewingMethodComponents/TeaDetailsBrewingMethodsSet";
 import TeaDetailsReviewsSet from "./ReviewComponents/TeaDetailsReviewsSet";
 import TeaDetailsInfoSection from "./TeaComponents/TeaDetailsInfoSection";
-import { useCallback, useState } from "react";
 
 const TeaDetailsView = () => {
     const {id} = useParams<{id: string}>(); // TODO other way
@@ -21,7 +20,6 @@ const TeaDetailsView = () => {
         <Stack>
             <TeaDetailsInfoSection teaID={teaID}/>
             <TeaDetailsBrewingMethodsSet teaID={teaID}/>
-            <TeaDetailsReviewsSet teaID={teaID}/>
         </Stack>
         </>
     );

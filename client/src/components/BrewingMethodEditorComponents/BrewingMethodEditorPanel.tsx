@@ -5,13 +5,12 @@ import { BrewingMethodFormData, emptyBrewingMethodFormData } from "../../types/F
 import { brewingMethodFormValidator } from "../../validators/formValidators";
 import { BrewingMethod } from "../../types/BrewingMethod";
 import { convertBrewingMethodFormDataToNewBrewingMethod, convertBrewingMethodToBrewingMethodFormData } from "../../utils/utils";
-import { useState } from "react";
-import { editBrewingMethod } from "../../services/teaService";
 import { useAppDispatch } from "../../store/hooks";
 import { openInfoModal } from "../../store/uiSlice";
+import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
+import { useEditBrewingMethodMutation } from "../../services/teaApi";
 
 const BREWING_EDIT_SUCCESS_MESSAGE = "Poprawnie edytowano sposób parzenia";
-const BREWING_EDIT_FAIL_MESSAGE = "Nie udało się edytować sposobu parzenia.";
 
 type BrewingMethodEditorPanelProps = {
     brewingMethod: BrewingMethod;
@@ -29,8 +28,7 @@ const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
         getData
     } = useForm<BrewingMethodFormData>(brewingMethodFormValidator, emptyBrewingMethodFormData, startingFormData);
 
-    const [isSaving, setIsSaving] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [editBrewingMethod, {isLoading: isSaving}] = useEditBrewingMethodMutation();
 
 
     const handleEdit = async () => {
@@ -39,32 +37,28 @@ const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
         }
 
         const brewingMethodToEdit = convertBrewingMethodFormDataToNewBrewingMethod(getData(), props.brewingMethod.teaId);
+        
         if(brewingMethodToEdit === null){
             return;
         }
 
-        setIsSaving(true);
-        setError(null)
-
         try {
-            await editBrewingMethod(props.brewingMethod.id, brewingMethodToEdit);
+            await editBrewingMethod({brewingMethodId: props.brewingMethod.id, brewingMethod: brewingMethodToEdit}).unwrap();
             dispatch(openInfoModal({
                 message: BREWING_EDIT_SUCCESS_MESSAGE
             })); 
+            props.onFinish();
         } catch (error) {
             dispatch(openInfoModal({
-                message: error instanceof Error ? error.message : BREWING_EDIT_FAIL_MESSAGE
+                message: getApiErrorMessage(error)
             })); 
-        } finally {
-            setIsSaving(false);
-            props.onFinish();
         }
     }
 
     return(
         <Stack>
             <div>
-                <Title order={1}>Dodaj sposób parzenia</Title>
+                <Title order={1}>Edytuj sposób parzenia</Title>
                 <Text c="dimmed" mt="xs">
                     Uzupełnij informacje o nowym sposobie parzenia.
                 </Text>
@@ -73,7 +67,6 @@ const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
             <Paper withBorder p="lg" radius="md">
                 <Stack gap="md">
                     <BrewingMethodForm formData={formData} updateField={updateField}/>
-                    {error && <Text c="red">{error}</Text>}
                     <Group justify="flex-end" mt="sm">
                         <Button 
                             variant="gradient" 

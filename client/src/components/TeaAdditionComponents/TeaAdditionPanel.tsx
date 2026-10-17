@@ -11,11 +11,18 @@ import {
 } from "@mantine/core";
 import TeaForm from "../FormComponents/TeaForm";
 import useForm from "../../hooks/useForm";
-import { addTea } from "../../services/teaService";
 import { emptyTeaFormData, TeaFormData } from "../../types/FormDatas";
 import { teaFormValidator } from "../../validators/formValidators";
+import { openInfoModal } from "../../store/uiSlice";
+import { useAddTeaMutation } from "../../services/teaApi";
+import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
+import { useAppDispatch } from "../../store/hooks";
+
+const TEA_ADD_SUCCESS_MESSAGE = "Poprawnie dodano herbatę!";
 
 const TeaAdditionPanel = () => {
+    const dispatch = useAppDispatch();
+    
     const {
         formData,
         updateField,
@@ -23,9 +30,8 @@ const TeaAdditionPanel = () => {
         isValid,
         getData
     } = useForm<TeaFormData>(teaFormValidator, emptyTeaFormData);
-    //Modal
-    const [isInfoPopupModalOpen, setIsInfoPopupModalOpen] = useState(false);
-    const [infoPopupModalMessage, setInfoPopupModalMessage] = useState('');
+
+    const[addTea, {isLoading: isAdding}] = useAddTeaMutation();
 
     const handleAdd = async () => {
         if (!isValid()){
@@ -45,49 +51,24 @@ const TeaAdditionPanel = () => {
         };
 
         try {
-            await addTea(teaToAdd);
-
+            await addTea(teaToAdd).unwrap();
             clearForm();
-    
-            setInfoPopupModalMessage('Poprawnie dodano herbatę!');
+            dispatch(openInfoModal({
+                message: TEA_ADD_SUCCESS_MESSAGE
+            }))
         } catch (error) {
-            setInfoPopupModalMessage(error instanceof Error ? `Nie udało się dodać herbaty: ${error.message}` : `Wystąpił nieznany błąd`);
+            dispatch(openInfoModal({
+                message: getApiErrorMessage(error)
+            }));
         }
-        
-        setIsInfoPopupModalOpen(true);
     }
-
-    
-        
+      
     const handleClear = () => {
         clearForm();
     }
 
     return (
         <Stack gap="xl">
-            <Modal
-                opened={isInfoPopupModalOpen}
-                onClose={() => setIsInfoPopupModalOpen(false)}
-                title=""
-                centered
-                withCloseButton={false}
-                closeOnClickOutside={false}
-                closeOnEscape={false}
-            >
-                <Stack gap="md">
-                    <Center>
-                        <Text>{infoPopupModalMessage}</Text>
-                    </Center>
-
-                    <Group variant='gradient' justify='center'>
-                        <Button
-                            onClick={() => setIsInfoPopupModalOpen(false)}
-                        >
-                            OK
-                        </Button>
-                    </Group>
-                </Stack>
-            </Modal>
 
             <div>
                 <Title order={1}>Dodaj herbatę</Title>
@@ -103,13 +84,21 @@ const TeaAdditionPanel = () => {
                         updateField={updateField}
                     />
                     <Group justify='flex-end' mt="sm">
-                        <Button variant='default' onClick={handleClear}>Clear</Button>
+                        <Button 
+                            variant='default' 
+                            onClick={handleClear}
+                            disabled={isAdding}
+                            loading={isAdding}    
+                        >
+                            Wyczyść
+                        </Button>
                         <Button 
                             variant='gradient'
                             onClick={handleAdd} 
-                            disabled={!isValid()}
+                            disabled={!isValid() || isAdding}
+                            loading={isAdding}
                         >
-                            Add
+                            Dodaj
                         </Button>
                     </Group>
 

@@ -1,9 +1,9 @@
-import { NewBrewingMethod } from "../services/teaService";
 import { BrewingMethod } from "../types/BrewingMethod";
 import { MethodType, ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
 import { BrewingMethodFormData, TeaFormData } from "../types/FormDatas";
 import { Tea } from "../types/Tea";
+import { NewBrewingMethod } from "../services/teaApi";
 
 export function getTeaDetailsPath(teaID: number | string): string {
     return `${ViewType.TeaListView}/${teaID}`;
