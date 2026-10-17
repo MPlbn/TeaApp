@@ -1,9 +1,10 @@
 import { BrewingMethod } from "../types/BrewingMethod";
 import { MethodType, ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
-import { BrewingMethodFormData, TeaFormData } from "../types/FormDatas";
+import { BrewingMethodFormData, ReviewFormData, TeaFormData } from "../types/FormDatas";
 import { Tea } from "../types/Tea";
-import { NewBrewingMethod } from "../services/teaApi";
+import { NewBrewingMethod, NewReview } from "../services/teaApi";
+import { Review } from "../types/Review";
 
 export function getTeaDetailsPath(teaID: number | string): string {
     return `${ViewType.TeaListView}/${teaID}`;
@@ -82,7 +83,7 @@ export function convertBrewingMethodFormDataToNewBrewingMethod(brewingMethodForm
     };
 }
 
-export function convertBrewingMethodToBrewingMethodFormData(brewingMethod: BrewingMethod) : BrewingMethodFormData {
+export function convertBrewingMethodToBrewingMethodFormData(brewingMethod: BrewingMethod): BrewingMethodFormData {
     return {
         teaId: brewingMethod.teaId,
         method: brewingMethod.method,
@@ -90,4 +91,26 @@ export function convertBrewingMethodToBrewingMethodFormData(brewingMethod: Brewi
         brewingTimes: [...brewingMethod.brewingTimes],
         gongfuBrewingTimeIncrement: brewingMethod.gongfuBrewingTimeIncrement ?? ""
     };
+}
+
+export function convertReviewFormDataToNewReview(reviewFormData: ReviewFormData, teaID: number, userID: number): NewReview | null {
+    if(reviewFormData.rating === null){
+        return null;
+    }
+    
+    return {
+        teaId: teaID,
+        userId: userID,
+        review: reviewFormData.review,
+        rating: Number(reviewFormData.rating)
+    }
+}
+
+export function convertReviewToReviewFormData(review: Review): ReviewFormData {
+    return {
+        teaId: review.teaId,
+        userId: review.userId,
+        review: review.review,
+        rating: review.rating
+    }
 }

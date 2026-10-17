@@ -7,11 +7,11 @@ import { Tea, ShortTea } from "../types/Tea";
 const BASE_URL = "http://localhost:8080/api";
 const TEA_URL = "Tea";
 const BREWING_METHOD_URL = "BrewingMethod";
-const REVIEW_URL = "Review";
+const REVIEW_URL = "TeaReview";
 
 const TAG_TEA = "Tea"
 const TAG_BREWING_METHOD = "BrewingMethod"
-const TAG_REVIEW = "Review"
+const TAG_REVIEW = "TeaReview"
 
 
 export type NewTea = Omit<Tea, "id">

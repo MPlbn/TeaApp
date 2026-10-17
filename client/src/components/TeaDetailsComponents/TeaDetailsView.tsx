@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { Stack, Text, Modal } from "@mantine/core";
+import { Stack, Text } from "@mantine/core";
 import TeaDetailsBrewingMethodsSet from "./BrewingMethodComponents/TeaDetailsBrewingMethodsSet";
 import TeaDetailsReviewsSet from "./ReviewComponents/TeaDetailsReviewsSet";
 import TeaDetailsInfoSection from "./TeaComponents/TeaDetailsInfoSection";
@@ -20,6 +20,7 @@ const TeaDetailsView = () => {
         <Stack>
             <TeaDetailsInfoSection teaID={teaID}/>
             <TeaDetailsBrewingMethodsSet teaID={teaID}/>
+            <TeaDetailsReviewsSet teaID={teaID}/>
         </Stack>
         </>
     );

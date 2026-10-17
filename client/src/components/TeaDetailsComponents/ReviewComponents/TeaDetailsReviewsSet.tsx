@@ -1,48 +1,55 @@
-import { Loader, Paper, Stack, Text } from "@mantine/core";
-import { Review } from "../../../types/Review";
-import { useEffect, useState } from "react";
-import { getReviewsByTeaID } from "../../../services/teaService";
+import { Button, Loader, Paper, Stack, Text, Modal } from "@mantine/core";
+import { useState } from "react";
 import TeaDetailsReview from "./TeaDetailsReview";
+import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
+import { useGetReviewsByTeaIDQuery } from "../../../services/teaApi";
+import ReviewAdditionView from "../../ReviewAdditionComponents/ReviewAdditionView";
 
 type TeaDetailsReviewsSetProps = {
     teaID: number;
 }
 
 const TeaDetailsReviewsSet = (props: TeaDetailsReviewsSetProps) => {
-    const [reviews, setReviews] = useState<Review[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [fetchingError, setFetchingError] = useState<string | null>(null);
+    const [isReviewAdditionOpen, setIsReviewAdditionOpen] = useState(false);
 
-    useEffect(() => {
-        const loadReviews = async () => {
-            try {
-                const fetchedReviews = await getReviewsByTeaID(props.teaID);
-                setReviews(fetchedReviews);
-            } catch (error) {
-                setFetchingError(error instanceof Error ? error.message : "Nie udało się pobrać recenzji");
-            } finally {
-                setIsLoading(false);
-            }
-        }
-        void loadReviews();
-    }, [props.teaID]);
+    const {
+        data: fetchedReviews,
+        error: fetchingError,
+        isLoading
+    } = useGetReviewsByTeaIDQuery(props.teaID);
 
     if(isLoading){
         return <Loader/>
     }
     
-    if(fetchingError !== null){
-        return <Text c="red">Błąd: ${fetchingError}</Text>
+    if(fetchingError){
+        return <Text c="red">Błąd: {getApiErrorMessage(fetchingError)}</Text>
     }
 
+    const reviews = (fetchedReviews ?? []);
+
     return(
+        <>
         <Paper withBorder radius="md">
             <Stack>
                 {reviews.map((review) => {
                     return <TeaDetailsReview key={review.id} review={review}/>
                 })}
+                <Button onClick={() => setIsReviewAdditionOpen(true)}>Dodaj Recenzję</Button>
             </Stack>
         </Paper>
+
+        <Modal
+            opened={isReviewAdditionOpen}
+            onClose={() => setIsReviewAdditionOpen(false)}
+            title=""
+            centered
+            closeOnClickOutside={false}
+            closeOnEscape={false}
+        >
+            <ReviewAdditionView teaID={props.teaID} onFinish={() => setIsReviewAdditionOpen(false)}/>
+        </Modal>
+        </>
     );
 };
 export default TeaDetailsReviewsSet;

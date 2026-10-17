@@ -20,14 +20,14 @@ public class BrewingMethodController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BrewingMethodResponseDTO>>> GetBrewingMethods(
-        int? TeaID
+        int? teaId
     )
     {
         var query = _dbContext.BrewingMethodDbSet.AsQueryable();
 
-        if (TeaID.HasValue)
+        if (teaId.HasValue)
         {
-            query = query.Where(brewingMethod => brewingMethod.teaId == TeaID.Value);
+            query = query.Where(brewingMethod => brewingMethod.teaId == teaId.Value);
         }
 
         var brewingMethods = await query.Select(brewingMethod => new BrewingMethodResponseDTO

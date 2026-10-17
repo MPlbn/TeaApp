@@ -19,7 +19,7 @@ type BrewingMethodEditorPanelProps = {
 
 const BrewingMethodEditorPanel = (props: BrewingMethodEditorPanelProps) => {
     const dispatch = useAppDispatch();
-    const startingFormData = convertBrewingMethodToBrewingMethodFormData(props.brewingMethod)
+    const startingFormData = convertBrewingMethodToBrewingMethodFormData(props.brewingMethod);
 
     const {
         formData,
