@@ -5,6 +5,7 @@ export type BrewingMethod = {
     teaId: number;
     method: MethodType;
     temperature: number;
+    amountPerHundred: number;
     brewingTimes: number[];
     gongfuBrewingTimeIncrement: number | null;
 };

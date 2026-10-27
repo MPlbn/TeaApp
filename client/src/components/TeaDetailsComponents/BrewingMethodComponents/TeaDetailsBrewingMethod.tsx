@@ -46,6 +46,10 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
                     <Text>{props.brewingMethod.temperature} °C</Text>
                 </Stack>
                 <Stack>
+                    <Text c="dimmed">Ilość</Text>
+                    <Text>{props.brewingMethod.amountPerHundred} g/100ml</Text>
+                </Stack>
+                <Stack>
                     <Text c="dimmed">Czasy parzenia</Text>
                     <Group>
                         {props.brewingMethod.brewingTimes.map((brewingTime, index) => 

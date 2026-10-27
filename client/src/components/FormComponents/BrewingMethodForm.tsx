@@ -68,6 +68,22 @@ const BrewingMethodForm = (props: BrewingMethodFormProps) => {
                 />
             </Grid.Col>
 
+            <Grid.Col span={12}>
+                <NumberInput
+                    label="Ilość gramów na 100ml wody"
+                    placeholder="2 g/100ml"
+                    value={props.formData.amountPerHundred}
+                    onChange={(value) => {props.updateField("amountPerHundred", value)}}
+                    min={0}
+                    max={20}
+                    decimalScale={1}
+                    fixedDecimalScale={false}
+                    suffix=" g/100ml"
+                    required
+                />
+            </Grid.Col>
+
+
             <Grid.Col span={{ base: 12, sm: 12 }}>
                 <TextInput
                     label="Czasy parzenia"

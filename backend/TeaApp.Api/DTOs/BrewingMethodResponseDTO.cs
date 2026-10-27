@@ -8,6 +8,7 @@ public class BrewingMethodResponseDTO
     public int teaId {get;set;}
     public MethodType method {get;set;}
     public int temperature {get;set;}
+    public decimal amountPerHundred {get;set;}
     public List<int> brewingTimes {get;set;} = [];
     public int? gongfuBrewingTimeIncrement {get;set;}
 }

@@ -18,6 +18,10 @@ public class BrewingMethodDTO : IValidatableObject
     public int? temperature {get;set;}
 
     [Required]
+    [Range(typeof(decimal), "0", "20")]
+    public decimal? amountPerHundred {get;set;}
+
+    [Required]
     [MinLength(1)]
     public List<int> brewingTimes {get;set;} = [];
 

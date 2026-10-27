@@ -29,6 +29,9 @@ namespace TeaApp.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
 
+                    b.Property<decimal>("amountPerHundred")
+                        .HasColumnType("numeric");
+
                     b.PrimitiveCollection<string>("brewingTimes")
                         .IsRequired()
                         .HasColumnType("jsonb");

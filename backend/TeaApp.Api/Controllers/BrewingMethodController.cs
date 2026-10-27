@@ -36,6 +36,7 @@ public class BrewingMethodController : ControllerBase
             teaId = brewingMethod.teaId,
             method = brewingMethod.method,
             temperature = brewingMethod.temperature,
+            amountPerHundred = brewingMethod.amountPerHundred,
             brewingTimes = brewingMethod.brewingTimes,
             gongfuBrewingTimeIncrement = brewingMethod.gongfuBrewingTimeIncrement
         })
@@ -45,9 +46,9 @@ public class BrewingMethodController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<BrewingMethodResponseDTO>> CreateBrewingMethod(BrewingMethodDTO uDTO)
+    public async Task<ActionResult<BrewingMethodResponseDTO>> CreateBrewingMethod(BrewingMethodDTO DTO)
     {
-        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.id == uDTO.teaId!.Value);
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(tea => tea.id == DTO.teaId!.Value);
 
         if (!teaExists)
         {
@@ -56,11 +57,12 @@ public class BrewingMethodController : ControllerBase
 
         var brewingMethod = new BrewingMethod
         {
-            teaId = uDTO.teaId!.Value,
-            method = uDTO.method!.Value,
-            temperature = uDTO.temperature!.Value,
-            brewingTimes = uDTO.brewingTimes,
-            gongfuBrewingTimeIncrement = uDTO.gongfuBrewingTimeIncrement
+            teaId = DTO.teaId!.Value,
+            method = DTO.method!.Value,
+            temperature = DTO.temperature!.Value,
+            amountPerHundred = DTO.amountPerHundred!.Value,
+            brewingTimes = DTO.brewingTimes,
+            gongfuBrewingTimeIncrement = DTO.gongfuBrewingTimeIncrement
         };
 
         _dbContext.BrewingMethodDbSet.Add(brewingMethod);
@@ -72,6 +74,7 @@ public class BrewingMethodController : ControllerBase
             teaId = brewingMethod.teaId,
             method = brewingMethod.method,
             temperature = brewingMethod.temperature,
+            amountPerHundred = brewingMethod.amountPerHundred,
             brewingTimes = brewingMethod.brewingTimes,
             gongfuBrewingTimeIncrement = brewingMethod.gongfuBrewingTimeIncrement
         };
@@ -80,7 +83,7 @@ public class BrewingMethodController : ControllerBase
     }
 
     [HttpPut("{uID:int}")]
-    public async Task<IActionResult> UpdateBrewingMethod(int uID, BrewingMethodDTO uDTO)
+    public async Task<IActionResult> UpdateBrewingMethod(int uID, BrewingMethodDTO DTO)
     {
         var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(uID);
 
@@ -89,18 +92,19 @@ public class BrewingMethodController : ControllerBase
             return NotFound();
         }
         
-        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.id == uDTO.teaId!.Value);
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(tea => tea.id == DTO.teaId!.Value);
 
         if (!teaExists)
         {
             return BadRequest("The specified tea does not exist.");
         }
 
-        brewingMethod.teaId = uDTO.teaId!.Value;
-        brewingMethod.method = uDTO.method!.Value;
-        brewingMethod.temperature = uDTO.temperature!.Value;
-        brewingMethod.brewingTimes = uDTO.brewingTimes;
-        brewingMethod.gongfuBrewingTimeIncrement = uDTO.gongfuBrewingTimeIncrement;
+        brewingMethod.teaId = DTO.teaId!.Value;
+        brewingMethod.method = DTO.method!.Value;
+        brewingMethod.temperature = DTO.temperature!.Value;
+        brewingMethod.amountPerHundred = DTO.amountPerHundred!.Value;
+        brewingMethod.brewingTimes = DTO.brewingTimes;
+        brewingMethod.gongfuBrewingTimeIncrement = DTO.gongfuBrewingTimeIncrement;
 
         await _dbContext.SaveChangesAsync();
 

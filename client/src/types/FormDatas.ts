@@ -22,6 +22,7 @@ export type BrewingMethodFormData = {
     teaId: number | null;
     method: MethodType | null;
     temperature: string | number;
+    amountPerHundred: string | number;
     brewingTimes: number[];
     gongfuBrewingTimeIncrement: string | number;
 };
@@ -30,6 +31,7 @@ export const emptyBrewingMethodFormData = {
     teaId: null,
     method: null,
     temperature: "",
+    amountPerHundred: "",
     brewingTimes: [],
     gongfuBrewingTimeIncrement: ""
 } as BrewingMethodFormData;

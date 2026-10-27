@@ -65,6 +65,7 @@ export function convertBrewingMethodFormDataToNewBrewingMethod(brewingMethodForm
     if (
         brewingMethodFormData.method === null ||
         brewingMethodFormData.temperature === "" ||
+        brewingMethodFormData.amountPerHundred === "" ||
         !Number.isFinite(Number(brewingMethodFormData.temperature))
     ) {
         return null;
@@ -97,6 +98,7 @@ export function convertBrewingMethodFormDataToNewBrewingMethod(brewingMethodForm
         teaId: teaID,
         method: brewingMethodFormData.method,
         temperature: Number(brewingMethodFormData.temperature),
+        amountPerHundred: Number(brewingMethodFormData.amountPerHundred),
         brewingTimes: brewingMethodFormData.brewingTimes,
         gongfuBrewingTimeIncrement: gongfuIncrement
     };
@@ -107,6 +109,7 @@ export function convertBrewingMethodToBrewingMethodFormData(brewingMethod: Brewi
         teaId: brewingMethod.teaId,
         method: brewingMethod.method,
         temperature: brewingMethod.temperature,
+        amountPerHundred: brewingMethod.amountPerHundred,
         brewingTimes: [...brewingMethod.brewingTimes],
         gongfuBrewingTimeIncrement: brewingMethod.gongfuBrewingTimeIncrement ?? ""
     };
