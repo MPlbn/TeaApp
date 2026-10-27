@@ -28,21 +28,21 @@ public class TeaReviewController : ControllerBase
 
         if (teaId.HasValue)
         {
-            query = query.Where(review => review.teaId == teaId.Value);
+            query = query.Where(review => review.TeaId == teaId.Value);
         }
 
         if (userId.HasValue)
         {
-            query = query.Where(review => review.userId == userId.Value);
+            query = query.Where(review => review.UserId == userId.Value);
         }
 
         var reviews = await query.Select(review => new TeaReviewResponseDTO
         {
-            id = review.id,
-            teaId = review.teaId,
-            userId = review.userId,
-            review = review.review,
-            rating = review.rating
+            Id = review.Id,
+            TeaId = review.TeaId,
+            UserId = review.UserId,
+            Review = review.Review,
+            Rating = review.Rating
         })
         .ToListAsync();
 
@@ -51,7 +51,7 @@ public class TeaReviewController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TeaReviewResponseDTO>> CreateTeaReview(TeaReviewDTO uDTO)
     {
-        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.id == uDTO.teaId!.Value);
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.Id == uDTO.TeaId!.Value);
 
         if (!teaExists)
         {
@@ -60,10 +60,10 @@ public class TeaReviewController : ControllerBase
 
         var review = new TeaReview
         {
-            teaId = uDTO.teaId!.Value,
-            userId = uDTO.userId!.Value,
-            review = uDTO.review,
-            rating = uDTO.rating
+            TeaId = uDTO.TeaId!.Value,
+            UserId = uDTO.UserId!.Value,
+            Review = uDTO.Review,
+            Rating = uDTO.Rating
         };
 
         _dbContext.TeaReviewDbSet.Add(review);
@@ -71,11 +71,11 @@ public class TeaReviewController : ControllerBase
 
         var response = new TeaReviewResponseDTO
         {
-            id = review.id,
-            teaId = review.teaId,
-            userId = review.userId,
-            review = review.review,
-            rating = review.rating            
+            Id = review.Id,
+            TeaId = review.TeaId,
+            UserId = review.UserId,
+            Review = review.Review,
+            Rating = review.Rating            
         };
 
         return StatusCode(StatusCodes.Status201Created, response);
@@ -90,17 +90,17 @@ public class TeaReviewController : ControllerBase
             return NotFound();
         }
         
-        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.id == uDTO.teaId!.Value);
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.Id == uDTO.TeaId!.Value);
 
         if (!teaExists)
         {
             return BadRequest("The specified tea does not exist.");
         }
 
-        review.teaId = uDTO.teaId!.Value;
-        review.userId = uDTO.userId!.Value;
-        review.review = uDTO.review;
-        review.rating = uDTO.rating;
+        review.TeaId = uDTO.TeaId!.Value;
+        review.UserId = uDTO.UserId!.Value;
+        review.Review = uDTO.Review;
+        review.Rating = uDTO.Rating;
 
         await _dbContext.SaveChangesAsync();
 

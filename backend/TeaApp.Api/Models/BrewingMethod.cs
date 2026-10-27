@@ -1,12 +1,12 @@
 namespace TeaApp.Api.Models;
 public class BrewingMethod
 {
-    public int id {get;set;}
-    public int teaId {get;set;}
-    public Tea tea {get;set;} = null!;
-    public MethodType method {get;set;}
-    public int temperature {get;set;}
-    public decimal amountPerHundred {get;set;}
-    public List<int> brewingTimes {get;set;} = [];
-    public int? gongfuBrewingTimeIncrement {get;set;}
+    public int Id {get;set;}
+    public int TeaId {get;set;}
+    public Tea Tea {get;set;} = null!;
+    public MethodType Method {get;set;}
+    public int Temperature {get;set;}
+    public decimal AmountPerHundred {get;set;}
+    public List<int> BrewingTimes {get;set;} = [];
+    public int? GongfuBrewingTimeIncrement {get;set;}
 }

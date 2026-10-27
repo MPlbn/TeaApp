@@ -13,9 +13,9 @@ public class BrewingMethodController : ControllerBase
 {
     private readonly TeaDbContext _dbContext;
 
-    public BrewingMethodController(TeaDbContext uDbContext)
+    public BrewingMethodController(TeaDbContext dbContext)
     {
-        _dbContext = uDbContext;
+        _dbContext = dbContext;
     }
 
     [HttpGet]
@@ -27,18 +27,18 @@ public class BrewingMethodController : ControllerBase
 
         if (teaId.HasValue)
         {
-            query = query.Where(brewingMethod => brewingMethod.teaId == teaId.Value);
+            query = query.Where(brewingMethod => brewingMethod.TeaId == teaId.Value);
         }
 
         var brewingMethods = await query.Select(brewingMethod => new BrewingMethodResponseDTO
         {
-            id = brewingMethod.id,
-            teaId = brewingMethod.teaId,
-            method = brewingMethod.method,
-            temperature = brewingMethod.temperature,
-            amountPerHundred = brewingMethod.amountPerHundred,
-            brewingTimes = brewingMethod.brewingTimes,
-            gongfuBrewingTimeIncrement = brewingMethod.gongfuBrewingTimeIncrement
+            Id = brewingMethod.Id,
+            TeaId = brewingMethod.TeaId,
+            Method = brewingMethod.Method,
+            Temperature = brewingMethod.Temperature,
+            AmountPerHundred = brewingMethod.AmountPerHundred,
+            BrewingTimes = brewingMethod.BrewingTimes,
+            GongfuBrewingTimeIncrement = brewingMethod.GongfuBrewingTimeIncrement
         })
         .ToListAsync();
 
@@ -48,7 +48,7 @@ public class BrewingMethodController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<BrewingMethodResponseDTO>> CreateBrewingMethod(BrewingMethodDTO DTO)
     {
-        var teaExists = await _dbContext.TeaDbSet.AnyAsync(tea => tea.id == DTO.teaId!.Value);
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(tea => tea.Id == DTO.TeaId!.Value);
 
         if (!teaExists)
         {
@@ -57,12 +57,12 @@ public class BrewingMethodController : ControllerBase
 
         var brewingMethod = new BrewingMethod
         {
-            teaId = DTO.teaId!.Value,
-            method = DTO.method!.Value,
-            temperature = DTO.temperature!.Value,
-            amountPerHundred = DTO.amountPerHundred!.Value,
-            brewingTimes = DTO.brewingTimes,
-            gongfuBrewingTimeIncrement = DTO.gongfuBrewingTimeIncrement
+            TeaId = DTO.TeaId!.Value,
+            Method = DTO.Method!.Value,
+            Temperature = DTO.Temperature!.Value,
+            AmountPerHundred = DTO.AmountPerHundred!.Value,
+            BrewingTimes = DTO.BrewingTimes,
+            GongfuBrewingTimeIncrement = DTO.GongfuBrewingTimeIncrement
         };
 
         _dbContext.BrewingMethodDbSet.Add(brewingMethod);
@@ -70,51 +70,51 @@ public class BrewingMethodController : ControllerBase
 
         var response = new BrewingMethodResponseDTO
         {
-            id = brewingMethod.id,
-            teaId = brewingMethod.teaId,
-            method = brewingMethod.method,
-            temperature = brewingMethod.temperature,
-            amountPerHundred = brewingMethod.amountPerHundred,
-            brewingTimes = brewingMethod.brewingTimes,
-            gongfuBrewingTimeIncrement = brewingMethod.gongfuBrewingTimeIncrement
+            Id = brewingMethod.Id,
+            TeaId = brewingMethod.TeaId,
+            Method = brewingMethod.Method,
+            Temperature = brewingMethod.Temperature,
+            AmountPerHundred = brewingMethod.AmountPerHundred,
+            BrewingTimes = brewingMethod.BrewingTimes,
+            GongfuBrewingTimeIncrement = brewingMethod.GongfuBrewingTimeIncrement
         };
 
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
-    [HttpPut("{uID:int}")]
-    public async Task<IActionResult> UpdateBrewingMethod(int uID, BrewingMethodDTO DTO)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateBrewingMethod(int id, BrewingMethodDTO DTO)
     {
-        var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(uID);
+        var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(id);
 
         if(brewingMethod == null)
         {
             return NotFound();
         }
         
-        var teaExists = await _dbContext.TeaDbSet.AnyAsync(tea => tea.id == DTO.teaId!.Value);
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(tea => tea.Id == DTO.TeaId!.Value);
 
         if (!teaExists)
         {
             return BadRequest("The specified tea does not exist.");
         }
 
-        brewingMethod.teaId = DTO.teaId!.Value;
-        brewingMethod.method = DTO.method!.Value;
-        brewingMethod.temperature = DTO.temperature!.Value;
-        brewingMethod.amountPerHundred = DTO.amountPerHundred!.Value;
-        brewingMethod.brewingTimes = DTO.brewingTimes;
-        brewingMethod.gongfuBrewingTimeIncrement = DTO.gongfuBrewingTimeIncrement;
+        brewingMethod.TeaId = DTO.TeaId!.Value;
+        brewingMethod.Method = DTO.Method!.Value;
+        brewingMethod.Temperature = DTO.Temperature!.Value;
+        brewingMethod.AmountPerHundred = DTO.AmountPerHundred!.Value;
+        brewingMethod.BrewingTimes = DTO.BrewingTimes;
+        brewingMethod.GongfuBrewingTimeIncrement = DTO.GongfuBrewingTimeIncrement;
 
         await _dbContext.SaveChangesAsync();
 
         return NoContent();
     }
 
-    [HttpDelete("{uID:int}")]
-    public async Task<IActionResult> DeleteBrewingMethod(int uID)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteBrewingMethod(int id)
     {
-        var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(uID);
+        var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(id);
 
         if(brewingMethod == null)
         {

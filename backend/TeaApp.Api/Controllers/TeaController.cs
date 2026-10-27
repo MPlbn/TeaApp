@@ -26,35 +26,38 @@ public class TeaController : ControllerBase
 
         if (Type.HasValue)
         {
-            query = query.Where(tea => tea.type == Type.Value);
+            query = query.Where(tea => tea.Type == Type.Value);
         }
 
         var teas = await query.Select(tea => new TeaListItemResponseDTO
         {
-            id = tea.id,
-            name = tea.name,
-            type = tea.type,
-            origin = tea.origin,
+            Id = tea.Id,
+            Name = tea.Name,
+            Type = tea.Type,
+            Origin = tea.Origin,
         })
         .ToListAsync();
 
         return Ok(teas);
     }
 
-    [HttpGet("{uID:int}")]
-    public async Task<ActionResult<TeaResponseDTO>> GetTea(int uID)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<TeaResponseDTO>> GetTea(int id)
     {
         var tea = await _dbContext.TeaDbSet
-        .Where(xTea => xTea.id == uID)
-        .Select(xTea => new TeaResponseDTO
+        .Where(tea => tea.Id == id)
+        .Select(tea => new TeaResponseDTO
         {
-            id = xTea.id,
-            name = xTea.name,
-            type = xTea.type,
-            price = xTea.price,
-            origin = xTea.origin,
-            shop = xTea.shop,
-            description = xTea.description
+            Id = tea.Id,
+            Name = tea.Name,
+            Type = tea.Type,
+            Price = tea.Price,
+            Origin = tea.Origin,
+            Shop = tea.Shop,
+            Description = tea.Description,
+            Flavors = tea.Flavors
+            .Select(flavor => flavor.FlavorType)
+            .ToList()
         })
         .FirstOrDefaultAsync();
 
@@ -67,55 +70,58 @@ public class TeaController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<TeaResponseDTO>> CreateTea(TeaDTO uDTO)
+    public async Task<IActionResult> CreateTea(TeaDTO DTO)
     {
         var tea = new Tea
         {
-            name = uDTO.name,
-            type = uDTO.type!.Value,
-            price = uDTO.price!.Value,
-            origin = uDTO.origin,
-            shop = uDTO.shop,
-            description = uDTO.description
+            Name = DTO.Name,
+            Type = DTO.Type!.Value,
+            Price = DTO.Price!.Value,
+            Origin = DTO.Origin,
+            Shop = DTO.Shop,
+            Description = DTO.Description,
+            Flavors = DTO.Flavors
+            .Distinct()
+            .Select(flavorType => new Flavor
+            {
+                FlavorType = flavorType
+            })
+            .ToList()
         };
 
         _dbContext.TeaDbSet.Add(tea);
         await _dbContext.SaveChangesAsync();
 
-        var response = new TeaResponseDTO
-        {
-            id = tea.id,
-            name = tea.name,
-            type = tea.type,
-            price = tea.price,
-            origin = tea.origin,
-            shop = tea.shop,
-            description = tea.description    
-        };
-
-        return CreatedAtAction(
-            nameof(GetTea),
-            new {uID = tea.id},
-            response
-        );
+        return NoContent();
     }
 
-    [HttpPut("{uID:int}")]
-    public async Task<IActionResult> UpdateTea(int uID, TeaDTO uDTO)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateTea(int id, TeaDTO DTO)
     {
-        var tea = await _dbContext.TeaDbSet.FindAsync(uID);
+        var tea = await _dbContext.TeaDbSet.FindAsync(id);
 
         if (tea == null)
         {
             return NotFound();
         }
 
-        tea.name = uDTO.name;        
-        tea.type = uDTO.type!.Value;        
-        tea.price = uDTO.price!.Value;        
-        tea.origin = uDTO.origin;        
-        tea.shop = uDTO.shop;        
-        tea.description = uDTO.description;        
+        tea.Name = DTO.Name;        
+        tea.Type = DTO.Type!.Value;        
+        tea.Price = DTO.Price!.Value;        
+        tea.Origin = DTO.Origin;        
+        tea.Shop = DTO.Shop;        
+        tea.Description = DTO.Description;     
+
+        var existingFlavors = await _dbContext.FlavorSet.Where(flavor => flavor.TeaId == id).ToListAsync();   
+
+        _dbContext.FlavorSet.RemoveRange(existingFlavors);
+
+        tea.Flavors = DTO.Flavors.Distinct().Select(flavor => new Flavor
+        {
+            TeaId = tea.Id,
+            FlavorType = flavor
+        })
+        .ToList();
 
         await _dbContext.SaveChangesAsync();
 

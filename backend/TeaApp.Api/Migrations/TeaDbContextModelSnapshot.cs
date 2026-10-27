@@ -23,128 +23,162 @@ namespace TeaApp.Api.Migrations
 
             modelBuilder.Entity("TeaApp.Api.Models.BrewingMethod", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("amountPerHundred")
+                    b.Property<decimal>("AmountPerHundred")
                         .HasColumnType("numeric");
 
-                    b.PrimitiveCollection<string>("brewingTimes")
+                    b.PrimitiveCollection<string>("BrewingTimes")
                         .IsRequired()
                         .HasColumnType("jsonb");
 
-                    b.Property<int?>("gongfuBrewingTimeIncrement")
+                    b.Property<int?>("GongfuBrewingTimeIncrement")
                         .HasColumnType("integer");
 
-                    b.Property<int>("method")
+                    b.Property<int>("Method")
                         .HasColumnType("integer");
 
-                    b.Property<int>("teaId")
+                    b.Property<int>("TeaId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("temperature")
+                    b.Property<int>("Temperature")
                         .HasColumnType("integer");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.HasIndex("teaId");
+                    b.HasIndex("TeaId");
 
                     b.ToTable("BrewingMethodTable", (string)null);
                 });
 
-            modelBuilder.Entity("TeaApp.Api.Models.Tea", b =>
+            modelBuilder.Entity("TeaApp.Api.Models.Flavor", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("origin")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("price")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("shop")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("type")
+                    b.Property<int>("FlavorType")
                         .HasColumnType("integer");
 
-                    b.HasKey("id");
+                    b.Property<int>("TeaId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeaId");
+
+                    b.ToTable("FlavorTable", (string)null);
+                });
+
+            modelBuilder.Entity("TeaApp.Api.Models.Tea", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Origin")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Shop")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
 
                     b.ToTable("TeaTable", (string)null);
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.TeaReview", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("rating")
+                    b.Property<int>("Rating")
                         .HasColumnType("integer");
 
-                    b.Property<string>("review")
+                    b.Property<string>("Review")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("teaId")
+                    b.Property<int>("TeaId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("userId")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.HasIndex("teaId");
+                    b.HasIndex("TeaId");
 
                     b.ToTable("TeaReviewTable", (string)null);
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.BrewingMethod", b =>
                 {
-                    b.HasOne("TeaApp.Api.Models.Tea", "tea")
-                        .WithMany("brewingMethods")
-                        .HasForeignKey("teaId")
+                    b.HasOne("TeaApp.Api.Models.Tea", "Tea")
+                        .WithMany("BrewingMethods")
+                        .HasForeignKey("TeaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("tea");
+                    b.Navigation("Tea");
+                });
+
+            modelBuilder.Entity("TeaApp.Api.Models.Flavor", b =>
+                {
+                    b.HasOne("TeaApp.Api.Models.Tea", "Tea")
+                        .WithMany("Flavors")
+                        .HasForeignKey("TeaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tea");
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.TeaReview", b =>
                 {
-                    b.HasOne("TeaApp.Api.Models.Tea", "tea")
-                        .WithMany("reviews")
-                        .HasForeignKey("teaId")
+                    b.HasOne("TeaApp.Api.Models.Tea", "Tea")
+                        .WithMany("Reviews")
+                        .HasForeignKey("TeaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("tea");
+                    b.Navigation("Tea");
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.Tea", b =>
                 {
-                    b.Navigation("brewingMethods");
+                    b.Navigation("BrewingMethods");
 
-                    b.Navigation("reviews");
+                    b.Navigation("Flavors");
+
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

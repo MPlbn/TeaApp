@@ -5,35 +5,44 @@ namespace TeaApp.Api.Data;
 
 public class TeaDbContext : DbContext
 {
-    public TeaDbContext(DbContextOptions<TeaDbContext> uOptions) : base(uOptions) {}
+    public TeaDbContext(DbContextOptions<TeaDbContext> options) : base(options) {}
 
     public DbSet<Tea> TeaDbSet {get;set;}
     public DbSet<TeaReview> TeaReviewDbSet {get;set;}
     public DbSet<BrewingMethod> BrewingMethodDbSet {get;set;}
+    public DbSet<Flavor> FlavorSet {get;set;}
 
-    protected override void OnModelCreating(ModelBuilder uModelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        uModelBuilder.Entity<Tea>().ToTable("TeaTable");
-        uModelBuilder.Entity<Tea>().HasKey(xTea => xTea.id);
+        modelBuilder.Entity<Tea>().ToTable("TeaTable");
+        modelBuilder.Entity<Tea>().HasKey(tea => tea.Id);
 
-        uModelBuilder.Entity<TeaReview>().ToTable("TeaReviewTable");
-        uModelBuilder.Entity<TeaReview>().HasKey(xTeaReview => xTeaReview.id);
-        uModelBuilder.Entity<TeaReview>()
-        .HasOne(xTeaReview => xTeaReview.tea)
-        .WithMany(xTea => xTea.reviews)
-        .HasForeignKey(xTeaReview => xTeaReview.teaId)
+        modelBuilder.Entity<TeaReview>().ToTable("TeaReviewTable");
+        modelBuilder.Entity<TeaReview>().HasKey(teaReview => teaReview.Id);
+        modelBuilder.Entity<TeaReview>()
+        .HasOne(teaReview => teaReview.Tea)
+        .WithMany(tea => tea.Reviews)
+        .HasForeignKey(teaReview => teaReview.TeaId)
         .OnDelete(DeleteBehavior.Cascade);
 
-        uModelBuilder.Entity<BrewingMethod>().ToTable("BrewingMethodTable");
-        uModelBuilder.Entity<BrewingMethod>().HasKey(xBrewingMethod => xBrewingMethod.id);
-        uModelBuilder.Entity<BrewingMethod>()
-        .HasOne(xBrewingMethod => xBrewingMethod.tea)
-        .WithMany(xTea => xTea.brewingMethods)
-        .HasForeignKey(xBrewingMethod => xBrewingMethod.teaId)
+        modelBuilder.Entity<BrewingMethod>().ToTable("BrewingMethodTable");
+        modelBuilder.Entity<BrewingMethod>().HasKey(brewingMethod => brewingMethod.Id);
+        modelBuilder.Entity<BrewingMethod>()
+        .HasOne(brewingMethod => brewingMethod.Tea)
+        .WithMany(tea => tea.BrewingMethods)
+        .HasForeignKey(brewingMethod => brewingMethod.TeaId)
         .OnDelete(DeleteBehavior.Cascade);
 
-        uModelBuilder.Entity<BrewingMethod>()
-        .Property(xBrewingMethod => xBrewingMethod.brewingTimes)
+        modelBuilder.Entity<BrewingMethod>()
+        .Property(brewingMethod => brewingMethod.BrewingTimes)
         .HasColumnType("jsonb");
+
+        modelBuilder.Entity<Flavor>().ToTable("FlavorTable");
+        modelBuilder.Entity<Flavor>().HasKey(flavor => flavor.Id);
+        modelBuilder.Entity<Flavor>()
+        .HasOne(flavor => flavor.Tea)
+        .WithMany(tea => tea.Flavors)
+        .HasForeignKey(flavor => flavor.TeaId)
+        .OnDelete(DeleteBehavior.Cascade);
     }
 }
