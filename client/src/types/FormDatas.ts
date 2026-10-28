@@ -1,4 +1,4 @@
-import { MethodType, TeaType } from "./enums";
+import { FlavorType, MethodType, TeaType } from "./enums";
 
 export type TeaFormData = {
     name: string;
@@ -6,7 +6,8 @@ export type TeaFormData = {
     origin: string;
     price: string | number;
     shop: string;
-    description: string
+    description: string;
+    flavors: FlavorType[];
 };
 
 export const emptyTeaFormData = {
@@ -15,7 +16,8 @@ export const emptyTeaFormData = {
     origin:"",
     price:"",
     shop:"",
-    description:""
+    description:"",
+    flavors: []
 } as TeaFormData;
 
 export type BrewingMethodFormData = {

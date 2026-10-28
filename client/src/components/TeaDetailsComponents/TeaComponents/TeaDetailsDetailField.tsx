@@ -1,5 +1,5 @@
-import { Divider, Grid, Paper, Stack, Text, Title } from "@mantine/core";
-import { getTeaTypeStringVersion } from "../../../utils/utils";
+import { Badge, Divider, Grid, Paper, Stack, Text, Title } from "@mantine/core";
+import { getFlavorTypeStringVersion, getTeaTypeStringVersion } from "../../../utils/utils";
 import { Tea } from "../../../types/Tea";
 
 type TeaDetailsDetailFieldProps = {
@@ -31,6 +31,16 @@ const TeaDetailsDetailField = (props: TeaDetailsDetailFieldProps) => {
                         <Stack>
                             <Text size="sm" c="dimmed">Cena za 50g</Text>
                             <Text fw={500}>{props.tea.price} zł</Text>
+                        </Stack>
+                    </Grid.Col>
+                    <Grid.Col span={{base: 12, sm: 6}}>    
+                        <Stack>
+                            <Text size="sm" c="dimmed">Nuty smakowe</Text>
+                            {props.tea.flavors.map((flavor) => (
+                                <Badge key={flavor} variant="light" size="lg">
+                                    {getFlavorTypeStringVersion(flavor)}
+                                </Badge>
+                            ))}
                         </Stack>
                     </Grid.Col>
                 </Grid>

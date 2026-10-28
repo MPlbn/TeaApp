@@ -1,10 +1,11 @@
 import { BrewingMethod } from "../types/BrewingMethod";
-import { MethodType, ViewType } from "../types/enums";
+import { FlavorType, MethodType, ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
 import { BrewingMethodFormData, ReviewFormData, TeaFormData } from "../types/FormDatas";
 import { Tea } from "../types/Tea";
 import { NewBrewingMethod, NewReview, NewTea } from "../services/teaApi";
 import { Review } from "../types/Review";
+import { flavorOptions } from "../config/FlavorOptions";
 
 export function getTeaDetailsPath(teaID: number | string): string {
     return `${ViewType.TeaListView}/${teaID}`;
@@ -31,6 +32,10 @@ export function getMethodTypeStringVersion(methodType: MethodType): string {
     }
 }
 
+export function getFlavorTypeStringVersion(flavor: FlavorType): string {
+    return flavorOptions.find((option) => option.value === flavor)?.label ?? "Nieznana nuta";
+}
+
 export function convertTeaFormDataToNewTea(teaFormData: TeaFormData): NewTea | null {
     if(teaFormData.type === null){
         return null;
@@ -46,7 +51,8 @@ export function convertTeaFormDataToNewTea(teaFormData: TeaFormData): NewTea | n
         origin: teaFormData.origin,
         price: teaFormData.price,
         shop: teaFormData.shop,
-        description: teaFormData.description
+        description: teaFormData.description,
+        flavors: teaFormData.flavors
     }
 }
 
@@ -57,7 +63,8 @@ export function convertTeaToTeaFormData(tea: Tea): TeaFormData {
         origin: tea.origin,
         price: tea.price ?? "",
         shop: tea.shop,
-        description: tea.description
+        description: tea.description,
+        flavors: tea.flavors
     }
 }
 

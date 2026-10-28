@@ -3,11 +3,13 @@ import {
     TextInput,
     Select,
     NumberInput,
-    Textarea
+    Textarea,
+    MultiSelect
  } from "@mantine/core";
-import { TeaType } from "../../types/enums";
+import { TeaType, FlavorType } from "../../types/enums";
 import { getTeaTypeStringVersion } from "../../utils/utils";
 import { TeaFormData } from "../../types/FormDatas";
+import { flavorOptions } from "../../config/FlavorOptions";
 
 const teaTypeOptions = Object.values(TeaType)
     .filter((value): value is TeaType => typeof value === 'number')
@@ -79,6 +81,27 @@ const TeaForm = (props: TeaFormProps) => {
                     onChange={(event) => {props.updateField("shop", event.currentTarget.value)}}
                 />
             </Grid.Col>
+
+            <Grid.Col span={12}>
+                <MultiSelect
+                    label="Nuty smakowe"
+                    placeholder="Wybierz nuty smakowe"
+                    data={flavorOptions.map((option) => ({
+                        value: String(option.value),
+                        label: option.label,
+                    }))}
+                    value={props.formData.flavors.map(String)}
+                    onChange={(values) => {
+                        props.updateField(
+                            "flavors",
+                            values.map((value) => Number(value) as FlavorType)
+                        );
+                    }}
+                    searchable
+                    clearable
+                    hidePickedOptions
+                />
+            </Grid.Col>            
                     
             <Grid.Col span={12}>
                 <Textarea

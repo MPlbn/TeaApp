@@ -1,4 +1,4 @@
-import { TeaType } from "./enums";
+import { FlavorType, TeaType } from "./enums";
 
 export type Tea = {
     id: number;
@@ -8,6 +8,7 @@ export type Tea = {
     origin: string;
     shop: string;
     description: string;
+    flavors: FlavorType[];
 };
 
 export type ShortTea = { // Naming to change probs. used for fetching data to fill TeaList components
