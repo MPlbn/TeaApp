@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TeaApp.Api.Models;
 
 namespace TeaApp.Api.Data;
 
-public class TeaDbContext : DbContext
+public class TeaDbContext : IdentityDbContext<ApplicationUser>
 {
     public TeaDbContext(DbContextOptions<TeaDbContext> options) : base(options) {}
 
@@ -14,6 +15,8 @@ public class TeaDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Tea>().ToTable("TeaTable");
         modelBuilder.Entity<Tea>().HasKey(tea => tea.Id);
 

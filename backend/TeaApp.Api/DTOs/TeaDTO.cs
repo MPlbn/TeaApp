@@ -20,5 +20,6 @@ public class TeaDTO
     public string Origin {get;set;} = "";
     public string Shop {get;set;} = "";
     public string Description {get;set;} = "";
+    public bool IsPublic {get;set;} = false;
     public List<FlavorType> Flavors {get;set;} = [];
 }

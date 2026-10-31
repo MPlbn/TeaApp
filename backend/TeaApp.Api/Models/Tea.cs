@@ -8,6 +8,8 @@ public class Tea
     public string Origin {get;set;} = ""; //country
     public string Shop {get;set;} = "";
     public string Description {get;set;} = "";
+    public string? OwnerId {get;set;}
+    public bool IsPublic {get;set;}
     public ICollection<TeaReview> Reviews {get;set;} = [];
     public ICollection<BrewingMethod> BrewingMethods {get;set;} = [];
     public ICollection<Flavor> Flavors {get;set;} = [];

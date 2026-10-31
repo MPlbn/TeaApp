@@ -163,3 +163,6 @@ vite.config.ts.timestamp-*
 
 # Electron-Forge
 out/
+
+# quick migration script
+migrationScript.sh

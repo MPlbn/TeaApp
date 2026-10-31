@@ -20,6 +20,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: "8080"
       ConnectionStrings__TeaDatabase: "${API_CONNECTION_STRING}"
+      Jwt__Key: ${JWT_KEY}
+      Jwt__Issuer: TeaApp
+      Jwt__Audience: TeaAppClient
     ports:
       - "8080:8080"
     depends_on:
