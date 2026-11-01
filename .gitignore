@@ -166,3 +166,6 @@ out/
 
 # quick migration script
 migrationScript.sh
+
+# editorconfig for c#
+.editorconfig

@@ -1,6 +1,6 @@
 namespace TeaApp.Api.Models;
-public enum TeaType
-{
+
+public enum TeaType {
     White,
     Green,
     Yellow,
@@ -9,15 +9,13 @@ public enum TeaType
     Heicha
 }
 
-public enum MethodType
-{
+public enum MethodType {
     Gongfu,
     Western, //Normal
     Alternative
 }
 
-public enum FlavorType
-{
+public enum FlavorType {
     Foresty = 0,
     Mossy = 1,
     Milky = 2,

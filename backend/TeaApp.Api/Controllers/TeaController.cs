@@ -12,29 +12,24 @@ namespace TeaApp.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TeaController : ControllerBase
-{
+public class TeaController : ControllerBase {
     private readonly TeaDbContext _dbContext;
 
-    public TeaController(TeaDbContext uDbContext)
-    {
+    public TeaController(TeaDbContext uDbContext) {
         _dbContext = uDbContext;
     }
 
     [HttpGet("public")]
     public async Task<ActionResult<IEnumerable<TeaListItemResponseDTO>>> GetPublicTeas(
         TeaType? Type
-    )
-    {
+    ) {
         var query = _dbContext.TeaDbSet.Where(tea => tea.IsPublic);
 
-        if (Type.HasValue)
-        {
+        if (Type.HasValue) {
             query = query.Where(tea => tea.Type == Type.Value);
         }
 
-        var teas = await query.Select(tea => new TeaListItemResponseDTO
-        {
+        var teas = await query.Select(tea => new TeaListItemResponseDTO {
             Id = tea.Id,
             Name = tea.Name,
             Type = tea.Type,
@@ -49,19 +44,16 @@ public class TeaController : ControllerBase
     [HttpGet("private")]
     public async Task<ActionResult<IEnumerable<TeaListItemResponseDTO>>> GetPrivateTeas(
         TeaType? Type
-    )
-    {
+    ) {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         var query = _dbContext.TeaDbSet.Where(tea => !tea.IsPublic && tea.OwnerId == userId);
 
-        if (Type.HasValue)
-        {
+        if (Type.HasValue) {
             query = query.Where(tea => tea.Type == Type.Value);
         }
 
-        var teas = await query.Select(tea => new TeaListItemResponseDTO
-        {
+        var teas = await query.Select(tea => new TeaListItemResponseDTO {
             Id = tea.Id,
             Name = tea.Name,
             Type = tea.Type,
@@ -73,12 +65,10 @@ public class TeaController : ControllerBase
     }
 
     [HttpGet("public/{id:int}")]
-    public async Task<ActionResult<TeaResponseDTO>> GetPublicTea(int id)
-    {
+    public async Task<ActionResult<TeaResponseDTO>> GetPublicTea(int id) {
         var tea = await _dbContext.TeaDbSet
         .Where(tea => tea.Id == id && tea.IsPublic)
-        .Select(tea => new TeaResponseDTO
-        {
+        .Select(tea => new TeaResponseDTO {
             Id = tea.Id,
             Name = tea.Name,
             Type = tea.Type,
@@ -96,16 +86,14 @@ public class TeaController : ControllerBase
 
         return Ok(tea);
     }
-    
+
     [Authorize]
     [HttpGet("private/{id:int}")]
-    public async Task<ActionResult<TeaResponseDTO>> GetPrivateTea(int id)
-    {
+    public async Task<ActionResult<TeaResponseDTO>> GetPrivateTea(int id) {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var tea = await _dbContext.TeaDbSet
         .Where(tea => tea.Id == id && !tea.IsPublic && tea.OwnerId == userId)
-        .Select(tea => new TeaResponseDTO
-        {
+        .Select(tea => new TeaResponseDTO {
             Id = tea.Id,
             Name = tea.Name,
             Type = tea.Type,
@@ -126,13 +114,11 @@ public class TeaController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> CreateTea(TeaDTO DTO)
-    {
+    public async Task<IActionResult> CreateTea(TeaDTO DTO) {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var isAdmin = User.IsInRole("Admin");
-        
-        var tea = new Tea
-        {
+
+        var tea = new Tea {
             Name = DTO.Name,
             Type = DTO.Type!.Value,
             Price = DTO.Price!.Value,
@@ -141,8 +127,7 @@ public class TeaController : ControllerBase
             Description = DTO.Description,
             Flavors = DTO.Flavors
             .Distinct()
-            .Select(flavorType => new Flavor
-            {
+            .Select(flavorType => new Flavor {
                 FlavorType = flavorType
             })
             .ToList(),
@@ -157,27 +142,25 @@ public class TeaController : ControllerBase
 
     [Authorize]
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdateTea(int id, TeaDTO DTO)
-    {
+    public async Task<IActionResult> UpdateTea(int id, TeaDTO DTO) {
         var tea = await _dbContext.TeaDbSet.FindAsync(id);
 
         if (tea == null) return NotFound();
 
-        if(!CanManageTea(tea)) return Forbid();
+        if (!CanManageTea(tea)) return Forbid();
 
-        tea.Name = DTO.Name;        
-        tea.Type = DTO.Type!.Value;        
-        tea.Price = DTO.Price!.Value;        
-        tea.Origin = DTO.Origin;        
-        tea.Shop = DTO.Shop;        
-        tea.Description = DTO.Description;     
+        tea.Name = DTO.Name;
+        tea.Type = DTO.Type!.Value;
+        tea.Price = DTO.Price!.Value;
+        tea.Origin = DTO.Origin;
+        tea.Shop = DTO.Shop;
+        tea.Description = DTO.Description;
 
-        var existingFlavors = await _dbContext.FlavorSet.Where(flavor => flavor.TeaId == id).ToListAsync();   
+        var existingFlavors = await _dbContext.FlavorSet.Where(flavor => flavor.TeaId == id).ToListAsync();
 
         _dbContext.FlavorSet.RemoveRange(existingFlavors);
 
-        tea.Flavors = DTO.Flavors.Distinct().Select(flavor => new Flavor
-        {
+        tea.Flavors = DTO.Flavors.Distinct().Select(flavor => new Flavor {
             TeaId = tea.Id,
             FlavorType = flavor
         })
@@ -190,12 +173,11 @@ public class TeaController : ControllerBase
 
     [Authorize]
     [HttpDelete("{uID:int}")]
-    public async Task<IActionResult> DeleteTea(int uID)
-    {
+    public async Task<IActionResult> DeleteTea(int uID) {
         var tea = await _dbContext.TeaDbSet.FindAsync(uID);
 
         if (tea == null) return NotFound();
-        if(!CanManageTea(tea)) return Forbid();
+        if (!CanManageTea(tea)) return Forbid();
 
         _dbContext.TeaDbSet.Remove(tea);
 
@@ -205,12 +187,11 @@ public class TeaController : ControllerBase
     }
 
 
-    private bool CanManageTea(Tea tea)
-    {
+    private bool CanManageTea(Tea tea) {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var isAdmin = User.IsInRole("Admin");
-        if(tea.IsPublic && isAdmin) return true;
-        if(!tea.IsPublic && tea.OwnerId == userId) return true;
+        if (tea.IsPublic && isAdmin) return true;
+        if (!tea.IsPublic && tea.OwnerId == userId) return true;
 
         return false;
     }

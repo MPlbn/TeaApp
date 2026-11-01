@@ -9,29 +9,24 @@ namespace TeaApp.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 
-public class BrewingMethodController : ControllerBase
-{
+public class BrewingMethodController : ControllerBase {
     private readonly TeaDbContext _dbContext;
 
-    public BrewingMethodController(TeaDbContext dbContext)
-    {
+    public BrewingMethodController(TeaDbContext dbContext) {
         _dbContext = dbContext;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BrewingMethodResponseDTO>>> GetBrewingMethods(
         int? teaId
-    )
-    {
+    ) {
         var query = _dbContext.BrewingMethodDbSet.AsQueryable();
 
-        if (teaId.HasValue)
-        {
+        if (teaId.HasValue) {
             query = query.Where(brewingMethod => brewingMethod.TeaId == teaId.Value);
         }
 
-        var brewingMethods = await query.Select(brewingMethod => new BrewingMethodResponseDTO
-        {
+        var brewingMethods = await query.Select(brewingMethod => new BrewingMethodResponseDTO {
             Id = brewingMethod.Id,
             TeaId = brewingMethod.TeaId,
             Method = brewingMethod.Method,
@@ -46,17 +41,14 @@ public class BrewingMethodController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<BrewingMethodResponseDTO>> CreateBrewingMethod(BrewingMethodDTO DTO)
-    {
+    public async Task<ActionResult<BrewingMethodResponseDTO>> CreateBrewingMethod(BrewingMethodDTO DTO) {
         var teaExists = await _dbContext.TeaDbSet.AnyAsync(tea => tea.Id == DTO.TeaId!.Value);
 
-        if (!teaExists)
-        {
+        if (!teaExists) {
             return BadRequest("The specified tea does not exist.");
         }
 
-        var brewingMethod = new BrewingMethod
-        {
+        var brewingMethod = new BrewingMethod {
             TeaId = DTO.TeaId!.Value,
             Method = DTO.Method!.Value,
             Temperature = DTO.Temperature!.Value,
@@ -68,8 +60,7 @@ public class BrewingMethodController : ControllerBase
         _dbContext.BrewingMethodDbSet.Add(brewingMethod);
         await _dbContext.SaveChangesAsync();
 
-        var response = new BrewingMethodResponseDTO
-        {
+        var response = new BrewingMethodResponseDTO {
             Id = brewingMethod.Id,
             TeaId = brewingMethod.TeaId,
             Method = brewingMethod.Method,
@@ -83,19 +74,16 @@ public class BrewingMethodController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdateBrewingMethod(int id, BrewingMethodDTO DTO)
-    {
+    public async Task<IActionResult> UpdateBrewingMethod(int id, BrewingMethodDTO DTO) {
         var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(id);
 
-        if(brewingMethod == null)
-        {
+        if (brewingMethod == null) {
             return NotFound();
         }
-        
+
         var teaExists = await _dbContext.TeaDbSet.AnyAsync(tea => tea.Id == DTO.TeaId!.Value);
 
-        if (!teaExists)
-        {
+        if (!teaExists) {
             return BadRequest("The specified tea does not exist.");
         }
 
@@ -112,19 +100,17 @@ public class BrewingMethodController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteBrewingMethod(int id)
-    {
+    public async Task<IActionResult> DeleteBrewingMethod(int id) {
         var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(id);
 
-        if(brewingMethod == null)
-        {
+        if (brewingMethod == null) {
             return NotFound();
         }
 
         _dbContext.BrewingMethodDbSet.Remove(brewingMethod);
 
         await _dbContext.SaveChangesAsync();
-        
+
         return NoContent();
     }
 }
