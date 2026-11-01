@@ -5,6 +5,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TeaApp.Api.Data;
 using TeaApp.Api.Models;
+using TeaApp.Api.Services;
+using Microsoft.AspNetCore.DataProtection;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +16,10 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<TokenService>();
+
 builder.Services.AddDbContext<TeaDbContext>
-(xOptions => xOptions.UseNpgsql(
+(options => options.UseNpgsql(
     builder.Configuration.GetConnectionString("TeaDatabase")
 ));
 
@@ -23,65 +29,72 @@ builder.Services
     .AddEntityFrameworkStores<TeaDbContext>();
 
 builder.Services
-    .AddAuthentication(options =>
-    {
+    .AddAuthentication(options => {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-          ValidateIssuer = true,
-          ValidIssuer = builder.Configuration["Jwt:Issuer"],
+    .AddJwtBearer(options => {
+        options.TokenValidationParameters = new TokenValidationParameters {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
 
-          ValidateAudience = true,
-          ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
 
-          ValidateLifetime = true,
-          ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
 
-          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
     });
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("TeaAppPolicy", policy =>
-    {
+builder.Services.AddCors(options => {
+    options.AddPolicy("TeaAppPolicy", policy => {
         policy
             .WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod();
-    }); 
+    });
 });
+
+builder.Services.AddHostedService<RefreshTokenCleanupService>();
+
+var certificatePassword = builder.Configuration["DP_CERT_PASSWORD"]
+    ?? throw new InvalidOperationException("DP_CERT_PASSWORD is not configured.");
+
+var certificate = X509CertificateLoader.LoadPkcs12FromFile(
+    "/https/dp-keys.pfx",
+    certificatePassword,
+    X509KeyStorageFlags.EphemeralKeySet
+);
+
+builder.Services
+    .AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("/app/DataProtection-Keys"))
+    .ProtectKeysWithCertificate(certificate)
+    .SetApplicationName("TeaApp");
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
+using (var scope = app.Services.CreateScope()) {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
     string[] roles = ["User", "Admin"];
 
-    foreach (var role in roles)
-    {
-        if(!await roleManager.RoleExistsAsync(role))
-        {
+    foreach (var role in roles) {
+        if (!await roleManager.RoleExistsAsync(role)) {
             await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
 }
 
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     app.MapOpenApi();
 
-    app.UseSwaggerUI(xOptions =>
-    {
-       xOptions.SwaggerEndpoint("/openapi/v1.json", "TeaApp API v1"); 
+    app.UseSwaggerUI(xOptions => {
+        xOptions.SwaggerEndpoint("/openapi/v1.json", "TeaApp API v1");
     });
 }
 

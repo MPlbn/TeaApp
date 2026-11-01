@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using TeaApp.Api.Constants;
 using TeaApp.Api.Models;
 
 namespace TeaApp.Api.Services;
@@ -17,7 +18,7 @@ public class TokenService(IConfiguration configuration, UserManager<ApplicationU
         var jwtIssuer = _configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("Brak Jwt:Issuer");
         var jwtAudience = _configuration["Jwt:Audience"] ?? throw new InvalidOperationException("Brak Jwt:Audience");
 
-        var expirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"] ?? "15");
+        var expirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"] ?? TokenConstants.DefaultAccessTokenExpirationMinutes.ToString());
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -56,17 +57,17 @@ public class TokenService(IConfiguration configuration, UserManager<ApplicationU
         return Convert.ToHexString(hashBytes);
     }
 
-    public (string rawToken, RefreshToken refreshToken) CreateRefreshToken(string userId, Guid familyId) {
-        var rawToken = GenerateRefreshToken();
+    public (string rawRefreshToken, RefreshToken refreshTokenEntity) CreateRefreshToken(string userId, Guid familyId) {
+        var rawRefreshToken = GenerateRefreshToken();
 
-        var refreshToken = new RefreshToken {
+        var refreshTokenEntity = new RefreshToken {
             UserId = userId,
-            TokenHash = HashRefreshToken(rawToken),
+            TokenHash = HashRefreshToken(rawRefreshToken),
             FamilyId = familyId,
             CreatedAtUtc = DateTime.UtcNow,
-            ExpiresAtUtc = DateTime.UtcNow.AddDays(int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"] ?? "7"))
+            ExpiresAtUtc = DateTime.UtcNow.AddDays(int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"] ?? TokenConstants.DefaultRefreshTokenExpirationDays.ToString()))
         };
 
-        return (rawToken, refreshToken);
+        return (rawRefreshToken, refreshTokenEntity);
     }
 }

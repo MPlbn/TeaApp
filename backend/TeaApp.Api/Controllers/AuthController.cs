@@ -1,12 +1,13 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
+using TeaApp.Api.Constants;
+using TeaApp.Api.Data;
 using TeaApp.Api.DTOs.Auth;
 using TeaApp.Api.Models;
+using TeaApp.Api.Services;
 
 namespace TeaApp.Api.Controllers;
 
@@ -14,10 +15,15 @@ namespace TeaApp.Api.Controllers;
 [Route("api/[controller]")]
 public class AuthController(
     UserManager<ApplicationUser> userManager,
-    IConfiguration configuration
+    IConfiguration configuration,
+    TokenService tokenService,
+    TeaDbContext context
     ) : ControllerBase {
+
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly IConfiguration _configuration = configuration;
+    private readonly TokenService _tokenService = tokenService;
+    private readonly TeaDbContext _context = context;
 
     [Authorize]
     [HttpGet("me")]
@@ -41,6 +47,7 @@ public class AuthController(
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequestDTO request) {
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
+
         if (existingUser != null) return BadRequest("An account with this email already exists.");
 
         var user = new ApplicationUser {
@@ -60,18 +67,86 @@ public class AuthController(
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequestDTO request) {
         var user = await _userManager.FindByNameAsync(request.Login);
-
         user ??= await _userManager.FindByEmailAsync(request.Login);
-
         if (user == null) return Unauthorized("Invalid login or password.");
 
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
-
         if (!isPasswordValid) return Unauthorized("Invalid login or password");
 
-        var token = await GenerateJwtToken(user);
+        var acessToken = await _tokenService.GenerateAccessToken(user);
+        var (refreshToken, refreshTokenEntity) = _tokenService.CreateRefreshToken(user.Id, Guid.NewGuid());
 
-        return Ok(token);
+        await _context.RefreshTokenSet.AddAsync(refreshTokenEntity);
+        await _context.SaveChangesAsync();
+
+        return Ok(new AuthResponseDTO {
+            Token = acessToken,
+            RefreshToken = refreshToken,
+            ExpiresAt = DateTime.UtcNow.AddMinutes(int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"] ?? TokenConstants.DefaultAccessTokenExpirationMinutes.ToString()))
+        });
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(RefreshTokenRequestDTO request) {
+        if (string.IsNullOrWhiteSpace(request.RefreshToken)) return BadRequest();
+
+        var tokenHash = _tokenService.HashRefreshToken(request.RefreshToken);
+
+        var refreshToken = await _context.RefreshTokenSet.FirstOrDefaultAsync(token => token.TokenHash == tokenHash);
+        if (refreshToken == null || refreshToken.RevokedAtUtc != null) return Ok();
+
+        refreshToken.RevokedAtUtc = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> GrantNewAccessAndRefreshToken(RefreshTokenRequestDTO request) {
+        if (string.IsNullOrWhiteSpace(request.RefreshToken)) return BadRequest("Refresh token is required.");
+
+        var tokenHash = _tokenService.HashRefreshToken(request.RefreshToken);
+
+        var storedToken = await _context.RefreshTokenSet.FirstOrDefaultAsync(token => token.TokenHash == tokenHash);
+        if (storedToken == null) return Unauthorized("Invalid refresh token.");
+
+        var now = DateTime.UtcNow;
+
+        if (storedToken.RevokedAtUtc != null) {
+            var familyTokens = await _context.RefreshTokenSet
+                .Where(token =>
+                    token.FamilyId == storedToken.FamilyId &&
+                    token.RevokedAtUtc == null)
+                .ToListAsync();
+
+            foreach (var token in familyTokens)
+                token.RevokedAtUtc = now;
+
+            await _context.SaveChangesAsync();
+            return Unauthorized("Refresh token reuse detected.");
+        }
+
+        if (storedToken.ExpiresAtUtc <= now) return Unauthorized("Refresh token has expired.");
+
+        var user = await _userManager.FindByIdAsync(storedToken.UserId);
+
+        if (user == null) return Unauthorized("Invalid refresh token.");
+
+        var accessToken = await _tokenService.GenerateAccessToken(user);
+        var (refreshToken, refreshTokenEntity) = _tokenService.CreateRefreshToken(user.Id, storedToken.FamilyId);
+
+        storedToken.RevokedAtUtc = now;
+        storedToken.ReplacedByTokenHash = refreshTokenEntity.TokenHash;
+
+        await _context.RefreshTokenSet.AddAsync(refreshTokenEntity);
+        await _context.SaveChangesAsync();
+
+        return Ok(new AuthResponseDTO {
+            Token = accessToken,
+            RefreshToken = refreshToken,
+            ExpiresAt = DateTime.UtcNow.AddMinutes(int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"] ?? TokenConstants.DefaultAccessTokenExpirationMinutes.ToString()))
+        });
     }
 
     [Authorize]
@@ -110,39 +185,5 @@ public class AuthController(
             user.UserName,
             user.Email
         });
-    }
-
-    private async Task<AuthResponseDTO> GenerateJwtToken(ApplicationUser user) {
-        var jwtKey = _configuration["Jwt:Key"]!;
-        var jwtIssuer = _configuration["Jwt:Issuer"]!;
-        var jwtAudience = _configuration["Jwt:Audience"]!;
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var roles = await _userManager.GetRolesAsync(user);
-        var claims = new List<Claim>
-        {
-            new (JwtRegisteredClaimNames.Sub, user.Id),
-            new (JwtRegisteredClaimNames.Email, user.Email!),
-            new (ClaimTypes.NameIdentifier, user.Id),
-            new (ClaimTypes.Email, user.Email!)
-        };
-
-        foreach (var role in roles) {
-            claims.Add(new(ClaimTypes.Role, role));
-        }
-
-        var token = new JwtSecurityToken(
-            issuer: jwtIssuer,
-            audience: jwtAudience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(60),
-            signingCredentials: credentials
-        );
-
-        return new AuthResponseDTO {
-            Token = new JwtSecurityTokenHandler().WriteToken(token),
-            ExpiresAt = token.ValidTo
-        };
     }
 }

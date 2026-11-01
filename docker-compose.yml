@@ -23,10 +23,15 @@ services:
       Jwt__Key: ${JWT_KEY}
       Jwt__Issuer: ${JWT_ISSUER}
       Jwt__Audience: ${JWT_AUDIENCE}
+      DP_CERT_PASSWORD: ${DP_CERT_PASSWORD}
     ports:
       - "8080:8080"
     depends_on:
       - tea-database
+    volumes:
+      - teaapp-dataprotection-keys:/app/DataProtection-Keys
+      - ./secrets/dp-keys.pfx:/https/dp-keys.pfx:ro
 
 volumes:
   postgres_data:
+  teaapp-dataprotection-keys:

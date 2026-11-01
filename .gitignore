@@ -169,3 +169,9 @@ migrationScript.sh
 
 # editorconfig for c#
 .editorconfig
+
+# logs
+api-logs.txt
+
+# secrets
+/secrets/
