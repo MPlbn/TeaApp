@@ -1,9 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TeaApp.Api.DTOs.Auth;
@@ -13,19 +12,34 @@ namespace TeaApp.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController(
+    UserManager<ApplicationUser> userManager,
+    IConfiguration configuration
+    ) : ControllerBase
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IConfiguration _configuration;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly IConfiguration _configuration = configuration;
 
-    public AuthController(
-        UserManager<ApplicationUser> userManager,
-        IConfiguration configuration
-    )
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<IActionResult> GetCurrentUser()
     {
-        _userManager = userManager;
-        _configuration = configuration;
-    }
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if(userId == null) return Unauthorized();
+
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if(user == null) return NotFound();
+
+        return Ok(new
+        {
+            user.Id,
+            user.UserName,
+            user.Email,
+            Roles = await _userManager.GetRolesAsync(user)
+        });
+    }   
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequestDTO request)
@@ -64,6 +78,47 @@ public class AuthController : ControllerBase
         var token = await GenerateJwtToken(user);
 
         return Ok(token);
+    }
+
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangeUserPassword(ChangePasswordDTO DTO)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if(userId == null) return Unauthorized();
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if(user == null) return NotFound();
+
+        var result = await _userManager.ChangePasswordAsync(user, DTO.CurrentPassword, DTO.NewPassword);
+        if(!result.Succeeded) return BadRequest(result.Errors);
+
+        return Ok("Password changed.");
+    }
+
+    [Authorize]
+    [HttpPut("me")]
+    public async Task<IActionResult> UpdateProfile(UpdateProfileDTO DTO)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if(userId == null) return Unauthorized();
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if(user == null) return NotFound();
+
+        if(!string.IsNullOrEmpty(DTO.UserName)) user.UserName = DTO.UserName;
+        if(!string.IsNullOrEmpty(DTO.Email)) user.Email = DTO.Email;
+
+        var result = await _userManager.UpdateAsync(user);
+
+        if(!result.Succeeded) return BadRequest(result.Errors);
+
+        return Ok(new
+        {
+            user.Id,
+            user.UserName,
+            user.Email
+        });
     }
 
     private async Task<AuthResponseDTO> GenerateJwtToken(ApplicationUser user)
