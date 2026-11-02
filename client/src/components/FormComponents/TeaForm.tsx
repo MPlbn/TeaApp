@@ -1,11 +1,11 @@
-import { 
+import {
     Grid,
     TextInput,
     Select,
     NumberInput,
     Textarea,
     MultiSelect
- } from "@mantine/core";
+} from "@mantine/core";
 import { TeaType, FlavorType } from "../../types/enums";
 import { getTeaTypeStringVersion } from "../../utils/utils";
 import { TeaFormData } from "../../types/FormDatas";
@@ -14,8 +14,9 @@ import { flavorOptions } from "../../config/FlavorOptions";
 const teaTypeOptions = Object.values(TeaType)
     .filter((value): value is TeaType => typeof value === 'number')
     .map((teaType) => ({
-        value: String(teaType), 
-        label: getTeaTypeStringVersion(teaType)}));
+        value: String(teaType),
+        label: getTeaTypeStringVersion(teaType)
+    }));
 
 type TeaFormProps = {
     formData: TeaFormData;
@@ -24,7 +25,7 @@ type TeaFormProps = {
         value: TeaFormData[TKey]
     ) => void;
 };
-                                            
+
 const TeaForm = (props: TeaFormProps) => {
     return (
         <Grid gap="md">
@@ -33,9 +34,9 @@ const TeaForm = (props: TeaFormProps) => {
                     label="Nazwa herbaty"
                     placeholder="np. Huoshan Huang Ya"
                     value={props.formData.name}
-                    onChange={(event) => {props.updateField("name", event.currentTarget.value)}}
+                    onChange={(event) => { props.updateField("name", event.currentTarget.value) }}
                     required
-                    />
+                />
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -45,9 +46,9 @@ const TeaForm = (props: TeaFormProps) => {
                     data={teaTypeOptions}
                     value={props.formData.type === null ? null : String(props.formData.type)}
                     onChange={
-                        (value) => {props.updateField("type", value === null ? null : Number(value) as TeaType)}}
+                        (value) => { props.updateField("type", value === null ? null : Number(value) as TeaType) }}
                     required
-                    />
+                />
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -55,7 +56,7 @@ const TeaForm = (props: TeaFormProps) => {
                     label="Pochodzenie"
                     placeholder="np. Chiny, Yunnan"
                     value={props.formData.origin}
-                    onChange={(event) => {props.updateField("origin", event.currentTarget.value)}}
+                    onChange={(event) => { props.updateField("origin", event.currentTarget.value) }}
                 />
             </Grid.Col>
 
@@ -64,7 +65,7 @@ const TeaForm = (props: TeaFormProps) => {
                     label="Cena PLN/50g"
                     placeholder="45.45 zł"
                     value={props.formData.price}
-                    onChange={(value) => {props.updateField("price", value)}}
+                    onChange={(value) => { props.updateField("price", value) }}
                     min={0}
                     decimalScale={2}
                     fixedDecimalScale={false}
@@ -78,7 +79,7 @@ const TeaForm = (props: TeaFormProps) => {
                     label="Sklep"
                     placeholder="Nazwa sklepu, np. e-herbata"
                     value={props.formData.shop}
-                    onChange={(event) => {props.updateField("shop", event.currentTarget.value)}}
+                    onChange={(event) => { props.updateField("shop", event.currentTarget.value) }}
                 />
             </Grid.Col>
 
@@ -101,14 +102,14 @@ const TeaForm = (props: TeaFormProps) => {
                     clearable
                     hidePickedOptions
                 />
-            </Grid.Col>            
-                    
+            </Grid.Col>
+
             <Grid.Col span={12}>
                 <Textarea
                     label="Opis"
                     placeholder="Krótki opis herbaty..."
                     value={props.formData.description}
-                    onChange={(event) => {props.updateField('description', event.currentTarget.value)}}
+                    onChange={(event) => { props.updateField('description', event.currentTarget.value) }}
                     minRows={3}
                     autosize
                 />

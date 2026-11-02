@@ -22,7 +22,7 @@ const FormPanel = (props: FormPanelProps) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSave = async () => {
-        if(!props.isValid || props.isSaving || isSubmitting){
+        if (!props.isValid || props.isSaving || isSubmitting) {
             return;
         }
 
@@ -34,19 +34,19 @@ const FormPanel = (props: FormPanelProps) => {
             dispatch(openInfoModal({
                 message: props.successMessage
             }));
-            props.onFinish();
         } catch (error) {
             dispatch(openInfoModal({
                 message: getApiErrorMessage(error)
             }));
         } finally {
             setIsSubmitting(false);
+            props.onFinish();
         }
 
     }
     const isBusy = props.isSaving || isSubmitting;
 
-    return(
+    return (
         <Stack>
             <div>
                 <Title order={1}>{props.title}</Title>
@@ -55,7 +55,7 @@ const FormPanel = (props: FormPanelProps) => {
                     {props.description}
                 </Text>
             </div>
-        
+
             <Paper withBorder p="lg" radius="md">
                 <Stack gap="md">
                     {props.children}
@@ -70,7 +70,7 @@ const FormPanel = (props: FormPanelProps) => {
                                 Wyczyść
                             </Button>
                         )}
-                        
+
                         <Button
                             variant="gradient"
                             onClick={handleSave}
@@ -82,7 +82,7 @@ const FormPanel = (props: FormPanelProps) => {
                     </Group>
                 </Stack>
             </Paper>
-    </Stack>
+        </Stack>
     );
 }
 export default FormPanel;

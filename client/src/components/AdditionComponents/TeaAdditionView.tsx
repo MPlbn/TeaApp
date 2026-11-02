@@ -17,17 +17,17 @@ const TeaAdditionView = () => {
         getData
     } = useForm<TeaFormData>(teaFormValidator, emptyTeaFormData);
 
-    const [addTea, {isLoading: isAdding}] = useAddTeaMutation();
+    const [addTea, { isLoading: isAdding }] = useAddTeaMutation();
 
     const handleSave = async () => {
         const teaToAdd = convertTeaFormDataToNewTea(getData());
 
-        if(teaToAdd === null){
+        if (teaToAdd === null) {
             return;
         }
         await addTea(teaToAdd).unwrap();
     }
-      
+
     const handleClear = () => {
         clearForm();
     }

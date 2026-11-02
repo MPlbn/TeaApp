@@ -1,18 +1,19 @@
 import { BrewingMethod } from "../types/BrewingMethod";
 import { FlavorType, MethodType, ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
-import { BrewingMethodFormData, ReviewFormData, TeaFormData } from "../types/FormDatas";
+import { BrewingMethodFormData, ReviewFormData, TeaFormData, UserLoginFormData, UserRegisterFormData } from "../types/FormDatas";
 import { Tea } from "../types/Tea";
 import { NewBrewingMethod, NewReview, NewTea } from "../services/teaApi";
 import { Review } from "../types/Review";
 import { flavorOptions } from "../config/FlavorOptions";
+import { UserLoginRequest, UserRegisterRequest } from "../types/User";
 
 export function getTeaDetailsPath(teaID: number | string): string {
     return `${ViewType.TeaListView}/${teaID}`;
 }
 
 export function getTeaTypeStringVersion(teaType: TeaType): string {
-    switch(teaType){
+    switch (teaType) {
         case TeaType.White: return 'Biała';
         case TeaType.Green: return 'Zielona';
         case TeaType.Yellow: return 'Żółta';
@@ -24,7 +25,7 @@ export function getTeaTypeStringVersion(teaType: TeaType): string {
 }
 
 export function getMethodTypeStringVersion(methodType: MethodType): string {
-    switch(methodType){
+    switch (methodType) {
         case MethodType.Gongfu: return "Gongfu";
         case MethodType.Western: return "Klasyczne";
         case MethodType.Alternative: return "Alternatywne";
@@ -37,11 +38,11 @@ export function getFlavorTypeStringVersion(flavor: FlavorType): string {
 }
 
 export function convertTeaFormDataToNewTea(teaFormData: TeaFormData): NewTea | null {
-    if(teaFormData.type === null){
+    if (teaFormData.type === null) {
         return null;
     }
 
-    if(typeof teaFormData.price === "string"){
+    if (typeof teaFormData.price === "string") {
         return null;
     }
 
@@ -53,7 +54,7 @@ export function convertTeaFormDataToNewTea(teaFormData: TeaFormData): NewTea | n
         shop: teaFormData.shop,
         description: teaFormData.description,
         flavors: teaFormData.flavors
-    }
+    } as NewTea;
 }
 
 export function convertTeaToTeaFormData(tea: Tea): TeaFormData {
@@ -65,7 +66,7 @@ export function convertTeaToTeaFormData(tea: Tea): TeaFormData {
         shop: tea.shop,
         description: tea.description,
         flavors: tea.flavors
-    }
+    } as TeaFormData;
 }
 
 export function convertBrewingMethodFormDataToNewBrewingMethod(brewingMethodFormData: BrewingMethodFormData, teaID: number): NewBrewingMethod | null {
@@ -108,7 +109,7 @@ export function convertBrewingMethodFormDataToNewBrewingMethod(brewingMethodForm
         amountPerHundred: Number(brewingMethodFormData.amountPerHundred),
         brewingTimes: brewingMethodFormData.brewingTimes,
         gongfuBrewingTimeIncrement: gongfuIncrement
-    };
+    } as NewBrewingMethod;
 }
 
 export function convertBrewingMethodToBrewingMethodFormData(brewingMethod: BrewingMethod): BrewingMethodFormData {
@@ -119,20 +120,20 @@ export function convertBrewingMethodToBrewingMethodFormData(brewingMethod: Brewi
         amountPerHundred: brewingMethod.amountPerHundred,
         brewingTimes: [...brewingMethod.brewingTimes],
         gongfuBrewingTimeIncrement: brewingMethod.gongfuBrewingTimeIncrement ?? ""
-    };
+    } as BrewingMethodFormData;
 }
 
 export function convertReviewFormDataToNewReview(reviewFormData: ReviewFormData, teaID: number, userID: number): NewReview | null {
-    if(reviewFormData.rating === null){
+    if (reviewFormData.rating === null) {
         return null;
     }
-    
+
     return {
         teaId: teaID,
         userId: userID,
         review: reviewFormData.review,
         rating: Number(reviewFormData.rating)
-    }
+    } as NewReview;
 }
 
 export function convertReviewToReviewFormData(review: Review): ReviewFormData {
@@ -141,5 +142,20 @@ export function convertReviewToReviewFormData(review: Review): ReviewFormData {
         userId: review.userId,
         review: review.review,
         rating: review.rating
-    }
+    } as ReviewFormData;
+}
+
+export function convertUserLoginFormDataToLoginRequest(formData: UserLoginFormData): UserLoginRequest {
+    return {
+        login: formData.login,
+        password: formData.password
+    } as UserLoginRequest;
+}
+
+export function convertUserRegisterFormDataToRegisterRequest(formData: UserRegisterFormData): UserRegisterRequest {
+    return {
+        userName: formData.userName,
+        email: formData.email,
+        password: formData.password
+    } as UserRegisterRequest;
 }

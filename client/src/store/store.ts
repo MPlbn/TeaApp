@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import uiReducer from "./uiSlice"
+import uiReducer from "./uiSlice";
+import authReducer from "./authSlice";
 import { teaApi } from "../services/teaApi";
 
 export const store = configureStore({
     reducer: {
         ui: uiReducer,
+        auth: authReducer,
         [teaApi.reducerPath]: teaApi.reducer
     },
 

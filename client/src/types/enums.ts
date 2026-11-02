@@ -1,9 +1,8 @@
 export enum ViewType {
     TeaListView = '/tea-list',
     AddTeaView = '/add-tea',
-    EditTeaView = '/edit-tea',
-    DeleteTeaView = '/delete-tea',
-    SettingsView = '/settings'
+    SettingsView = '/settings',
+    UserView = '/user'
 }
 
 export enum TeaType {

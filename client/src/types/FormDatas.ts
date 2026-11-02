@@ -11,12 +11,12 @@ export type TeaFormData = {
 };
 
 export const emptyTeaFormData = {
-    name:"",
-    type:null,
-    origin:"",
-    price:"",
-    shop:"",
-    description:"",
+    name: "",
+    type: null,
+    origin: "",
+    price: "",
+    shop: "",
+    description: "",
     flavors: []
 } as TeaFormData;
 
@@ -52,6 +52,24 @@ export const emptyReviewFormData = {
     rating: 0
 } as ReviewFormData;
 
-export type UserFormData = {
-    //TODO later
+export type UserRegisterFormData = {
+    userName: string;
+    email: string;
+    password: string;
 };
+
+export const emptyUserRegisterFormData = {
+    userName: "",
+    email: "",
+    password: "",
+};
+
+export type UserLoginFormData = {
+    login: string;
+    password: string;
+}
+
+export const emptyUserLoginFormData = {
+    login: "",
+    password: ""
+}
