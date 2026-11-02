@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="TeaApp.Api/TeaApp.Api.csproj" />
+  <Project Path="TeaApp.Tests/TeaApp.Tests.csproj" />
 </Solution>

@@ -8,7 +8,6 @@ using TeaApp.Api.Models;
 using TeaApp.Api.Services;
 using Microsoft.AspNetCore.DataProtection;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +23,7 @@ builder.Services.AddDbContext<TeaDbContext>
 ));
 
 builder.Services
-    .AddIdentityCore<ApplicationUser>()
+    .AddIdentityCore<ApplicationUser>(options => options.User.RequireUniqueEmail = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<TeaDbContext>();
 
@@ -61,20 +60,25 @@ builder.Services.AddCors(options => {
 
 builder.Services.AddHostedService<RefreshTokenCleanupService>();
 
-var certificatePassword = builder.Configuration["DP_CERT_PASSWORD"]
-    ?? throw new InvalidOperationException("DP_CERT_PASSWORD is not configured.");
+if (builder.Environment.IsEnvironment("Testing")) {
+    builder.Services.AddDataProtection().SetApplicationName("TeaApp.Tests");
+}
+else {
+    var certificatePassword = builder.Configuration["DP_CERT_PASSWORD"]
+        ?? throw new InvalidOperationException("DP_CERT_PASSWORD is not configured.");
 
-var certificate = X509CertificateLoader.LoadPkcs12FromFile(
-    "/https/dp-keys.pfx",
-    certificatePassword,
-    X509KeyStorageFlags.EphemeralKeySet
-);
+    var certificate = X509CertificateLoader.LoadPkcs12FromFile(
+        "/https/dp-keys.pfx",
+        certificatePassword,
+        X509KeyStorageFlags.EphemeralKeySet
+    );
 
-builder.Services
-    .AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo("/app/DataProtection-Keys"))
-    .ProtectKeysWithCertificate(certificate)
-    .SetApplicationName("TeaApp");
+    builder.Services
+        .AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo("/app/DataProtection-Keys"))
+        .ProtectKeysWithCertificate(certificate)
+        .SetApplicationName("TeaApp");
+}
 
 var app = builder.Build();
 
@@ -93,8 +97,8 @@ using (var scope = app.Services.CreateScope()) {
 if (app.Environment.IsDevelopment()) {
     app.MapOpenApi();
 
-    app.UseSwaggerUI(xOptions => {
-        xOptions.SwaggerEndpoint("/openapi/v1.json", "TeaApp API v1");
+    app.UseSwaggerUI(options => {
+        options.SwaggerEndpoint("/openapi/v1.json", "TeaApp API v1");
     });
 }
 
@@ -108,3 +112,5 @@ app.MapControllers();
 app.UseHttpsRedirection();
 
 app.Run();
+
+public partial class Program { }
