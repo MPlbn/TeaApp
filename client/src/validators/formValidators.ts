@@ -1,4 +1,4 @@
-import { BrewingMethodFormData, ReviewFormData, TeaFormData, UserLoginFormData, UserRegisterFormData } from "../types/FormDatas";
+import { BrewingMethodFormData, ReviewFormData, TeaFormData, UserChangeDataFormData, UserChangePasswordFormData, UserLoginFormData, UserRegisterFormData } from "../types/FormDatas";
 
 export function teaFormValidator(formData: TeaFormData): boolean {
     const price = Number(formData.price)
@@ -36,7 +36,7 @@ export function reviewFormValidator(formData: ReviewFormData): boolean {
     return true
 }
 
-export function userFormValidator(formData: UserRegisterFormData | UserLoginFormData): boolean {
+export function userFormValidator(formData: UserRegisterFormData | UserLoginFormData | UserChangePasswordFormData | UserChangeDataFormData): boolean {
     const areAllFieldsFilled = !Object.values(formData).some((value) => value.trim() === "");
     return areAllFieldsFilled;
 }

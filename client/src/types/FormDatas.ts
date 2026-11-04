@@ -73,3 +73,23 @@ export const emptyUserLoginFormData = {
     login: "",
     password: ""
 }
+
+export type UserChangePasswordFormData = {
+    oldPassword: string;
+    newPassword: string;
+}
+
+export const emptyUserChangePasswordFormData = {
+    oldPassword: "",
+    newPassword: ""
+}
+
+export type UserChangeDataFormData = {
+    userName: string;
+    email: string;
+}
+
+export const emptyUserChangeDataFormData = {
+    userName: "",
+    email: ""
+}

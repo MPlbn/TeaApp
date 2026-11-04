@@ -1,7 +1,7 @@
 import { UserLoginFormData } from "../../types/FormDatas";
 import { Stack, TextInput } from "@mantine/core";
 
-type UserFormProps = {
+type UserLoginFormProps = {
     formData: UserLoginFormData;
     updateField: <TKey extends keyof UserLoginFormData>(
         key: TKey,
@@ -9,7 +9,7 @@ type UserFormProps = {
     ) => void;
 };
 
-const UserLoginForm = (props: UserFormProps) => {
+const UserLoginForm = (props: UserLoginFormProps) => {
     return (
         <Stack>
             <TextInput

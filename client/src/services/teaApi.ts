@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BrewingMethod } from "../types/BrewingMethod";
 import { Review } from "../types/Review";
 import { Tea, ShortTea } from "../types/Tea";
-import { AuthResponse, User, UserLoginRequest, UserRegisterRequest } from "../types/User";
+import { AuthResponse, ChangePasswordRequest, RefreshTokenRequest, UpdateProfileRequest, UpdateProfileResponse, User, UserLoginRequest, UserRegisterRequest } from "../types/User";
 import { RootState } from "../store/store";
 
 const BASE_URL = "http://localhost:8080/api";
@@ -27,7 +27,8 @@ export const teaApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: BASE_URL,
         prepareHeaders: (headers, { getState }) => {
-            const token = (getState() as RootState).auth.accessToken;
+            const state = getState() as RootState
+            const token = state.auth.accessToken;
 
             if (token) {
                 headers.set("Authorization", `Bearer ${token}`);
@@ -169,8 +170,40 @@ export const teaApi = createApi({
             })
         }),
 
+        logoutUser: build.mutation<void, RefreshTokenRequest>({
+            query: (request) => ({
+                url: `${AUTH_URL}/logout`,
+                method: "POST",
+                body: request
+            })
+        }),
+
         getCurrentUser: build.query<User, void>({
             query: () => "auth/me"
+        }),
+
+        changeUserPassword: build.mutation<string, ChangePasswordRequest>({
+            query: (request) => ({
+                url: `${AUTH_URL}/change-password`,
+                method: "POST",
+                body: request
+            })
+        }),
+
+        updateUserProfile: build.mutation<UpdateProfileResponse, UpdateProfileRequest>({
+            query: (request) => ({
+                url: `${AUTH_URL}/me`,
+                method: "PUT",
+                body: request
+            })
+        }),
+
+        refreshToken: build.mutation<AuthResponse, RefreshTokenRequest>({
+            query: (request) => ({
+                url: `${AUTH_URL}/refresh`,
+                method: "POST",
+                body: request
+            })
         }),
     }),
 });
@@ -194,5 +227,9 @@ export const {
 
     useRegisterUserMutation,
     useLoginUserMutation,
-    useGetCurrentUserQuery
+    useLogoutUserMutation,
+    useGetCurrentUserQuery,
+    useChangeUserPasswordMutation,
+    useUpdateUserProfileMutation,
+    useRefreshTokenMutation,
 } = teaApi;

@@ -29,6 +29,12 @@ export type UpdateProfileRequest = {
     email?: string;
 }
 
+export type UpdateProfileResponse = {
+    id: string;
+    userName: string;
+    email: string;
+}
+
 export type User = {
     id: string;
     userName: string;
