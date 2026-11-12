@@ -29,6 +29,7 @@ const authSlice = createSlice({
             state.accessToken = null;
             state.refreshToken = null;
             state.expiresAt = null;
+            state.user = null;
         },
 
         setUser: (state, action: PayloadAction<User>) => {

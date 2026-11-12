@@ -6,7 +6,7 @@ import {
 import { navigationItems, bottomNavigationItems } from '../config/SidebarNavigationItems';
 import { useLocation, useNavigate } from 'react-router';
 import { TablerIcon } from '@tabler/icons-react';
-import { UserRole, ViewType } from '../types/enums';
+import { ViewType } from '../types/enums';
 import { useAppSelector } from '../store/hooks';
 
 
@@ -20,11 +20,12 @@ export type SidebarItem = {
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const user = useAppSelector((state) => state.auth.user);
+
+  console.log("User:", user);
 
   function renderNavigationItem(item: SidebarItem) {
     const ItemIcon = item.icon
-
-    const user = useAppSelector((state) => state.auth.user);
 
     const userRoles = user?.roles ?? [];
 

@@ -4,6 +4,9 @@ import { Review } from "../types/Review";
 import { Tea, ShortTea } from "../types/Tea";
 import { AuthResponse, ChangePasswordRequest, RefreshTokenRequest, UpdateProfileRequest, UpdateProfileResponse, User, UserLoginRequest, UserRegisterRequest } from "../types/User";
 import { RootState } from "../store/store";
+import { Mutex } from "async-mutex";
+import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { clearCredentials, setCredentials } from "../store/authSlice";
 
 const BASE_URL = "http://localhost:8080/api";
 const PUBLIC_TEA_URL = "Tea/public";
@@ -24,22 +27,89 @@ export type NewTea = Omit<Tea, "id">
 export type NewBrewingMethod = Omit<BrewingMethod, "id">
 export type NewReview = Omit<Review, "id">
 
+const mutex = new Mutex();
+
+const baseQuery = fetchBaseQuery({
+    baseUrl: BASE_URL,
+    prepareHeaders: (headers, { getState }) => {
+        const state = getState() as RootState
+        const token = state.auth.accessToken;
+
+        if (token) {
+            headers.set("Authorization", `Bearer ${token}`);
+        }
+
+        return headers;
+    }
+});
+
+const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
+    await mutex.waitForUnlock();
+
+    let result = await baseQuery(args, api, extraOptions);
+
+    const requestUrl = typeof args === "string" ? args : args.url;
+    const isLoginRequest = requestUrl.endsWith("auth/login");
+
+    if (result.error?.status === 401 && !isLoginRequest) {
+        if (!mutex.isLocked()) {
+            const release = await mutex.acquire();
+
+            try {
+                const state = api.getState() as RootState;
+                const refreshToken = state.auth.refreshToken;
+
+                if (refreshToken) {
+                    const refreshResult = await baseQuery(
+                        {
+                            url: `${AUTH_URL}/refresh`,
+                            method: "POST",
+                            body: { refreshToken }
+                        },
+                        api,
+                        extraOptions
+                    )
+
+                    if (refreshResult.data) {
+                        const data = refreshResult.data as {
+                            accessToken: string;
+                            refreshToken: string;
+                            expiresAt: string;
+                        };
+
+                        api.dispatch(setCredentials({
+                            accessToken: data.accessToken,
+                            refreshToken: data.refreshToken,
+                            expiresAt: data.expiresAt
+                        }));
+
+                        result = await baseQuery(args, api, extraOptions);
+                    }
+                    else {
+                        api.dispatch(clearCredentials());
+                    }
+                }
+                else {
+                    api.dispatch(clearCredentials());
+                }
+            } finally {
+                release();
+            }
+        }
+        else {
+            await mutex.waitForUnlock();
+            result = await baseQuery(args, api, extraOptions);
+        }
+    }
+
+    return result;
+};
+
+
 export const teaApi = createApi({
     reducerPath: "teaApi",
 
-    baseQuery: fetchBaseQuery({
-        baseUrl: BASE_URL,
-        prepareHeaders: (headers, { getState }) => {
-            const state = getState() as RootState
-            const token = state.auth.accessToken;
-
-            if (token) {
-                headers.set("Authorization", `Bearer ${token}`);
-            }
-
-            return headers;
-        }
-    }),
+    baseQuery: baseQueryWithReauth,
 
     tagTypes: [TAG_TEA_PUBLIC, TAG_BREWING_METHOD, TAG_REVIEW, TAG_USER, TAG_TEA_PRIVATE],
 

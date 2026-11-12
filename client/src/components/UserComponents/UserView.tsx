@@ -14,16 +14,16 @@ const UserView = () => {
         isLoading,
         isError
     } = useGetCurrentUserQuery(undefined, {
-        skip: !accessToken,
+        skip: accessToken === null,
         refetchOnMountOrArgChange: true
     });
 
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (user)
+        if (accessToken && user)
             dispatch(setUser(user));
-    }), [user, dispatch];
+    }), [accessToken, user, dispatch];
 
     if (isLoading)
         return <Loader />
