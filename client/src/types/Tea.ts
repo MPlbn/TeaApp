@@ -9,6 +9,8 @@ export type Tea = {
     shop: string;
     description: string;
     flavors: FlavorType[];
+    isPublic: boolean;
+    ownerId: string | null;
 };
 
 export type ShortTea = { // Naming to change probs. used for fetching data to fill TeaList components

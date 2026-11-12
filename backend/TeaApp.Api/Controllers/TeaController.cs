@@ -78,7 +78,8 @@ public class TeaController : ControllerBase {
             Description = tea.Description,
             Flavors = tea.Flavors
             .Select(flavor => flavor.FlavorType)
-            .ToList()
+            .ToList(),
+            OwnerId = tea.OwnerId
         })
         .FirstOrDefaultAsync();
 
@@ -103,7 +104,8 @@ public class TeaController : ControllerBase {
             Description = tea.Description,
             Flavors = tea.Flavors
             .Select(flavor => flavor.FlavorType)
-            .ToList()
+            .ToList(),
+            OwnerId = tea.OwnerId
         })
         .FirstOrDefaultAsync();
 
@@ -117,6 +119,8 @@ public class TeaController : ControllerBase {
     public async Task<IActionResult> CreateTea(TeaDTO DTO) {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var isAdmin = User.IsInRole("Admin");
+        var isPublic = isAdmin && DTO.IsPublic;
+
 
         var tea = new Tea {
             Name = DTO.Name,
@@ -125,13 +129,14 @@ public class TeaController : ControllerBase {
             Origin = DTO.Origin,
             Shop = DTO.Shop,
             Description = DTO.Description,
+            OwnerId = isPublic ? null : userId,
             Flavors = DTO.Flavors
             .Distinct()
             .Select(flavorType => new Flavor {
                 FlavorType = flavorType
             })
             .ToList(),
-            IsPublic = isAdmin && DTO.IsPublic
+            IsPublic = isPublic
         };
 
         _dbContext.TeaDbSet.Add(tea);

@@ -27,8 +27,6 @@ export function brewingMethodFormValidator(formData: BrewingMethodFormData): boo
 }
 
 export function reviewFormValidator(formData: ReviewFormData): boolean {
-    if (formData.teaId <= 0 || formData.userId <= 0) return false //userId to change, it will be string
-
     if (formData.review === "") return false;
 
     if (formData.rating === null) return false;

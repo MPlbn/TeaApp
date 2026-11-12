@@ -40,14 +40,14 @@ export const emptyBrewingMethodFormData = {
 
 export type ReviewFormData = {
     teaId: number;
-    userId: number;
+    userId: string;
     review: string;
     rating: number | null;
 };
 
 export const emptyReviewFormData = {
     teaId: 0,
-    userId: 0,
+    userId: "",
     review: "",
     rating: 0
 } as ReviewFormData;

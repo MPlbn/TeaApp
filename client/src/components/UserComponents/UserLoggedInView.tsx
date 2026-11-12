@@ -53,7 +53,7 @@ const UserLoggedInView = () => {
                 <Text>ID: {user?.id}</Text>
                 <Text>Username: {user?.userName}</Text>
                 <Text>Email: {user?.email}</Text>
-                {user?.roles.map((role) => { return <Text>Rola: {role}</Text> })}
+                {user?.roles.map((role) => { return <Text key={role}>Rola: {role}</Text> })}
                 <Text></Text>
                 <Button onClick={() => setActiveForm("changePassword")}>Zmień hasło</Button>
                 <Button onClick={() => setActiveForm("changeData")}>Zmień dane</Button>

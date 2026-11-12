@@ -4,12 +4,15 @@ import {
     Select,
     NumberInput,
     Textarea,
-    MultiSelect
+    MultiSelect,
+    GridCol
 } from "@mantine/core";
-import { TeaType, FlavorType } from "../../types/enums";
+import { TeaType, FlavorType, UserRole } from "../../types/enums";
 import { getTeaTypeStringVersion } from "../../utils/utils";
 import { TeaFormData } from "../../types/FormDatas";
 import { flavorOptions } from "../../config/FlavorOptions";
+import { User } from "../../types/User";
+import { CollectionType } from "../../types/enums";
 
 const teaTypeOptions = Object.values(TeaType)
     .filter((value): value is TeaType => typeof value === 'number')
@@ -24,9 +27,35 @@ type TeaFormProps = {
         key: TKey,
         value: TeaFormData[TKey]
     ) => void;
+    user: User | null;
+    collectionType: CollectionType | null;
+    setCollectionType: (value: CollectionType | null) => void;
 };
 
 const TeaForm = (props: TeaFormProps) => {
+
+    const renderSelection = () => {
+        if (!props.user || !props.user.roles.includes(UserRole.Admin)) return null;
+
+        const data = [
+            { value: String(CollectionType.Public), label: "Publiczna" },
+            { value: String(CollectionType.Private), label: "Prywatna" }
+        ];
+
+        return (
+            <GridCol span={{ base: 12, sm: 6 }}>
+                <Select
+                    label="Rodzaj kolekcji"
+                    placeholder="Wybierz rodzaj"
+                    data={data}
+                    value={props.collectionType === null ? null : String(props.collectionType)}
+                    onChange={(value) => props.setCollectionType(value === null ? null : Number(value) as CollectionType)}
+                    clearable
+                />
+            </GridCol>
+        )
+    }
+
     return (
         <Grid gap="md">
             <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -114,6 +143,8 @@ const TeaForm = (props: TeaFormProps) => {
                     autosize
                 />
             </Grid.Col>
+
+            {renderSelection()}
         </Grid>
     );
 }

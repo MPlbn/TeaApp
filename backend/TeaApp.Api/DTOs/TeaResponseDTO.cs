@@ -11,4 +11,5 @@ public class TeaResponseDTO {
     public string Shop { get; set; } = "";
     public string Description { get; set; } = "";
     public List<FlavorType> Flavors { get; set; } = [];
+    public string? OwnerId { get; set; }
 }

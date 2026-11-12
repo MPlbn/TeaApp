@@ -67,8 +67,11 @@ else {
     var certificatePassword = builder.Configuration["DP_CERT_PASSWORD"]
         ?? throw new InvalidOperationException("DP_CERT_PASSWORD is not configured.");
 
+    var certificatePath = builder.Configuration["DP_CERT_PATH"]
+    ?? throw new InvalidOperationException("DP_CERT_PATH is not configured.");
+
     var certificate = X509CertificateLoader.LoadPkcs12FromFile(
-        "/https/dp-keys.pfx",
+        certificatePath,
         certificatePassword,
         X509KeyStorageFlags.EphemeralKeySet
     );

@@ -6,14 +6,17 @@ import { AuthResponse, ChangePasswordRequest, RefreshTokenRequest, UpdateProfile
 import { RootState } from "../store/store";
 
 const BASE_URL = "http://localhost:8080/api";
-const TEA_URL = "Tea/public";
+const PUBLIC_TEA_URL = "Tea/public";
+const PRIVATE_TEA_URL = "Tea/private";
+const TEA_URL = "Tea";
 const BREWING_METHOD_URL = "BrewingMethod";
 const REVIEW_URL = "TeaReview";
 const AUTH_URL = "auth";
 
-const TAG_TEA = "Tea"
-const TAG_BREWING_METHOD = "BrewingMethod"
-const TAG_REVIEW = "TeaReview"
+const TAG_TEA_PUBLIC = "Tea";
+const TAG_TEA_PRIVATE = "TeaPrivate";
+const TAG_BREWING_METHOD = "BrewingMethod";
+const TAG_REVIEW = "TeaReview";
 const TAG_USER = "User";
 
 
@@ -38,19 +41,31 @@ export const teaApi = createApi({
         }
     }),
 
-    tagTypes: [TAG_TEA, TAG_BREWING_METHOD, TAG_REVIEW, TAG_USER],
+    tagTypes: [TAG_TEA_PUBLIC, TAG_BREWING_METHOD, TAG_REVIEW, TAG_USER, TAG_TEA_PRIVATE],
 
     endpoints: (build) => ({
         //Tea
         getAllTeasForList: build.query<ShortTea[], void>({
-            query: () => TEA_URL,
-            providesTags: [TAG_TEA]
+            query: () => PUBLIC_TEA_URL,
+            providesTags: [TAG_TEA_PUBLIC]
+        }),
+
+        getAllTeasPrivateForList: build.query<ShortTea[], void>({
+            query: () => PRIVATE_TEA_URL,
+            providesTags: [TAG_TEA_PRIVATE]
         }),
 
         getTeaByID: build.query<Tea, number>({
-            query: (teaId) => `${TEA_URL}/${teaId}`,
+            query: (teaId) => `${PUBLIC_TEA_URL}/${teaId}`,
             providesTags: (_result, _error, teaId) => [
-                { type: TAG_TEA, id: teaId }
+                { type: TAG_TEA_PUBLIC, id: teaId }
+            ]
+        }),
+
+        getTeaByIDPrivate: build.query<Tea, number>({
+            query: (teaId) => `${PRIVATE_TEA_URL}/${teaId}`,
+            providesTags: (_result, _error, teaId) => [
+                { type: TAG_TEA_PRIVATE, id: teaId }
             ]
         }),
 
@@ -60,27 +75,27 @@ export const teaApi = createApi({
                 method: "POST",
                 body: tea
             }),
-            invalidatesTags: [TAG_TEA]
+            invalidatesTags: [TAG_TEA_PUBLIC, TAG_TEA_PRIVATE]
         }),
 
         editTea: build.mutation<void, { teaId: number; tea: NewTea }>({
             query: ({ teaId: teaId, tea: tea }) => ({
-                url: `${TEA_URL}/${teaId}`,
+                url: `${PUBLIC_TEA_URL}/${teaId}`,
                 method: "PUT",
                 body: tea
             }),
             invalidatesTags: (_result, _error, argument) => [
-                TAG_TEA,
-                { type: TAG_TEA, id: argument.teaId }
+                TAG_TEA_PUBLIC,
+                { type: TAG_TEA_PUBLIC, id: argument.teaId }
             ]
         }),
 
         deleteTea: build.mutation<void, number>({
             query: (id) => ({
-                url: `${TEA_URL}/${id}`,
+                url: `${PUBLIC_TEA_URL}/${id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: [TAG_TEA]
+            invalidatesTags: [TAG_TEA_PUBLIC]
         }),
 
         //BrewingMethod
@@ -210,7 +225,9 @@ export const teaApi = createApi({
 
 export const {
     useGetAllTeasForListQuery,
+    useGetAllTeasPrivateForListQuery,
     useGetTeaByIDQuery,
+    useGetTeaByIDPrivateQuery,
     useAddTeaMutation,
     useEditTeaMutation,
     useDeleteTeaMutation,

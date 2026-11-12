@@ -1,4 +1,4 @@
-import{
+import {
     Paper,
     Text,
     UnstyledButton,
@@ -7,23 +7,24 @@ import{
 } from '@mantine/core';
 import { ShortTea } from '../../types/Tea';
 import { useNavigate } from 'react-router';
-import { 
+import {
     getTeaDetailsPath,
     getTeaTypeStringVersion
 } from '../../utils/utils';
 
 type TeaListItemProps = {
     shortTea: ShortTea;
+    isPublic: boolean;
 };
 
 const TeaListItem = (props: TeaListItemProps) => {
     const navigate = useNavigate();
 
     function handleClick(): void {
-        navigate(getTeaDetailsPath(props.shortTea.id))
+        navigate(getTeaDetailsPath(props.shortTea.id, props.isPublic))
     }
-    
-    return(
+
+    return (
         <UnstyledButton
             onClick={handleClick}
             w="100%"
@@ -34,24 +35,24 @@ const TeaListItem = (props: TeaListItemProps) => {
                 radius="md"
             >
                 <Group wrap="nowrap" align="stretch" gap="xs">
-                <Text fw={600} style={{ flex: 1 }}>
-                    {props.shortTea.name}
-                </Text>
+                    <Text fw={600} style={{ flex: 1 }}>
+                        {props.shortTea.name}
+                    </Text>
 
-                <Divider orientation="vertical" />
+                    <Divider orientation="vertical" />
 
-                <Text size="sm" c="dimmed" style={{ flex: 1 }} ta="center">
-                    {getTeaTypeStringVersion(props.shortTea.type)}
-                </Text>
+                    <Text size="sm" c="dimmed" style={{ flex: 1 }} ta="center">
+                        {getTeaTypeStringVersion(props.shortTea.type)}
+                    </Text>
 
-                <Divider orientation="vertical" />
+                    <Divider orientation="vertical" />
 
-                <Text size="sm" style={{ flex: 1 }} ta="right">
-                    {props.shortTea.origin}
-                </Text>
+                    <Text size="sm" style={{ flex: 1 }} ta="right">
+                        {props.shortTea.origin}
+                    </Text>
                 </Group>
             </Paper>
-        </UnstyledButton>      
+        </UnstyledButton>
     );
 }
 export default TeaListItem;

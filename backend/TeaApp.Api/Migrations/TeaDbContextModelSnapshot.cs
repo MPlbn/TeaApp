@@ -375,8 +375,8 @@ namespace TeaApp.Api.Migrations
                     b.Property<int>("TeaId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

@@ -7,6 +7,7 @@ import ReviewAdditionView from "../../AdditionComponents/ReviewAdditionView";
 
 type TeaDetailsReviewsSetProps = {
     teaID: number;
+    canAddReview: boolean;
 }
 
 const TeaDetailsReviewsSet = (props: TeaDetailsReviewsSetProps) => {
@@ -18,37 +19,47 @@ const TeaDetailsReviewsSet = (props: TeaDetailsReviewsSetProps) => {
         isLoading
     } = useGetReviewsByTeaIDQuery(props.teaID);
 
-    if(isLoading){
-        return <Loader/>
+    if (isLoading) {
+        return <Loader />
     }
-    
-    if(fetchingError){
+
+    if (fetchingError) {
         return <Text c="red">Błąd: {getApiErrorMessage(fetchingError)}</Text>
     }
 
     const reviews = (fetchedReviews ?? []);
 
-    return(
-        <>
-        <Paper withBorder radius="md">
-            <Stack>
-                {reviews.map((review) => {
-                    return <TeaDetailsReview key={review.id} review={review}/>
-                })}
-                <Button onClick={() => setIsReviewAdditionOpen(true)}>Dodaj Recenzję</Button>
-            </Stack>
-        </Paper>
+    const renderAddButton = () => {
+        if (!props.canAddReview) return <></>
 
-        <Modal
-            opened={isReviewAdditionOpen}
-            onClose={() => setIsReviewAdditionOpen(false)}
-            title=""
-            centered
-            closeOnClickOutside={false}
-            closeOnEscape={false}
-        >
-            <ReviewAdditionView teaID={props.teaID} onFinish={() => setIsReviewAdditionOpen(false)}/>
-        </Modal>
+        return (
+            <>
+                <Button onClick={() => setIsReviewAdditionOpen(true)}>Dodaj Recenzję</Button>
+            </>
+        )
+    }
+
+    return (
+        <>
+            <Paper withBorder radius="md">
+                <Stack>
+                    {reviews.map((review) => {
+                        return <TeaDetailsReview key={review.id} review={review} />
+                    })}
+                    {renderAddButton()}
+                </Stack>
+            </Paper>
+
+            <Modal
+                opened={isReviewAdditionOpen}
+                onClose={() => setIsReviewAdditionOpen(false)}
+                title=""
+                centered
+                closeOnClickOutside={false}
+                closeOnEscape={false}
+            >
+                <ReviewAdditionView teaID={props.teaID} onFinish={() => setIsReviewAdditionOpen(false)} />
+            </Modal>
         </>
     );
 };

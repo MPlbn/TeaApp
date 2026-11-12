@@ -1,4 +1,4 @@
-import { 
+import {
     Stack,
     Title,
     Text
@@ -13,7 +13,7 @@ import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 
 const TeaListView = () => {
     const [selectedTeaType, setSelectedTeaType] = useState<TeaType | null>(null);
-    
+
     const {
         data: teas,
         error: fetchingError,
@@ -21,11 +21,11 @@ const TeaListView = () => {
     } = useGetAllTeasForListQuery();
 
 
-    if(isLoading) {
-        return <Loader/>;
+    if (isLoading) {
+        return <Loader />;
     }
-    
-    if(fetchingError) {
+
+    if (fetchingError) {
         return <Text c="red">Błąd: {getApiErrorMessage(fetchingError)}</Text>
     }
 
@@ -45,7 +45,7 @@ const TeaListView = () => {
             </Text>
 
             <Stack gap="xs">
-                {filteredTeas.map((tea) => {return <TeaListItem key={tea.id} shortTea={tea}/>})}
+                {filteredTeas.map((tea) => { return <TeaListItem key={tea.id} shortTea={tea} isPublic={true} /> })}
             </Stack>
         </Stack>
     );

@@ -7,10 +7,8 @@ public class TeaReviewDTO {
     [Range(1, int.MaxValue)]
     public int? TeaId { get; set; }
 
-    //User will be changed once Users are implemented
     [Required]
-    [Range(1, int.MaxValue)]
-    public int? UserId { get; set; }
+    public string? UserId { get; set; }
 
     [Required]
     [MinLength(1)]

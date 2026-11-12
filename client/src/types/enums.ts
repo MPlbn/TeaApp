@@ -2,7 +2,9 @@ export enum ViewType {
     TeaListView = '/tea-list',
     AddTeaView = '/add-tea',
     SettingsView = '/settings',
-    UserView = '/user'
+    UserView = '/user',
+    PrivateTeaListView = '/tea-list-private', // To change for private 
+    Teaware = '/teaware-list' // To change for teaware later
 }
 
 export enum TeaType {
@@ -56,4 +58,14 @@ export enum FlavorType {
     Intense = 32,
     Sour = 33,
     NO_NOTES = 34
+}
+
+export enum UserRole {
+    User = "User",
+    Admin = "Admin"
+}
+
+export enum CollectionType {
+    Public = 0,
+    Private = 1
 }

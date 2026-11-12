@@ -6,7 +6,8 @@ import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { useGetBrewingMethodsByTeaIDQuery } from "../../../services/teaApi";
 
 type TeaDetailsBrewingMethodsSetProps = {
-    teaID: number
+    teaID: number,
+    canModifyBrewingMethods: boolean
 };
 
 const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) => {
@@ -18,41 +19,52 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
         isLoading
     } = useGetBrewingMethodsByTeaIDQuery(props.teaID);
 
-    if(isLoading){
-        return <Loader/>
+    if (isLoading) {
+        return <Loader />
     }
 
-    if(fetchingError){
+    if (fetchingError) {
         return <Text c="red">Błąd: {getApiErrorMessage(fetchingError)}</Text>
     }
 
     const brewingMethods = (fetchedBrewingMethods ?? []);
 
-    return(
+    const renderAddButton = () => {
+        if (!props.canModifyBrewingMethods) return <></>
+
+        return (
+            <>
+                <Button onClick={() => setIsBrewingMethodAdditionOpen(true)}>Dodaj</Button>
+            </>
+        )
+    }
+
+    return (
         <>
-        <Text>Sposoby parzenia</Text>
+            <Text>Sposoby parzenia</Text>
             <Paper withBorder radius="md">
                 <Stack>
                     {brewingMethods.map((brewingMethod) => {
-                        return <TeaDetailsBrewingMethod 
-                            key={brewingMethod.id} 
-                            brewingMethod={brewingMethod} 
+                        return <TeaDetailsBrewingMethod
+                            key={brewingMethod.id}
+                            brewingMethod={brewingMethod}
+                            canModify={props.canModifyBrewingMethods}
                         />
                     })}
-                    <Button onClick={() => setIsBrewingMethodAdditionOpen(true)}>Dodaj</Button>
+                    {renderAddButton()}
                 </Stack>
             </Paper>
 
-        <Modal
-            opened={isBrewingMethodAdditionOpen}
-            onClose={() => setIsBrewingMethodAdditionOpen(false)}
-            title=""
-            centered
-            closeOnClickOutside={false}
-            closeOnEscape={false}
-        >
-            <BrewingMethodAdditionView teaID={props.teaID} onFinish={() => setIsBrewingMethodAdditionOpen(false)}/>
-        </Modal>
+            <Modal
+                opened={isBrewingMethodAdditionOpen}
+                onClose={() => setIsBrewingMethodAdditionOpen(false)}
+                title=""
+                centered
+                closeOnClickOutside={false}
+                closeOnEscape={false}
+            >
+                <BrewingMethodAdditionView teaID={props.teaID} onFinish={() => setIsBrewingMethodAdditionOpen(false)} />
+            </Modal>
         </>
     );
 };

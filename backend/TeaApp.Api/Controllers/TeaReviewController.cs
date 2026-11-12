@@ -18,17 +18,12 @@ public class TeaReviewController : ControllerBase {
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TeaReviewResponseDTO>>> GetReviews(
-        int? teaId,
-        int? userId
+        int? teaId
     ) {
         var query = _dbContext.TeaReviewDbSet.AsQueryable();
 
         if (teaId.HasValue) {
             query = query.Where(review => review.TeaId == teaId.Value);
-        }
-
-        if (userId.HasValue) {
-            query = query.Where(review => review.UserId == userId.Value);
         }
 
         var reviews = await query.Select(review => new TeaReviewResponseDTO {
@@ -43,18 +38,18 @@ public class TeaReviewController : ControllerBase {
         return Ok(reviews);
     }
     [HttpPost]
-    public async Task<ActionResult<TeaReviewResponseDTO>> CreateTeaReview(TeaReviewDTO uDTO) {
-        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.Id == uDTO.TeaId!.Value);
+    public async Task<ActionResult<TeaReviewResponseDTO>> CreateTeaReview(TeaReviewDTO DTO) {
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.Id == DTO.TeaId!.Value);
 
         if (!teaExists) {
             return BadRequest("The specified tea does not exist.");
         }
 
         var review = new TeaReview {
-            TeaId = uDTO.TeaId!.Value,
-            UserId = uDTO.UserId!.Value,
-            Review = uDTO.Review,
-            Rating = uDTO.Rating
+            TeaId = DTO.TeaId!.Value,
+            UserId = DTO.UserId!,
+            Review = DTO.Review,
+            Rating = DTO.Rating
         };
 
         _dbContext.TeaReviewDbSet.Add(review);
@@ -70,32 +65,32 @@ public class TeaReviewController : ControllerBase {
 
         return StatusCode(StatusCodes.Status201Created, response);
     }
-    [HttpPut("{uID:int}")]
-    public async Task<IActionResult> UpdateTeaReview(int uID, TeaReviewDTO uDTO) {
-        var review = await _dbContext.TeaReviewDbSet.FindAsync(uID);
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateTeaReview(int id, TeaReviewDTO DTO) {
+        var review = await _dbContext.TeaReviewDbSet.FindAsync(id);
 
         if (review == null) {
             return NotFound();
         }
 
-        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.Id == uDTO.TeaId!.Value);
+        var teaExists = await _dbContext.TeaDbSet.AnyAsync(xTea => xTea.Id == DTO.TeaId!.Value);
 
         if (!teaExists) {
             return BadRequest("The specified tea does not exist.");
         }
 
-        review.TeaId = uDTO.TeaId!.Value;
-        review.UserId = uDTO.UserId!.Value;
-        review.Review = uDTO.Review;
-        review.Rating = uDTO.Rating;
+        review.TeaId = DTO.TeaId!.Value;
+        review.UserId = DTO.UserId!;
+        review.Review = DTO.Review;
+        review.Rating = DTO.Rating;
 
         await _dbContext.SaveChangesAsync();
 
         return NoContent();
     }
-    [HttpDelete("{uID:int}")]
-    public async Task<IActionResult> DeleteTeaReview(int uID) {
-        var review = await _dbContext.TeaReviewDbSet.FindAsync(uID);
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteTeaReview(int id) {
+        var review = await _dbContext.TeaReviewDbSet.FindAsync(id);
 
         if (review == null) {
             return NotFound();

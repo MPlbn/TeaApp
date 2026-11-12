@@ -1,27 +1,65 @@
 import { useParams } from "react-router";
-import { Stack, Text } from "@mantine/core";
+import { Loader, Stack, Text } from "@mantine/core";
 import TeaDetailsBrewingMethodsSet from "./BrewingMethodComponents/TeaDetailsBrewingMethodsSet";
 import TeaDetailsReviewsSet from "./ReviewComponents/TeaDetailsReviewsSet";
 import TeaDetailsInfoSection from "./TeaComponents/TeaDetailsInfoSection";
+import { useAppSelector } from "../../store/hooks";
+import { useGetTeaByIDPrivateQuery, useGetTeaByIDQuery } from "../../services/teaApi";
+import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
+import { isUserAuthorizedToAddReview, isUserAuthorizedToEditTea } from "../../utils/utils";
 
-const TeaDetailsView = () => {
-    const {id} = useParams<{id: string}>(); // TODO other way
+const TEA_NOT_FOUND_MESSAGE = "Nie znaleziono herbaty.";
+
+
+type TeaDetailsViewProps = {
+    isPublic: boolean;
+}
+
+const TeaDetailsView = (props: TeaDetailsViewProps) => {
+    const { id } = useParams<{ id: string }>(); // TODO other way
     const teaID = Number(id);
 
-    if(!id ||
-        !Number.isInteger(teaID) ||
-        teaID <= 0
-    ) {
+    const user = useAppSelector((state) => state.auth.user);
+
+    const shouldSkipQuery = !id || !Number.isInteger(teaID) || teaID <= 0;
+
+    const publicTeaQuery = useGetTeaByIDQuery(teaID, { skip: shouldSkipQuery || !props.isPublic });
+
+    const privateTeaQuery = useGetTeaByIDPrivateQuery(teaID, { skip: shouldSkipQuery || props.isPublic });
+
+    const {
+        data: tea,
+        error: fetchingError,
+        isLoading
+    } = props.isPublic ? publicTeaQuery : privateTeaQuery;
+
+    if (shouldSkipQuery) {
         return <Text c="red">Nieprawidłowe ID herbaty.</Text>;
     }
 
+    if (isLoading) {
+        return <Loader />
+    }
+
+    if (fetchingError) {
+        return <Text c="red">Błąd: {getApiErrorMessage(fetchingError)}</Text>
+    }
+
+    if (!tea) {
+        return <Text c="red">{TEA_NOT_FOUND_MESSAGE}</Text>;
+    }
+
+    const isUserAuthorized = isUserAuthorizedToEditTea(tea, user);
+
+    const canUserAddReview = isUserAuthorizedToAddReview(tea, user);
+
     return (
         <>
-        <Stack>
-            <TeaDetailsInfoSection teaID={teaID}/>
-            <TeaDetailsBrewingMethodsSet teaID={teaID}/>
-            <TeaDetailsReviewsSet teaID={teaID}/>
-        </Stack>
+            <Stack>
+                <TeaDetailsInfoSection tea={tea} canModifyTea={isUserAuthorized} />
+                <TeaDetailsBrewingMethodsSet teaID={teaID} canModifyBrewingMethods={isUserAuthorized} />
+                <TeaDetailsReviewsSet teaID={teaID} canAddReview={canUserAddReview} />
+            </Stack>
         </>
     );
 }

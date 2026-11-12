@@ -5,6 +5,7 @@ import { useAddReviewMutation } from "../../services/teaApi";
 import { convertReviewFormDataToNewReview } from "../../utils/utils";
 import ReviewForm from "../FormComponents/ReviewForm";
 import FormPanel from "../FormComponents/FormPanel";
+import { useAppSelector } from "../../store/hooks";
 
 const REVIEW_ADD_SUCCESS_MESSAGE = "Poprawnie dodano recenzję!";
 
@@ -14,6 +15,10 @@ type ReviewAdditionViewProps = {
 }
 
 const ReviewAdditionView = (props: ReviewAdditionViewProps) => {
+    const user = useAppSelector((state) => state.auth.user);
+
+    if (!user) return <>GUEST USER, HOW DID YOU GET HERE</>;
+
     const {
         formData,
         updateField,
@@ -22,12 +27,12 @@ const ReviewAdditionView = (props: ReviewAdditionViewProps) => {
         getData
     } = useForm<ReviewFormData>(reviewFormValidator, emptyReviewFormData);
 
-    const [addReview, {isLoading: isAdding}] = useAddReviewMutation();
+    const [addReview, { isLoading: isAdding }] = useAddReviewMutation();
 
     const handleSave = async () => {
-        const reviewToAdd = convertReviewFormDataToNewReview(getData(), props.teaID, 1) // 1 - userID before users work - TODO change when user added
+        const reviewToAdd = convertReviewFormDataToNewReview(getData(), props.teaID, user.id)
 
-        if(reviewToAdd === null){
+        if (reviewToAdd === null) {
             return;
         }
         await addReview(reviewToAdd).unwrap();
@@ -37,7 +42,7 @@ const ReviewAdditionView = (props: ReviewAdditionViewProps) => {
         clearForm();
     }
 
-    return(
+    return (
         <FormPanel
             title="Dodaj recenzję"
             description="Uzupełnij informacje o recenzji"

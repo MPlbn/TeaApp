@@ -24,6 +24,7 @@ services:
       Jwt__Issuer: ${JWT_ISSUER}
       Jwt__Audience: ${JWT_AUDIENCE}
       DP_CERT_PASSWORD: ${DP_CERT_PASSWORD}
+      DP_CERT_PATH: /https/dp-keys.pfx
     ports:
       - "8080:8080"
     depends_on:

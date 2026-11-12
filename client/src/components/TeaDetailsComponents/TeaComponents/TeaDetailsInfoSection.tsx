@@ -5,74 +5,68 @@ import { Loader, Text, Stack, Button, Group, Modal } from "@mantine/core";
 import { useNavigate } from "react-router";
 import { ViewType } from "../../../types/enums";
 import TeaEditorView from "../../EditorComponents/TeaEditorView";
-import { useAppDispatch } from "../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { openInfoModal } from "../../../store/uiSlice";
-import { useDeleteTeaMutation, useGetTeaByIDQuery } from "../../../services/teaApi";
+import { useDeleteTeaMutation, useGetTeaByIDPrivateQuery, useGetTeaByIDQuery } from "../../../services/teaApi";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
+import { isUserAuthorizedToEditTea } from "../../../utils/utils";
+import { Tea } from "../../../types/Tea";
 
-const TEA_NOT_FOUND_MESSAGE = "Nie znaleziono herbaty.";
 const TEA_DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto herbatę!";
 
 type TeaDetailsInfoSectionProps = {
-    teaID: number;
+    tea: Tea,
+    canModifyTea: boolean
 };
 
 const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
+
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const {
-        data: tea,
-        error: fetchingError,
-        isLoading
-    } = useGetTeaByIDQuery(props.teaID, {skip: !Number.isInteger(props.teaID) || props.teaID <= 0});
-
-    const [deleteTea, {isLoading: isDeleting}] = useDeleteTeaMutation();
+    const [deleteTea, { isLoading: isDeleting }] = useDeleteTeaMutation();
 
     const handleDelete = async () => {
         try {
-            await deleteTea(props.teaID).unwrap();
+            await deleteTea(props.tea.id).unwrap();
             navigate(ViewType.TeaListView);
             dispatch(openInfoModal({
                 message: TEA_DELETE_SUCCESS_MESSAGE
             }));
         }
-        catch(error) {
+        catch (error) {
             dispatch(openInfoModal({
                 message: getApiErrorMessage(error)
             }));
         }
     }
-    
-    
-    if(isLoading){
-        return <Loader/>
-    }
-    
-    if(fetchingError){
-        return <Text c="red">Błąd: {getApiErrorMessage(fetchingError)}</Text>
-    }
-    
-    if(!tea){
-        return <Text c="red">{TEA_NOT_FOUND_MESSAGE}</Text>;
-    }
 
-    return(
-        <Stack>
-            <Group>
-                <TeaDetailsTitle name={tea.name} onBack={() => navigate(ViewType.TeaListView)}/>
+    const renderModificationButtons = () => {
+        if (!props.canModifyTea) return <></>;
+
+        return (
+            <>
                 <Button onClick={() => setIsEditorOpen(true)}>Edytuj</Button>
                 <Button c="red" variant="outline" onClick={handleDelete} loading={isDeleting}>Usuń</Button>
+            </>
+        )
+    }
+
+    return (
+        <Stack>
+            <Group>
+                <TeaDetailsTitle name={props.tea.name} onBack={() => navigate(-1)} />
+                {renderModificationButtons()}
             </Group>
-            <TeaDetailsDetailField tea={tea}/>
+            <TeaDetailsDetailField tea={props.tea} />
             <Modal
                 opened={isEditorOpen}
                 onClose={() => setIsEditorOpen(false)}
                 centered
                 size="lg"
             >
-                <TeaEditorView tea={tea} onFinish={() => setIsEditorOpen(false)}/>
+                <TeaEditorView tea={props.tea} onFinish={() => setIsEditorOpen(false)} />
             </Modal>
         </Stack>
     );

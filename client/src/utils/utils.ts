@@ -1,15 +1,16 @@
 import { BrewingMethod } from "../types/BrewingMethod";
-import { FlavorType, MethodType, ViewType } from "../types/enums";
+import { FlavorType, MethodType, UserRole, ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
 import { BrewingMethodFormData, ReviewFormData, TeaFormData, UserLoginFormData, UserRegisterFormData } from "../types/FormDatas";
 import { Tea } from "../types/Tea";
 import { NewBrewingMethod, NewReview, NewTea } from "../services/teaApi";
 import { Review } from "../types/Review";
 import { flavorOptions } from "../config/FlavorOptions";
-import { UserLoginRequest, UserRegisterRequest } from "../types/User";
+import { User, UserLoginRequest, UserRegisterRequest } from "../types/User";
 
-export function getTeaDetailsPath(teaID: number | string): string {
-    return `${ViewType.TeaListView}/${teaID}`;
+export function getTeaDetailsPath(teaID: number | string, isPublic: boolean): string {
+    const path = isPublic ? `${ViewType.TeaListView}/${teaID}` : `${ViewType.PrivateTeaListView}/${teaID}`
+    return path;
 }
 
 export function getTeaTypeStringVersion(teaType: TeaType): string {
@@ -37,7 +38,7 @@ export function getFlavorTypeStringVersion(flavor: FlavorType): string {
     return flavorOptions.find((option) => option.value === flavor)?.label ?? "Nieznana nuta";
 }
 
-export function convertTeaFormDataToNewTea(teaFormData: TeaFormData): NewTea | null {
+export function convertTeaFormDataToNewTea(teaFormData: TeaFormData, isPublic: boolean): NewTea | null {
     if (teaFormData.type === null) {
         return null;
     }
@@ -53,7 +54,8 @@ export function convertTeaFormDataToNewTea(teaFormData: TeaFormData): NewTea | n
         price: teaFormData.price,
         shop: teaFormData.shop,
         description: teaFormData.description,
-        flavors: teaFormData.flavors
+        flavors: teaFormData.flavors,
+        isPublic: isPublic
     } as NewTea;
 }
 
@@ -123,7 +125,7 @@ export function convertBrewingMethodToBrewingMethodFormData(brewingMethod: Brewi
     } as BrewingMethodFormData;
 }
 
-export function convertReviewFormDataToNewReview(reviewFormData: ReviewFormData, teaID: number, userID: number): NewReview | null {
+export function convertReviewFormDataToNewReview(reviewFormData: ReviewFormData, teaID: number, userID: string): NewReview | null {
     if (reviewFormData.rating === null) {
         return null;
     }
@@ -158,4 +160,29 @@ export function convertUserRegisterFormDataToRegisterRequest(formData: UserRegis
         email: formData.email,
         password: formData.password
     } as UserRegisterRequest;
+}
+
+export function isUserAuthorizedToEditTea(tea: Tea, user: User | null): boolean {
+    if (!user) return false;
+
+    if (tea.ownerId === null && user.roles.includes(UserRole.Admin)) return true;
+    else if (tea.ownerId === user.id) return true;
+
+    return false;
+}
+
+export function isUserAuthorizedToAddReview(tea: Tea, user: User | null): boolean {
+    if (!user) return false
+
+    if (tea.ownerId === null || tea.ownerId === user.id) return true;
+
+    return false;
+}
+
+export function isUserAuthorizedToModifyReview(review: Review, user: User | null): boolean {
+    if (!user) return false
+
+    if (review.userId === user.id) return true
+
+    return false;
 }

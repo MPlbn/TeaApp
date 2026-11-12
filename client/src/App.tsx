@@ -10,6 +10,7 @@ import { Route, Routes, Navigate } from 'react-router';
 import TeaDetailsView from './components/TeaDetailsComponents/TeaDetailsView';
 import InfoModal from './components/InfoModal';
 import UserView from './components/UserComponents/UserView';
+import TeaListViewPrivate from './components/TeaListComponents/TeaListViewPrivate';
 
 export default function App() {
 
@@ -44,7 +45,14 @@ export default function App() {
           <Route
             path={`${ViewType.TeaListView}/:id`}
             element={
-              <TeaDetailsView />
+              <TeaDetailsView isPublic={true} />
+            }
+          />
+
+          <Route
+            path={`${ViewType.PrivateTeaListView}/:id`}
+            element={
+              <TeaDetailsView isPublic={false} />
             }
           />
 
@@ -61,6 +69,11 @@ export default function App() {
           <Route
             path={ViewType.UserView}
             element={<UserView />}
+          />
+
+          <Route
+            path={ViewType.PrivateTeaListView}
+            element={<TeaListViewPrivate />}
           />
 
           <Route
