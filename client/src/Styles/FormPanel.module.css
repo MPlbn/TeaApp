@@ -1,0 +1,50 @@
+.panel {
+    width: 100%;
+}
+
+.header {
+    align-items: center;
+}
+
+.form {
+    background-color: white;
+    border-color: var(--mantine-color-gray-2);
+}
+
+.actions {
+    margin-top: var(--mantine-spacing-sm);
+}
+
+.primaryButton {
+    min-width: 120px;
+    font-weight: 600;
+    transition:
+        background-color 150ms ease,
+        transform 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.primaryButton:not(:disabled):hover {
+    background-color: var(--mantine-color-teaGreen-7);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgb(80 113 77 / 18%);
+}
+
+.primaryButton:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.secondaryButton {
+    border-color: #E2E9DF;
+    color: #59665A;
+    background-color: #F7F9F5;
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease;
+}
+
+.secondaryButton:not(:disabled):hover {
+    background-color: #EDF3EA;
+    border-color: #CDDFCA;
+}

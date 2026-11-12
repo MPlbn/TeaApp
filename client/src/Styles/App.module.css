@@ -1,0 +1,8 @@
+.appShell {
+    background-color: var(--mantine-color-background-0);
+}
+
+.navbar {
+    background-color: transparent;
+    border: none;
+}

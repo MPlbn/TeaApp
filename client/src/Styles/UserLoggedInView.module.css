@@ -1,0 +1,56 @@
+.page {
+    width: 100%;
+    max-width: 520px;
+    margin-inline: auto;
+    padding-top: var(--mantine-spacing-xl);
+}
+
+.userInfo {
+    background-color: white;
+    border-color: #E5EAE2;
+}
+
+.fieldLabel {
+    color: #89928A;
+    font-size: var(--mantine-font-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.accountActions {
+    background-color: white;
+    border-color: #E5EAE2;
+}
+
+.accountAction {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--mantine-spacing-md);
+    border-radius: var(--mantine-radius-md);
+    color: var(--mantine-color-text);
+    transition: background-color 150ms ease;
+}
+
+.accountAction:hover {
+    background-color: #F1F6EF;
+}
+
+.modalContent {
+    border: 1px solid #E5EAE2;
+    box-shadow: 0 8px 30px rgb(52 74 54 / 12%);
+}
+
+.modalHeader {
+    background-color: white;
+}
+
+.modalTitle {
+    color: #344A36;
+    font-weight: 600;
+}
+
+.modalBody {
+    padding: var(--mantine-spacing-xl);
+}

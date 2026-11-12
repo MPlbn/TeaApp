@@ -1,0 +1,16 @@
+.input input {
+    background-color: #FAFBF9;
+    border-color: #E2E9DF;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.input input:focus {
+    border-color: var(--mantine-color-teaGreen-6);
+    box-shadow: 0 0 0 2px var(--mantine-color-teaGreen-0);
+}
+
+.label {
+    color: #465448;
+    font-weight: 500;
+    margin-bottom: 6px;
+}

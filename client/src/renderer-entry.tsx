@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import App from './App';
+import { theme } from './Styles/theme';
 
 const rootElement = document.getElementById('root');
 
@@ -16,12 +17,12 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-  <MantineProvider>
-  <BrowserRouter>
-  <Provider store={store}>
-    <App />
-  </Provider>
-  </BrowserRouter>
-  </MantineProvider>
+    <MantineProvider theme={theme}>
+      <BrowserRouter>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </BrowserRouter>
+    </MantineProvider>
   </StrictMode>,
 );

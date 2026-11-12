@@ -1,0 +1,23 @@
+.sidebar {
+    height: 100%;
+    background-color: "#edffde";
+    border: 1px solid var(--mantine-color-background-2);
+    border-radius: 0 var(--mantine-radius-xl) var(--mantine-radius-xl) 0;
+    padding: var(--mantine-spacing-md);
+}
+
+.navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.navLink {
+    border-radius: var(--mantine-radius-md);
+    padding: 10px 12px;
+    transition: background-color 150ms ease;
+}
+
+.navLinkLabel {
+    font-weight: 500;
+}

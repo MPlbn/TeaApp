@@ -23,7 +23,7 @@ const UserView = () => {
     useEffect(() => {
         if (accessToken && user)
             dispatch(setUser(user));
-    }), [accessToken, user, dispatch];
+    }, [accessToken, user, dispatch]);
 
     if (isLoading)
         return <Loader />

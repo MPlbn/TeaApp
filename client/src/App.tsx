@@ -11,20 +11,22 @@ import TeaDetailsView from './components/TeaDetailsComponents/TeaDetailsView';
 import InfoModal from './components/InfoModal';
 import UserView from './components/UserComponents/UserView';
 import TeaListViewPrivate from './components/TeaListComponents/TeaListViewPrivate';
+import styles from './Styles/App.module.css';
 
 export default function App() {
 
   return (
     <AppShell
       navbar={{
-        width: 240,
+        width: 260,
         breakpoint: 0
       }}
       padding="xl"
+      className={styles.appShell}
     >
       <InfoModal />
 
-      <AppShell.Navbar p="md">
+      <AppShell.Navbar className={styles.navbar}>
         <Sidebar />
       </AppShell.Navbar>
 

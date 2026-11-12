@@ -1,4 +1,4 @@
-import { Button, Modal, Stack, Text } from "@mantine/core"
+import { Badge, Button, Divider, Group, Modal, Paper, Stack, Text, Title, UnstyledButton } from "@mantine/core"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { useState } from "react";
 import { teaApi, useLogoutUserMutation } from "../../services/teaApi";
@@ -7,8 +7,10 @@ import { clearCredentials } from "../../store/authSlice";
 import UserChangePasswordPanel from "./UserChangePasswordPanel";
 import UserChangeDataPanel from "./UserChangeDataPanel";
 import { openInfoModal } from "../../store/uiSlice";
+import styles from '../../Styles/UserLoggedInView.module.css'
+import { IconChevronRight, IconLogout } from "@tabler/icons-react";
 
-const LOOGUT_SUCCESS_MESSAGE = "Poprawnie wylogowano!";
+const LOGOUT_SUCCESS_MESSAGE = "Poprawnie wylogowano!";
 
 const UserLoggedInView = () => {
     const user = useAppSelector((state) => state.auth.user);
@@ -39,7 +41,7 @@ const UserLoggedInView = () => {
                 const request = { refreshToken: refreshToken } as RefreshTokenRequest;
                 await logoutUser(request).unwrap();
             }
-            dispatch(openInfoModal({ message: LOOGUT_SUCCESS_MESSAGE }));
+            dispatch(openInfoModal({ message: LOGOUT_SUCCESS_MESSAGE }));
         } finally {
             dispatch(clearCredentials());
             dispatch(teaApi.util.resetApiState());
@@ -47,22 +49,91 @@ const UserLoggedInView = () => {
     }
 
     return (
-        <Stack>
-            <Stack>
-                <Text>Jesteś zalogowany!</Text>
-                <Text>ID: {user?.id}</Text>
-                <Text>Username: {user?.userName}</Text>
-                <Text>Email: {user?.email}</Text>
-                {user?.roles.map((role) => { return <Text key={role}>Rola: {role}</Text> })}
-                <Text></Text>
-                <Button onClick={() => setActiveForm("changePassword")}>Zmień hasło</Button>
-                <Button onClick={() => setActiveForm("changeData")}>Zmień dane</Button>
-                <Button
-                    onClick={handleLogout}
-                    loading={isLoggingOut}
-                >
-                    Wyloguj się
-                </Button>
+        <Stack className={styles.page} gap="lg">
+            <Stack gap="xs">
+                <Title order={1}>Twoje konto</Title>
+                <Text c="dimmed">
+                    Witaj ponownie! Oto informacje o Twoim koncie.
+                </Text>
+            </Stack>
+
+            <Paper className={styles.userInfo} withBorder p="xl" radius="lg">
+                <Stack gap="md">
+                    <Title order={3}>Dane użytkownika</Title>
+
+                    <Divider color="gray.2" />
+
+                    <Stack gap={3}>
+                        <Stack gap={2}>
+                            <Text className={styles.fieldLabel}>LOGIN</Text>
+                            <Text>{user?.userName}</Text>
+                        </Stack>
+
+                        <Stack gap={2}>
+                            <Text className={styles.fieldLabel}>ADRES E-MAIL</Text>
+                            <Text>{user?.email}</Text>
+                        </Stack>
+
+                        <Stack gap={2}>
+                            <Text className={styles.fieldLabel}>ROLE</Text>
+                            <Group gap="xs">
+                                {user?.roles.map((role) => (
+                                    <Badge key={role} color="teaGreen">
+                                        {role}
+                                    </Badge>
+                                ))}
+                            </Group>
+                        </Stack>
+                    </Stack>
+                </Stack>
+            </Paper>
+
+            <Stack gap="sm">
+                <Title order={3}>Zarządzanie kontem</Title>
+
+                <Paper withBorder radius="lg" p="xs" className={styles.accountActions}>
+                    <UnstyledButton
+                        className={styles.accountAction}
+                        onClick={() => setActiveForm("changeData")}
+                    >
+                        <Stack gap={2}>
+                            <Text fw={500}>Zmiana danych</Text>
+                            <Text size="xs" c="dimmed">
+                                Zaktualizuj login i adres e-mail
+                            </Text>
+                        </Stack>
+
+                        <IconChevronRight size={20} />
+                    </UnstyledButton>
+
+                    <Divider color="gray.2" />
+
+                    <UnstyledButton
+                        className={styles.accountAction}
+                        onClick={() => setActiveForm("changePassword")}
+                    >
+                        <Stack gap={2}>
+                            <Text fw={500}>Zmiana hasła</Text>
+                            <Text size="xs" c="dimmed">
+                                Zmień hasło do swojego konta
+                            </Text>
+                        </Stack>
+
+                        <IconChevronRight size={20} />
+                    </UnstyledButton>
+                </Paper>
+
+                <Group justify="flex-end">
+                    <Button
+                        variant="subtle"
+                        color="red"
+                        leftSection={<IconLogout size={16} />}
+                        onClick={handleLogout}
+                        loading={isLoggingOut}
+                    >
+                        Wyloguj się
+                    </Button>
+                </Group>
             </Stack>
 
             <Modal
@@ -70,6 +141,17 @@ const UserLoggedInView = () => {
                 onClose={closeModal}
                 centered
                 size="lg"
+                radius="lg"
+                overlayProps={{
+                    backgroundOpacity: 0.45,
+                    blur: 2,
+                }}
+                classNames={{
+                    content: styles.modalContent,
+                    header: styles.modalHeader,
+                    title: styles.modalTitle,
+                    body: styles.modalBody,
+                }}
             >
                 {renderActiveForm()}
             </Modal>

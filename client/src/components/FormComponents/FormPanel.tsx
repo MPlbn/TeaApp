@@ -3,6 +3,7 @@ import { ReactNode, useState } from "react";
 import { openInfoModal } from "../../store/uiSlice";
 import { Stack, Title, Text, Paper, Group, Button } from "@mantine/core";
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
+import styles from "../../Styles/FormPanel.module.css"
 
 type FormPanelProps = {
     title: string;
@@ -47,23 +48,24 @@ const FormPanel = (props: FormPanelProps) => {
     const isBusy = props.isSaving || isSubmitting;
 
     return (
-        <Stack>
-            <div>
-                <Title order={1}>{props.title}</Title>
-
+        <Stack className={styles.panel} gap="lg">
+            <Stack className={styles.header} gap="xs">
+                <Title order={1} ta="center">{props.title}</Title>
                 <Text c="dimmed" mt="xs">
                     {props.description}
                 </Text>
-            </div>
+            </Stack>
 
-            <Paper withBorder p="lg" radius="md">
-                <Stack gap="md">
+            <Paper className={styles.form} withBorder p="xl" radius="lg">
+                <Stack gap="lg">
                     {props.children}
 
-                    <Group justify="flex-end" mt="sm">
+                    <Group justify="flex-end" mt="xs">
                         {props.onClear && (
                             <Button
+                                className={styles.secondaryButton}
                                 variant="default"
+                                radius="md"
                                 onClick={props.onClear}
                                 disabled={isBusy}
                             >
@@ -72,7 +74,9 @@ const FormPanel = (props: FormPanelProps) => {
                         )}
 
                         <Button
-                            variant="gradient"
+                            className={styles.primaryButton}
+                            color="teaGreen"
+                            radius="md"
                             onClick={handleSave}
                             disabled={!props.isValid || isBusy}
                             loading={isBusy}
