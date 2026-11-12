@@ -172,17 +172,13 @@ export function isUserAuthorizedToEditTea(tea: Tea, user: User | null): boolean 
 }
 
 export function isUserAuthorizedToAddReview(tea: Tea, user: User | null): boolean {
-    if (!user) return false
+    return user !== null && (tea.ownerId === null || tea.ownerId === user.id);
+}
 
-    if (tea.ownerId === null || tea.ownerId === user.id) return true;
-
-    return false;
+export function doesUserOwnReviewInSet(reviews: Review[], user: User | null): boolean {
+    return user === null || reviews.some(review => review.userId === user.id);
 }
 
 export function isUserAuthorizedToModifyReview(review: Review, user: User | null): boolean {
-    if (!user) return false
-
-    if (review.userId === user.id) return true
-
-    return false;
+    return user !== null && review.userId === user.id;
 }

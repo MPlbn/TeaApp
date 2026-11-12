@@ -380,7 +380,10 @@ namespace TeaApp.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TeaId");
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("TeaId", "UserId")
+                        .IsUnique();
 
                     b.ToTable("TeaReviewTable", (string)null);
                 });
@@ -477,7 +480,14 @@ namespace TeaApp.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TeaApp.Api.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.Navigation("Tea");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.Tea", b =>

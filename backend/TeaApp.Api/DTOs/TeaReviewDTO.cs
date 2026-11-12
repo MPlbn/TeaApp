@@ -8,9 +8,6 @@ public class TeaReviewDTO {
     public int? TeaId { get; set; }
 
     [Required]
-    public string? UserId { get; set; }
-
-    [Required]
     [MinLength(1)]
     public string Review { get; set; } = "";
 

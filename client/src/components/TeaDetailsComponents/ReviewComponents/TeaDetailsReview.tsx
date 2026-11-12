@@ -51,6 +51,7 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
         <>
             <Stack>
                 <Text>userID: {props.review.userId}</Text>
+                <Text>userName: {props.review.userName}</Text>
                 <Text>Review: {props.review.review}</Text>
                 <Text>Rating: {props.review.rating}</Text>
 

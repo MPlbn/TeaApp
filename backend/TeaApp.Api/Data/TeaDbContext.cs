@@ -24,6 +24,17 @@ public class TeaDbContext(DbContextOptions<TeaDbContext> options) : IdentityDbCo
         .WithMany(tea => tea.Reviews)
         .HasForeignKey(teaReview => teaReview.TeaId)
         .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<TeaReview>()
+        .HasOne(review => review.User)
+        .WithMany()
+        .HasForeignKey(review => review.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<TeaReview>()
+        .HasIndex(review => new {
+            review.TeaId,
+            review.UserId
+        })
+        .IsUnique();
 
         modelBuilder.Entity<BrewingMethod>().ToTable("BrewingMethodTable");
         modelBuilder.Entity<BrewingMethod>().HasKey(brewingMethod => brewingMethod.Id);

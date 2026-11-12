@@ -4,6 +4,8 @@ import TeaDetailsReview from "./TeaDetailsReview";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { useGetReviewsByTeaIDQuery } from "../../../services/teaApi";
 import ReviewAdditionView from "../../AdditionComponents/ReviewAdditionView";
+import { useAppSelector } from "../../../store/hooks";
+import { doesUserOwnReviewInSet } from "../../../utils/utils";
 
 type TeaDetailsReviewsSetProps = {
     teaID: number;
@@ -12,6 +14,8 @@ type TeaDetailsReviewsSetProps = {
 
 const TeaDetailsReviewsSet = (props: TeaDetailsReviewsSetProps) => {
     const [isReviewAdditionOpen, setIsReviewAdditionOpen] = useState(false);
+
+    const user = useAppSelector((state) => state.auth.user);
 
     const {
         data: fetchedReviews,
@@ -29,8 +33,10 @@ const TeaDetailsReviewsSet = (props: TeaDetailsReviewsSetProps) => {
 
     const reviews = (fetchedReviews ?? []);
 
+    const userAlreadyOwnsReview = doesUserOwnReviewInSet(reviews, user);
+
     const renderAddButton = () => {
-        if (!props.canAddReview) return <></>
+        if (!props.canAddReview || userAlreadyOwnsReview) return <></>
 
         return (
             <>
