@@ -1,6 +1,5 @@
 import { PasswordInput, Stack } from "@mantine/core";
 import { UserChangePasswordFormData } from "../../types/FormDatas";
-import styles from "../../Styles/Form.module.css"
 
 type UserChangePasswordFormProps = {
     formData: UserChangePasswordFormData;
@@ -14,12 +13,6 @@ const UserChangePasswordForm = (props: UserChangePasswordFormProps) => {
     return (
         <Stack>
             <PasswordInput
-                classNames={{
-                    input: styles.input,
-                    label: styles.label,
-                }}
-                size="md"
-                radius="md"
                 label="Stare hasło"
                 placeholder="Wpisz hasło"
                 value={props.formData.oldPassword}
@@ -27,12 +20,6 @@ const UserChangePasswordForm = (props: UserChangePasswordFormProps) => {
                 required
             />
             <PasswordInput
-                classNames={{
-                    input: styles.input,
-                    label: styles.label,
-                }}
-                size="md"
-                radius="md"
                 label="Nowe hasło"
                 placeholder="Wpisz hasło"
                 value={props.formData.newPassword}

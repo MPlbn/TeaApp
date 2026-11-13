@@ -139,8 +139,6 @@ const TeaForm = (props: TeaFormProps) => {
                     placeholder="Krótki opis herbaty..."
                     value={props.formData.description}
                     onChange={(event) => { props.updateField('description', event.currentTarget.value) }}
-                    minRows={3}
-                    autosize
                 />
             </Grid.Col>
 

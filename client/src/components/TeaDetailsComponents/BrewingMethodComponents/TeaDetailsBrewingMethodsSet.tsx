@@ -1,9 +1,12 @@
-import { Button, Loader, Modal, Paper, Stack, Text } from "@mantine/core";
+import { Button, Group, Loader, Modal, Paper, Stack, Tabs, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import TeaDetailsBrewingMethod from "./TeaDetailsBrewingMethod";
 import BrewingMethodAdditionView from "../../AdditionComponents/BrewingMethodAdditionView";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { useGetBrewingMethodsByTeaIDQuery } from "../../../services/teaApi";
+import { MethodType } from "../../../types/enums";
+import sectionStyles from "../../../Styles/TeaDetailsSection.module.css"
+import styles from "../../../Styles/BrewingMethod.module.css"
 
 type TeaDetailsBrewingMethodsSetProps = {
     teaID: number,
@@ -34,26 +37,69 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
 
         return (
             <>
-                <Button onClick={() => setIsBrewingMethodAdditionOpen(true)}>Dodaj</Button>
+                <Button color="teaGreen.7" size="xs" variant="subtle" onClick={() => setIsBrewingMethodAdditionOpen(true)}>Dodaj</Button>
             </>
+        )
+    }
+
+    const renderMethods = (method: MethodType) => {
+        const filteredMethods = brewingMethods.filter((filterMethod) => filterMethod.method == method);
+
+        if (filteredMethods.length === 0) {
+            return (
+                <Text c="dimmed" ta="center" py="xl">Brak zdefiniowanych metod parzenia dla tego sposobu</Text>
+            );
+        }
+
+        return (
+            <Stack gap="md">
+                {filteredMethods.map((brewingMethod) => (
+                    <TeaDetailsBrewingMethod
+                        key={brewingMethod.id}
+                        brewingMethod={brewingMethod}
+                        canModify={props.canModifyBrewingMethods}
+                    />
+                ))}
+            </Stack>
         )
     }
 
     return (
         <>
-            <Text>Sposoby parzenia</Text>
-            <Paper withBorder radius="md">
-                <Stack>
-                    {brewingMethods.map((brewingMethod) => {
-                        return <TeaDetailsBrewingMethod
-                            key={brewingMethod.id}
-                            brewingMethod={brewingMethod}
-                            canModify={props.canModifyBrewingMethods}
-                        />
-                    })}
+            <Stack className={sectionStyles.section}>
+                <Group>
+                    <Title order={2}>Sposoby parzenia</Title>
                     {renderAddButton()}
-                </Stack>
-            </Paper>
+                </Group>
+
+                <Paper className={styles.panel} p="lg" shadow="xl">
+                    <Tabs defaultValue="gongfu" variant="default" color="teaGreen">
+                        <Tabs.List grow>
+                            <Tabs.Tab value="gongfu">Gongfu</Tabs.Tab>
+                            <Tabs.Tab value="western">Zwykłe</Tabs.Tab>
+                            <Tabs.Tab value="alternative">Alternatywne</Tabs.Tab>
+                        </Tabs.List>
+
+                        <Tabs.Panel value="gongfu" pt="lg">
+                            <Stack gap="md">
+                                {renderMethods(MethodType.Gongfu)}
+                            </Stack>
+                        </Tabs.Panel>
+
+                        <Tabs.Panel value="western" pt="lg">
+                            <Stack gap="md">
+                                {renderMethods(MethodType.Western)}
+                            </Stack>
+                        </Tabs.Panel>
+
+                        <Tabs.Panel value="alternative" pt="lg">
+                            <Stack gap="md">
+                                {renderMethods(MethodType.Alternative)}
+                            </Stack>
+                        </Tabs.Panel>
+                    </Tabs>
+                </Paper>
+            </Stack>
 
             <Modal
                 opened={isBrewingMethodAdditionOpen}

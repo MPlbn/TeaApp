@@ -10,19 +10,19 @@ type TeaTypeChooserSetProps = {
 }
 
 const TeaTypeChooserSet = (props: TeaTypeChooserSetProps) => {
-  
+
     return (
         <Button.Group>
             {teaTypeOptions.map((option) => {
                 return (
-                    <TeaTypeChooser 
+                    <TeaTypeChooser
                         key={option.label}
                         label={option.label}
                         active={props.selectedTeaType === option.value}
-                        onClick={() => {props.onTeaTypeChange(option.value)}}
+                        onClick={() => { props.onTeaTypeChange(option.value) }}
                     />
                 );
-                }
+            }
             )}
         </Button.Group>
     );

@@ -11,8 +11,9 @@ const TeaDetailsTitle = (props: TeaDetailsTitleProps) => {
         <Group gap="md" align="center">
             <ActionIcon
                 variant="subtle"
+                color="teaGreen"
                 size="lg"
-                aria-label="Wróć do listy herbat"
+                aria-label="Wróć"
                 onClick={props.onBack}
             >
                 <IconArrowLeft size={24} />

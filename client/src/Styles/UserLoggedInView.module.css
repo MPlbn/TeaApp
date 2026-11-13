@@ -36,21 +36,3 @@
 .accountAction:hover {
     background-color: #F1F6EF;
 }
-
-.modalContent {
-    border: 1px solid #E5EAE2;
-    box-shadow: 0 8px 30px rgb(52 74 54 / 12%);
-}
-
-.modalHeader {
-    background-color: white;
-}
-
-.modalTitle {
-    color: #344A36;
-    font-weight: 600;
-}
-
-.modalBody {
-    padding: var(--mantine-spacing-xl);
-}

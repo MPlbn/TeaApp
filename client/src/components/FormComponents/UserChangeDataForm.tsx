@@ -1,6 +1,5 @@
 import { Stack, TextInput } from "@mantine/core";
 import { UserChangeDataFormData } from "../../types/FormDatas";
-import styles from "../../Styles/Form.module.css"
 
 type UserChangeDataFormProps = {
     formData: UserChangeDataFormData;
@@ -14,12 +13,6 @@ const UserChangeDataForm = (props: UserChangeDataFormProps) => {
     return (
         <Stack>
             <TextInput
-                classNames={{
-                    input: styles.input,
-                    label: styles.label,
-                }}
-                size="md"
-                radius="md"
                 label="Nazwa użytkownika"
                 placeholder="Wpisz nazwę użytkownika"
                 value={props.formData.userName}
@@ -27,12 +20,6 @@ const UserChangeDataForm = (props: UserChangeDataFormProps) => {
                 required
             />
             <TextInput
-                classNames={{
-                    input: styles.input,
-                    label: styles.label,
-                }}
-                size="md"
-                radius="md"
                 label="Email"
                 placeholder="name@email.com"
                 value={props.formData.email}

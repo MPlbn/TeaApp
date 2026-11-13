@@ -1,4 +1,4 @@
-import { Stack } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
 import { TeaType } from "../../types/enums";
 import TeaTypeChooserSet from "./TeaTypeChooserSet";
 
@@ -10,12 +10,12 @@ type TeaListFilterProps = {
 
 const TeaListFilter = (props: TeaListFilterProps) => {
     return (
-        <Stack gap="md">
-            <TeaTypeChooserSet 
+        <Group gap="md">
+            <TeaTypeChooserSet
                 selectedTeaType={props.selectedTeaType}
                 onTeaTypeChange={props.onTeaTypeChange}
             />
-        </Stack>
+        </Group>
     );
 }
 export default TeaListFilter;

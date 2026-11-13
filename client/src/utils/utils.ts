@@ -25,6 +25,18 @@ export function getTeaTypeStringVersion(teaType: TeaType): string {
     }
 }
 
+export function getTeaTypeColor(teaType: TeaType): string {
+    switch (teaType) {
+        case TeaType.White: return "#8C9299";
+        case TeaType.Green: return "#63865F";
+        case TeaType.Yellow: return "#C49A36";
+        case TeaType.Oolong: return "#9276B5";
+        case TeaType.Black: return "#B96B68";
+        case TeaType.Heicha: return "#997451";
+        default: return "#8C9299";
+    }
+}
+
 export function getMethodTypeStringVersion(methodType: MethodType): string {
     switch (methodType) {
         case MethodType.Gongfu: return "Gongfu";

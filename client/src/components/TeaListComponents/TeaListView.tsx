@@ -1,7 +1,8 @@
 import {
     Stack,
     Title,
-    Text
+    Text,
+    SimpleGrid
 } from "@mantine/core";
 import { TeaType } from "../../types/enums";
 import { Loader } from "@mantine/core";
@@ -10,6 +11,7 @@ import TeaListFilter from "./TeaListFilter";
 import { useGetAllTeasForListQuery } from "../../services/teaApi";
 import { useState } from "react";
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
+import sectionStyles from "../../Styles/TeaDetailsSection.module.css"
 
 const TeaListView = () => {
     const [selectedTeaType, setSelectedTeaType] = useState<TeaType | null>(null);
@@ -33,8 +35,9 @@ const TeaListView = () => {
     const filteredTeas = (teas ?? []).filter((tea) => selectedTeaType === null ? true : tea.type === selectedTeaType);
 
     return (
-        <Stack gap="md">
-            <Title order={2}>Lista herbat</Title>
+        <Stack className={sectionStyles.section}>
+            <Title order={1} c="teaGreen.9">Lista herbat</Title>
+
             <TeaListFilter
                 selectedTeaType={selectedTeaType}
                 onTeaTypeChange={setSelectedTeaType}
@@ -44,9 +47,14 @@ const TeaListView = () => {
                 Znalezionych herbat: {filteredTeas.length}
             </Text>
 
-            <Stack gap="xs">
+            <SimpleGrid
+                cols={2}
+                spacing="sm"
+                verticalSpacing="md"
+            >
                 {filteredTeas.map((tea) => { return <TeaListItem key={tea.id} shortTea={tea} isPublic={true} /> })}
-            </Stack>
+            </SimpleGrid>
+
         </Stack>
     );
 }

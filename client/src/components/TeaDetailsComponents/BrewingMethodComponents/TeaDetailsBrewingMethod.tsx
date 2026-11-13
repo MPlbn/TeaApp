@@ -1,4 +1,4 @@
-import { Button, Group, Paper, Stack, Text, Modal } from "@mantine/core";
+import { Button, Group, Paper, Stack, Text, Modal, Badge, SimpleGrid, Divider } from "@mantine/core";
 import { BrewingMethod } from "../../../types/BrewingMethod";
 import { getMethodTypeStringVersion } from "../../../utils/utils";
 import { useState } from "react";
@@ -7,6 +7,9 @@ import { useAppDispatch } from "../../../store/hooks";
 import { openInfoModal } from "../../../store/uiSlice";
 import { useDeleteBrewingMethodMutation } from "../../../services/teaApi";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
+import { MethodType } from "../../../types/enums";
+import { IconArrowRight } from "@tabler/icons-react";
+
 
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto sposób parzenia";
 
@@ -19,6 +22,7 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
     const dispatch = useAppDispatch();
     const [isBrewingMethodEditorOpen, setIsBrewingMethodEditorOpen] = useState(false);
     const [deleteBrewingMethod, { isLoading: isDeleting }] = useDeleteBrewingMethodMutation();
+    const isGongfu = props.brewingMethod.method === MethodType.Gongfu;
 
     const handleDelete = async () => {
         try {
@@ -37,54 +41,92 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
         if (!props.canModify) return <></>
 
         return (
-            <Group>
-                <Button onClick={() => setIsBrewingMethodEditorOpen(true)}>Edytuj</Button>
-                <Button c="red" onClick={handleDelete}>Usuń</Button>
+            <Group justify="flex-end" gap="xs">
+                <Button
+                    size="xs"
+                    variant="subtle"
+                    onClick={() => setIsBrewingMethodEditorOpen(true)}
+                >
+                    Edytuj
+                </Button>
+
+                <Button
+                    size="xs"
+                    variant="subtle"
+                    color="red"
+                    onClick={handleDelete}
+                    loading={isDeleting}
+                >
+                    Usuń
+                </Button>
             </Group>
         )
     }
 
     return (
         <>
-            <Paper withBorder radius="md">
-                <Stack>
-                    <Stack>
-                        <Text c="dimmed">Rodzaj parzenia</Text>
-                        <Text>{getMethodTypeStringVersion(props.brewingMethod.method)}</Text>
-                    </Stack>
+            <Paper withBorder radius="md" p="lg" shadow="xs">
+                <Stack gap="lg">
+                    <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                        <Stack gap={4}>
+                            <Text size="sm" c="dimmed">Temperatura parzenia</Text>
+                            <Text fw={600} size="lg" c="teaGreen.9">
+                                {props.brewingMethod.temperature} °C
+                            </Text>
+                        </Stack>
 
-                    <Stack>
-                        <Text c="dimmed">Temperatura parzenia</Text>
-                        <Text>{props.brewingMethod.temperature} °C</Text>
-                    </Stack>
-                    <Stack>
-                        <Text c="dimmed">Ilość</Text>
-                        <Text>{props.brewingMethod.amountPerHundred} g/100ml</Text>
-                    </Stack>
-                    <Stack>
-                        <Text c="dimmed">Czasy parzenia</Text>
-                        <Group>
-                            {props.brewingMethod.brewingTimes.map((brewingTime, index) =>
-                                (<Text key={index}>{brewingTime}{"s"}{index < props.brewingMethod.brewingTimes.length - 1 && " ->"}</Text>))}
+                        <Stack gap={4}>
+                            <Text size="sm" c="dimmed">Ilość herbaty</Text>
+                            <Text fw={600} size="lg" c="teaGreen.9">
+                                {props.brewingMethod.amountPerHundred} g / 100 ml
+                            </Text>
+                        </Stack>
+                    </SimpleGrid>
+
+                    <Divider color="gray.2" />
+
+                    <Stack gap="sm">
+                        <Text size="sm" c="dimmed">Czasy parzenia</Text>
+
+                        <Group gap="xs" wrap="wrap">
+                            {props.brewingMethod.brewingTimes.map((brewingTime, index) => (
+                                <Group key={index} gap="xs">
+                                    <Text fw={500} c="teaGreen.9">
+                                        {brewingTime}s
+                                    </Text>
+
+                                    {index < props.brewingMethod.brewingTimes.length - 1 && (
+                                        <IconArrowRight size={16} color="var(--mantine-color-dimmed)" />
+                                    )}
+                                </Group>
+                            ))}
+
+                            {isGongfu && (
+                                <>
+                                    <IconArrowRight size={16} color="var(--mantine-color-dimmed)" />
+                                    <Text c="dimmed">... +</Text>
+                                    <Text fw={500} c="teaGreen.9">
+                                        {props.brewingMethod.gongfuBrewingTimeIncrement}s
+                                    </Text>
+                                </>
+                            )}
                         </Group>
                     </Stack>
-                    <Stack>
-                        <Text c="dimmed">Gongfu increment</Text>
-                        <Text>{props.brewingMethod.gongfuBrewingTimeIncrement}</Text>
-                    </Stack>
+
+                    {renderButtons()}
                 </Stack>
-                {renderButtons()}
             </Paper>
 
             <Modal
                 opened={isBrewingMethodEditorOpen}
                 onClose={() => setIsBrewingMethodEditorOpen(false)}
-                title=""
-                centered
                 closeOnClickOutside={false}
                 closeOnEscape={false}
             >
-                <BrewingMethodEditorView brewingMethod={props.brewingMethod} onFinish={() => setIsBrewingMethodEditorOpen(false)} />
+                <BrewingMethodEditorView
+                    brewingMethod={props.brewingMethod}
+                    onFinish={() => setIsBrewingMethodEditorOpen(false)}
+                />
             </Modal>
         </>
     );

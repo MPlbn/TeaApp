@@ -1,4 +1,4 @@
-import { Modal, Stack, Text, Group, Button } from "@mantine/core";
+import { Modal, Stack, Text, Group, Button, Paper, Divider, Badge, Blockquote } from "@mantine/core";
 import { Review } from "../../../types/Review";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
@@ -7,6 +7,7 @@ import { openInfoModal } from "../../../store/uiSlice";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import ReviewEditorView from "../../EditorComponents/ReviewEditorView";
 import { isUserAuthorizedToModifyReview } from "../../../utils/utils";
+import RatingStars from "./RatingStars";
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto recenzję!";
 
 type TeaDetailsReviewProps = {
@@ -17,6 +18,8 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
     const dispatch = useAppDispatch();
     const [isReviewEditorOpen, setIsReviewEditorOpen] = useState(false);
     const [deleteReview, { isLoading: isDeleting }] = useDeleteReviewMutation();
+    const user = useAppSelector((state) => state.auth.user);
+    const canModifyReview = isUserAuthorizedToModifyReview(props.review, user)
 
     const handleDelete = async () => {
         try {
@@ -31,32 +34,69 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
         }
     }
 
-    const user = useAppSelector((state) => state.auth.user);
-
-
-    const canModifyReview = isUserAuthorizedToModifyReview(props.review, user)
-
     const renderModifyButtons = () => {
         if (!canModifyReview) return <></>
 
         return (
-            <Group>
-                <Button onClick={() => setIsReviewEditorOpen(true)}>Edytuj</Button>
-                <Button c="red" onClick={handleDelete}>Usuń</Button>
+            <Group justify="flex-end" gap="xs">
+                <Button
+                    size="xs"
+                    variant="subtle"
+                    onClick={() => setIsReviewEditorOpen(true)}
+                >
+                    Edytuj
+                </Button>
+                <Button
+                    size="xs"
+                    color="red"
+                    variant="subtle"
+                    onClick={handleDelete}
+                    loading={isDeleting}
+                >
+                    Usuń
+                </Button>
             </Group>
         )
     }
 
     return (
         <>
-            <Stack>
-                <Text>userID: {props.review.userId}</Text>
-                <Text>userName: {props.review.userName}</Text>
-                <Text>Review: {props.review.review}</Text>
-                <Text>Rating: {props.review.rating}</Text>
+            {/* <Paper withBorder radius="lg" p="lg" bg="white">
+                <Stack gap="md">
+                    <Group justify="space-between" align="center">
+                        <Text fw={600} size="lg">
+                            {props.review.userName}
+                        </Text>
 
-                {renderModifyButtons()}
-            </Stack>
+                        <Badge color="teaGreen" variant="light" size="lg">
+                            Ocena: {props.review.rating}
+                        </Badge>
+                    </Group>
+
+                    <Divider color="gray.2" />
+
+                    <Text>
+                        {props.review.review}
+                    </Text>
+
+                    {renderModifyButtons()}
+                </Stack>
+            </Paper> */}
+
+            <Blockquote cite={props.review.userName} textWrap="wrap">
+                <Stack>
+                    <Badge color="white">
+                        <Group justify="space-between" gap='xs'>
+                            <Text c="teaGreen.9">Ocena: </Text>
+                            <RatingStars rating={props.review.rating} />
+                        </Group>
+                    </Badge>
+
+                    <Text>{props.review.review}</Text>
+
+                </Stack>
+
+            </Blockquote >
 
             <Modal
                 opened={isReviewEditorOpen}

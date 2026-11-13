@@ -1,16 +1,16 @@
 import TeaDetailsTitle from "../TeaDetailsTitle";
 import TeaDetailsDetailField from "./TeaDetailsDetailField";
 import { useState } from "react";
-import { Loader, Text, Stack, Button, Group, Modal } from "@mantine/core";
+import { Stack, Button, Group, Modal, stylesToString } from "@mantine/core";
 import { useNavigate } from "react-router";
 import { ViewType } from "../../../types/enums";
 import TeaEditorView from "../../EditorComponents/TeaEditorView";
-import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { useAppDispatch, } from "../../../store/hooks";
 import { openInfoModal } from "../../../store/uiSlice";
-import { useDeleteTeaMutation, useGetTeaByIDPrivateQuery, useGetTeaByIDQuery } from "../../../services/teaApi";
+import { useDeleteTeaMutation, } from "../../../services/teaApi";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
-import { isUserAuthorizedToEditTea } from "../../../utils/utils";
 import { Tea } from "../../../types/Tea";
+import styles from "../../../Styles/TeaDetailsSection.module.css"
 
 const TEA_DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto herbatę!";
 
@@ -47,14 +47,14 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
 
         return (
             <>
-                <Button onClick={() => setIsEditorOpen(true)}>Edytuj</Button>
-                <Button c="red" variant="outline" onClick={handleDelete} loading={isDeleting}>Usuń</Button>
+                <Button size="xs" color={"teaGreen"} variant="subtle" onClick={() => setIsEditorOpen(true)}>Edytuj</Button>
+                <Button size="xs" color="red" variant="subtle" onClick={handleDelete} loading={isDeleting}>Usuń</Button>
             </>
         )
     }
 
     return (
-        <Stack>
+        <Stack className={styles.section}>
             <Group>
                 <TeaDetailsTitle name={props.tea.name} onBack={() => navigate(-1)} />
                 {renderModificationButtons()}

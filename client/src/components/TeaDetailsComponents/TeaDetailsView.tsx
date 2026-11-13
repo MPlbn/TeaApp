@@ -7,6 +7,7 @@ import { useAppSelector } from "../../store/hooks";
 import { useGetTeaByIDPrivateQuery, useGetTeaByIDQuery } from "../../services/teaApi";
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 import { isUserAuthorizedToAddReview, isUserAuthorizedToEditTea } from "../../utils/utils";
+import styles from "../../Styles/UserNotLoggedInView.module.css"
 
 const TEA_NOT_FOUND_MESSAGE = "Nie znaleziono herbaty.";
 
@@ -55,7 +56,7 @@ const TeaDetailsView = (props: TeaDetailsViewProps) => {
 
     return (
         <>
-            <Stack>
+            <Stack gap="lg" maw={700} className={styles.page}>
                 <TeaDetailsInfoSection tea={tea} canModifyTea={isUserAuthorized} />
                 <TeaDetailsBrewingMethodsSet teaID={teaID} canModifyBrewingMethods={isUserAuthorized} />
                 <TeaDetailsReviewsSet teaID={teaID} canAddReview={canUserAddReview} />

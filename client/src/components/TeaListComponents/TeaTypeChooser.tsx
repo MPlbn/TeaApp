@@ -7,12 +7,14 @@ type TeaTypeChooserProps = {
 }
 
 const TeaTypeChooser = (props: TeaTypeChooserProps) => {
-    
+
     return (
         <Button
             variant={props.active ? 'filled' : 'default'}
-            color={props.active ? 'teal' : 'gray'}
+            color={props.active ? 'teaGreen.7' : 'gray'}
             onClick={props.onClick}
+            radius="md"
+            size="xs"
         >
             {props.label}
         </Button>

@@ -1,4 +1,4 @@
-import { Button, Loader, Paper, Stack, Text, Modal } from "@mantine/core";
+import { Button, Loader, Paper, Stack, Text, Modal, Title, Group } from "@mantine/core";
 import { useState } from "react";
 import TeaDetailsReview from "./TeaDetailsReview";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
@@ -6,6 +6,7 @@ import { useGetReviewsByTeaIDQuery } from "../../../services/teaApi";
 import ReviewAdditionView from "../../AdditionComponents/ReviewAdditionView";
 import { useAppSelector } from "../../../store/hooks";
 import { doesUserOwnReviewInSet } from "../../../utils/utils";
+import sectionStyles from "../../../Styles/TeaDetailsSection.module.css"
 
 type TeaDetailsReviewsSetProps = {
     teaID: number;
@@ -40,27 +41,44 @@ const TeaDetailsReviewsSet = (props: TeaDetailsReviewsSetProps) => {
 
         return (
             <>
-                <Button onClick={() => setIsReviewAdditionOpen(true)}>Dodaj Recenzję</Button>
+                <Button variant="default" color="teaGreen" onClick={() => setIsReviewAdditionOpen(true)}>Dodaj Recenzję</Button >
             </>
+        )
+    }
+
+    const renderReviews = () => {
+        if (reviews.length === 0) {
+            return (
+                <Paper withBorder radius="lg" p="xl" bg="white">
+                    <Text c="dimmed" ta="center">
+                        Ta herbata nie ma jeszcze żadnych recenzji.
+                    </Text>
+                </Paper>
+            )
+        }
+
+        return (
+            reviews.map((review) => {
+                return <TeaDetailsReview key={review.id} review={review} />
+            })
         )
     }
 
     return (
         <>
-            <Paper withBorder radius="md">
-                <Stack>
-                    {reviews.map((review) => {
-                        return <TeaDetailsReview key={review.id} review={review} />
-                    })}
+            <Stack className={sectionStyles.section}>
+                <Group justify="space-between" align="center">
+                    <Title order={2}>Recenzje</Title>
                     {renderAddButton()}
-                </Stack>
-            </Paper>
+                </Group>
+
+                {renderReviews()}
+            </Stack>
+
 
             <Modal
                 opened={isReviewAdditionOpen}
                 onClose={() => setIsReviewAdditionOpen(false)}
-                title=""
-                centered
                 closeOnClickOutside={false}
                 closeOnEscape={false}
             >

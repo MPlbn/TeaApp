@@ -1,6 +1,5 @@
 import { UserRegisterFormData } from "../../types/FormDatas";
 import { PasswordInput, Stack, TextInput } from "@mantine/core";
-import styles from "../../Styles/Form.module.css"
 
 
 type UserFormProps = {
@@ -15,12 +14,6 @@ const UserRegisterForm = (props: UserFormProps) => {
     return (
         <Stack>
             <TextInput
-                classNames={{
-                    input: styles.input,
-                    label: styles.label,
-                }}
-                size="md"
-                radius="md"
                 label="Nazwa użytkownika"
                 placeholder="Wpisz nazwę użytkownika"
                 value={props.formData.userName}
@@ -28,12 +21,6 @@ const UserRegisterForm = (props: UserFormProps) => {
                 required
             />
             <TextInput
-                classNames={{
-                    input: styles.input,
-                    label: styles.label,
-                }}
-                size="md"
-                radius="md"
                 label="Adres email"
                 placeholder="name@email.com"
                 value={props.formData.email}
@@ -41,12 +28,6 @@ const UserRegisterForm = (props: UserFormProps) => {
                 required
             />
             <PasswordInput
-                classNames={{
-                    input: styles.input,
-                    label: styles.label,
-                }}
-                size="md"
-                radius="md"
                 label="Hasło"
                 placeholder="Wpisz swoje hasło"
                 value={props.formData.password}

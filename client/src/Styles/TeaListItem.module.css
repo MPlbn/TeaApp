@@ -1,0 +1,40 @@
+.item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border-radius: var(--mantine-radius-lg);
+}
+
+.card {
+    background-color: white;
+    border-color: #E5EAE2;
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.item:hover .card {
+    background-color: var(--mantine-color-teaGreen-0);
+    border-color: var(--mantine-color-teaGreen-3);
+}
+
+.item:focus-visible {
+    outline: 2px solid var(--mantine-color-teaGreen-6);
+    outline-offset: 2px;
+}
+
+.name {
+    flex: 1;
+    min-width: 0;
+}
+
+.origin {
+    text-align: right;
+}
+
+@media (max-width: 600px) {
+    .origin {
+        display: none;
+    }
+}
