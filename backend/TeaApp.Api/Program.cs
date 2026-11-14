@@ -59,6 +59,7 @@ builder.Services.AddCors(options => {
 });
 
 builder.Services.AddHostedService<RefreshTokenCleanupService>();
+builder.Services.AddHostedService<PublishRequestCleanupService>();
 
 if (builder.Environment.IsEnvironment("Testing")) {
     builder.Services.AddDataProtection().SetApplicationName("TeaApp.Tests");

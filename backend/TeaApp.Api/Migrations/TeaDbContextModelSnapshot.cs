@@ -273,6 +273,39 @@ namespace TeaApp.Api.Migrations
                     b.ToTable("FlavorTable", (string)null);
                 });
 
+            modelBuilder.Entity("TeaApp.Api.Models.PublishRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ResolutionMessage")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ResolvingAdminId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TeaId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeaId");
+
+                    b.ToTable("PublishRequestTable", (string)null);
+                });
+
             modelBuilder.Entity("TeaApp.Api.Models.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
@@ -388,6 +421,32 @@ namespace TeaApp.Api.Migrations
                     b.ToTable("TeaReviewTable", (string)null);
                 });
 
+            modelBuilder.Entity("TeaApp.Api.Models.TeaWare", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("TeaWareTable", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -461,6 +520,17 @@ namespace TeaApp.Api.Migrations
                     b.Navigation("Tea");
                 });
 
+            modelBuilder.Entity("TeaApp.Api.Models.PublishRequest", b =>
+                {
+                    b.HasOne("TeaApp.Api.Models.Tea", "Tea")
+                        .WithMany()
+                        .HasForeignKey("TeaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tea");
+                });
+
             modelBuilder.Entity("TeaApp.Api.Models.RefreshToken", b =>
                 {
                     b.HasOne("TeaApp.Api.Models.ApplicationUser", "User")
@@ -486,6 +556,17 @@ namespace TeaApp.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Tea");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TeaApp.Api.Models.TeaWare", b =>
+                {
+                    b.HasOne("TeaApp.Api.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

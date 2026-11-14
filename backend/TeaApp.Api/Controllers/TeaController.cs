@@ -12,12 +12,8 @@ namespace TeaApp.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TeaController : ControllerBase {
-    private readonly TeaDbContext _dbContext;
-
-    public TeaController(TeaDbContext uDbContext) {
-        _dbContext = uDbContext;
-    }
+public class TeaController(TeaDbContext dbContext) : ControllerBase {
+    private readonly TeaDbContext _dbContext = dbContext;
 
     [HttpGet("public")]
     public async Task<ActionResult<IEnumerable<TeaListItemResponseDTO>>> GetPublicTeas(
@@ -47,7 +43,7 @@ public class TeaController : ControllerBase {
     ) {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var query = _dbContext.TeaDbSet.Where(tea => !tea.IsPublic && tea.OwnerId == userId);
+        var query = _dbContext.TeaDbSet.Where(tea => tea.OwnerId == userId);
 
         if (Type.HasValue) {
             query = query.Where(tea => tea.Type == Type.Value);
@@ -92,8 +88,9 @@ public class TeaController : ControllerBase {
     [HttpGet("private/{id:int}")]
     public async Task<ActionResult<TeaResponseDTO>> GetPrivateTea(int id) {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var isAdmin = User.IsInRole("Admin");
         var tea = await _dbContext.TeaDbSet
-        .Where(tea => tea.Id == id && !tea.IsPublic && tea.OwnerId == userId)
+        .Where(tea => tea.Id == id && tea.OwnerId == userId)
         .Select(tea => new TeaResponseDTO {
             Id = tea.Id,
             Name = tea.Name,
@@ -154,6 +151,11 @@ public class TeaController : ControllerBase {
 
         if (!CanManageTea(tea)) return Forbid();
 
+        var hasPendingRequest = await _dbContext.PublishRequestSet
+        .AnyAsync(publishRequest => publishRequest.TeaId == id && publishRequest.Status == PublishRequestStatus.Pending);
+
+        if (hasPendingRequest) return Conflict("Tea has a pending publish request.");
+
         tea.Name = DTO.Name;
         tea.Type = DTO.Type!.Value;
         tea.Price = DTO.Price!.Value;
@@ -196,7 +198,7 @@ public class TeaController : ControllerBase {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var isAdmin = User.IsInRole("Admin");
         if (tea.IsPublic && isAdmin) return true;
-        if (!tea.IsPublic && tea.OwnerId == userId) return true;
+        if (tea.OwnerId == userId) return true;
 
         return false;
     }

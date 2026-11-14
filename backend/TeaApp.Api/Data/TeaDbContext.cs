@@ -10,6 +10,8 @@ public class TeaDbContext(DbContextOptions<TeaDbContext> options) : IdentityDbCo
     public DbSet<BrewingMethod> BrewingMethodDbSet { get; set; }
     public DbSet<Flavor> FlavorSet { get; set; }
     public DbSet<RefreshToken> RefreshTokenSet { get; set; }
+    public DbSet<TeaWare> TeaWareSet { get; set; }
+    public DbSet<PublishRequest> PublishRequestSet { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
@@ -63,11 +65,25 @@ public class TeaDbContext(DbContextOptions<TeaDbContext> options) : IdentityDbCo
         modelBuilder.Entity<RefreshToken>().Property(token => token.ReplacedByTokenHash).HasMaxLength(64);
         modelBuilder.Entity<RefreshToken>()
         .HasOne(token => token.User)
-        .WithMany().
-        HasForeignKey(token => token.UserId).
-        OnDelete(DeleteBehavior.Cascade);
+        .WithMany()
+        .HasForeignKey(token => token.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<TeaWare>().ToTable("TeaWareTable");
+        modelBuilder.Entity<TeaWare>().HasKey(teaWare => teaWare.Id);
+        modelBuilder.Entity<TeaWare>()
+        .HasOne(teaWare => teaWare.User)
+        .WithMany()
+        .HasForeignKey(teaWare => teaWare.OwnerId)
+        .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<PublishRequest>().ToTable("PublishRequestTable");
+        modelBuilder.Entity<PublishRequest>().HasKey(publishRequest => publishRequest.Id);
+        modelBuilder.Entity<PublishRequest>()
+        .HasOne(publishRequest => publishRequest.Tea)
+        .WithMany()
+        .HasForeignKey(publishRequest => publishRequest.TeaId)
+        .OnDelete(DeleteBehavior.Cascade);
 
     }
 }
