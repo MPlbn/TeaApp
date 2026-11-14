@@ -1,4 +1,4 @@
-import { createTheme, Modal, MultiSelect, NumberInput, PasswordInput, Select, Textarea, TextInput, Title } from "@mantine/core";
+import { createTheme, MaskInput, Modal, MultiSelect, NumberInput, PasswordInput, Select, Textarea, TextInput, Title } from "@mantine/core";
 import modalStyles from "./Modal.module.css"
 import formStyles from "./Form.module.css"
 
@@ -120,6 +120,18 @@ export const theme = createTheme({
         }),
 
         MultiSelect: MultiSelect.extend({
+            defaultProps: {
+                size: "md",
+                radius: "md"
+            },
+
+            classNames: {
+                input: formStyles.input,
+                label: formStyles.label,
+            }
+        }),
+
+        MaskInput: MaskInput.extend({
             defaultProps: {
                 size: "md",
                 radius: "md"

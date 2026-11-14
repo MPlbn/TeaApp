@@ -150,22 +150,24 @@ export const teaApi = createApi({
 
         editTea: build.mutation<void, { teaId: number; tea: NewTea }>({
             query: ({ teaId: teaId, tea: tea }) => ({
-                url: `${PUBLIC_TEA_URL}/${teaId}`,
+                url: `${TEA_URL}/${teaId}`,
                 method: "PUT",
                 body: tea
             }),
             invalidatesTags: (_result, _error, argument) => [
                 TAG_TEA_PUBLIC,
-                { type: TAG_TEA_PUBLIC, id: argument.teaId }
+                { type: TAG_TEA_PUBLIC, id: argument.teaId },
+                TAG_TEA_PRIVATE,
+                { type: TAG_TEA_PRIVATE, id: argument.teaId }
             ]
         }),
 
         deleteTea: build.mutation<void, number>({
             query: (id) => ({
-                url: `${PUBLIC_TEA_URL}/${id}`,
+                url: `${TEA_URL}/${id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: [TAG_TEA_PUBLIC]
+            invalidatesTags: [TAG_TEA_PUBLIC, TAG_TEA_PRIVATE]
         }),
 
         //BrewingMethod

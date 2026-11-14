@@ -13,38 +13,42 @@ import styles from '../Styles/Sidebar.module.css';
 
 export type SidebarItem = {
   label: string;
-  icon: TablerIcon;
-  view: ViewType;
+  icon: TablerIcon | null;
+  view: ViewType | null;
   availableToRoles: string[];
+  childItems: SidebarItem[] | null;
 };
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useAppSelector((state) => state.auth.user);
+  const userRoles = user?.roles ?? [];
 
-  function renderNavigationItem(item: SidebarItem) {
-    const ItemIcon = item.icon
-
-    const userRoles = user?.roles ?? [];
-
+  const renderNavigationItem = (item: SidebarItem) => {
     const shouldRender = item.availableToRoles.length === 0 || item.availableToRoles.some((role) => userRoles.includes(role));
 
     if (!shouldRender) return null;
+
+
 
     return (
       <NavLink
         key={item.view}
         label={item.label}
-        leftSection={<ItemIcon size={20} stroke={1.7} />}
-        active={location.pathname === item.view}
-        onClick={() => { navigate(item.view) }}
+        {...(item.icon !== null && {
+          leftSection: <item.icon size={20} stroke={1.7} />
+        })}
+        {...(item.view !== null && {
+          active: location.pathname === item.view,
+          onClick: () => { navigate(item.view!) }
+        })}
         classNames={{
           root: styles.navLink,
           label: styles.navLinkLabel
-        }}
-
-      />
+        }}>
+        {item.childItems !== null && item.childItems.map(renderNavigationItem)}
+      </NavLink >
     );
   }
 

@@ -9,3 +9,8 @@ export type BrewingMethod = {
     brewingTimes: number[];
     gongfuBrewingTimeIncrement: number | null;
 };
+
+export type BrewingTime = {
+    minutes: number;
+    seconds: number;
+}

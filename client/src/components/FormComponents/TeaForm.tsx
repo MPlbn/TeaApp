@@ -35,7 +35,7 @@ type TeaFormProps = {
 const TeaForm = (props: TeaFormProps) => {
 
     const renderSelection = () => {
-        if (!props.user || !props.user.roles.includes(UserRole.Admin)) return null;
+        if (props.user === null || !props.user.roles.includes(UserRole.Admin)) return null;
 
         const data = [
             { value: String(CollectionType.Public), label: "Publiczna" },

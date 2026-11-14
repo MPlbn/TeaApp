@@ -8,19 +8,26 @@ import { TeaType } from "../../types/enums";
 import { Loader } from "@mantine/core";
 import TeaListItem from "./TeaListItem";
 import TeaListFilter from "./TeaListFilter";
-import { useGetAllTeasForListQuery } from "../../services/teaApi";
+import { useGetAllTeasForListQuery, useGetAllTeasPrivateForListQuery } from "../../services/teaApi";
 import { useState } from "react";
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 import sectionStyles from "../../Styles/TeaDetailsSection.module.css"
 
-const TeaListView = () => {
+type TeaListViewProps = {
+    isPublic: boolean;
+}
+
+const TeaListView = (props: TeaListViewProps) => {
     const [selectedTeaType, setSelectedTeaType] = useState<TeaType | null>(null);
+
+    const publicQuery = useGetAllTeasForListQuery(undefined, { skip: !props.isPublic });
+    const privateQuery = useGetAllTeasPrivateForListQuery(undefined, { skip: props.isPublic });
 
     const {
         data: teas,
         error: fetchingError,
         isLoading
-    } = useGetAllTeasForListQuery();
+    } = props.isPublic ? publicQuery : privateQuery;
 
 
     if (isLoading) {
@@ -52,7 +59,7 @@ const TeaListView = () => {
                 spacing="sm"
                 verticalSpacing="md"
             >
-                {filteredTeas.map((tea) => { return <TeaListItem key={tea.id} shortTea={tea} isPublic={true} /> })}
+                {filteredTeas.map((tea) => { return <TeaListItem key={tea.id} shortTea={tea} isPublic={props.isPublic} /> })}
             </SimpleGrid>
 
         </Stack>

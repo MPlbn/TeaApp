@@ -1,9 +1,10 @@
 import { useAppDispatch } from "../../store/hooks"
 import { ReactNode, useState } from "react";
-import { openInfoModal } from "../../store/uiSlice";
 import { Stack, Title, Text, Paper, Group, Button } from "@mantine/core";
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 import styles from "../../Styles/FormPanel.module.css"
+import { notifications } from "@mantine/notifications";
+import { IconCheck, IconX } from "@tabler/icons-react";
 
 type FormPanelProps = {
     title: string;
@@ -32,13 +33,19 @@ const FormPanel = (props: FormPanelProps) => {
         try {
             await props.onSave();
 
-            dispatch(openInfoModal({
-                message: props.successMessage
-            }));
+            notifications.show({
+                title: "SUKCES",
+                message: props.successMessage,
+                color: "teaGreen.8",
+                icon: <IconCheck />
+            })
         } catch (error) {
-            dispatch(openInfoModal({
-                message: getApiErrorMessage(error)
-            }));
+            notifications.show({
+                title: "BŁĄD",
+                message: getApiErrorMessage(error),
+                color: "red",
+                icon: <IconX />
+            });
         } finally {
             setIsSubmitting(false);
             props.onFinish();

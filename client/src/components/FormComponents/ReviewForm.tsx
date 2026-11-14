@@ -1,10 +1,5 @@
 import { ReviewFormData } from "../../types/FormDatas";
-import { Grid, Select, Textarea } from "@mantine/core";
-
-const ratingOptions = Array.from(
-    { length: 10 },
-    (_, i) => String(i + 1)
-)
+import { Grid, Rating, Stack, Text, Textarea } from "@mantine/core";
 
 type ReviewFormProps = {
     formData: ReviewFormData;
@@ -29,14 +24,18 @@ const ReviewForm = (props: ReviewFormProps) => {
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, sm: 12 }}>
-                <Select
-                    label="Ocena"
-                    placeholder="Wybierz ocenę"
-                    data={ratingOptions}
-                    value={props.formData.rating === null ? null : String(props.formData.rating)}
-                    onChange={(value) => { props.updateField("rating", value === null ? null : Number(value)) }}
-                    required
-                />
+                <Stack>
+                    <Text size="sm" c="dimmed">Ocena</Text>
+                    <Rating
+                        value={props.formData.rating === null ? 0 : props.formData.rating / 2}
+                        onChange={(value) => { props.updateField("rating", Math.floor(value * 2)); console.log(Math.floor(value * 2)) }}
+                        size="xl"
+                        count={5}
+                        fractions={2}
+                        allowClear
+                    />
+
+                </Stack>
             </Grid.Col>
         </Grid>
     );

@@ -57,7 +57,7 @@ const TeaDetailsView = (props: TeaDetailsViewProps) => {
     return (
         <>
             <Stack gap="lg" maw={700} className={styles.page}>
-                <TeaDetailsInfoSection tea={tea} canModifyTea={isUserAuthorized} />
+                <TeaDetailsInfoSection tea={tea} canModifyTea={isUserAuthorized} isPublic={props.isPublic} />
                 <TeaDetailsBrewingMethodsSet teaID={teaID} canModifyBrewingMethods={isUserAuthorized} />
                 <TeaDetailsReviewsSet teaID={teaID} canAddReview={canUserAddReview} />
             </Stack>

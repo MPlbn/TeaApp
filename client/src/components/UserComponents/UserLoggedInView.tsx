@@ -6,9 +6,9 @@ import { RefreshTokenRequest } from "../../types/User";
 import { clearCredentials } from "../../store/authSlice";
 import UserChangePasswordPanel from "./UserChangePasswordPanel";
 import UserChangeDataPanel from "./UserChangeDataPanel";
-import { openInfoModal } from "../../store/uiSlice";
 import styles from '../../Styles/UserLoggedInView.module.css'
-import { IconChevronRight, IconLogout } from "@tabler/icons-react";
+import { IconCheck, IconChevronRight, IconLogout } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 
 const LOGOUT_SUCCESS_MESSAGE = "Poprawnie wylogowano!";
 
@@ -41,7 +41,12 @@ const UserLoggedInView = () => {
                 const request = { refreshToken: refreshToken } as RefreshTokenRequest;
                 await logoutUser(request).unwrap();
             }
-            dispatch(openInfoModal({ message: LOGOUT_SUCCESS_MESSAGE }));
+            notifications.show({
+                title: "SUKCES",
+                message: LOGOUT_SUCCESS_MESSAGE,
+                color: "teaGreen.8",
+                icon: <IconCheck />
+            });
         } finally {
             dispatch(clearCredentials());
             dispatch(teaApi.util.resetApiState());

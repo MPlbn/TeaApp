@@ -1,15 +1,14 @@
 import { Button, Group, Paper, Stack, Text, Modal, Badge, SimpleGrid, Divider } from "@mantine/core";
 import { BrewingMethod } from "../../../types/BrewingMethod";
-import { getMethodTypeStringVersion } from "../../../utils/utils";
 import { useState } from "react";
 import BrewingMethodEditorView from "../../EditorComponents/BrewingMethodEditorView";
 import { useAppDispatch } from "../../../store/hooks";
-import { openInfoModal } from "../../../store/uiSlice";
 import { useDeleteBrewingMethodMutation } from "../../../services/teaApi";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { MethodType } from "../../../types/enums";
-import { IconArrowRight } from "@tabler/icons-react";
-
+import { IconArrowRight, IconCheck, IconX } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { getSecondsStringVersion } from "../../../utils/brewingMethodUtils";
 
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto sposób parzenia";
 
@@ -19,7 +18,6 @@ type TeaDetailsBrewingMethodProps = {
 };
 
 const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
-    const dispatch = useAppDispatch();
     const [isBrewingMethodEditorOpen, setIsBrewingMethodEditorOpen] = useState(false);
     const [deleteBrewingMethod, { isLoading: isDeleting }] = useDeleteBrewingMethodMutation();
     const isGongfu = props.brewingMethod.method === MethodType.Gongfu;
@@ -27,13 +25,19 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
     const handleDelete = async () => {
         try {
             await deleteBrewingMethod(props.brewingMethod.id).unwrap();
-            dispatch(openInfoModal({
-                message: DELETE_SUCCESS_MESSAGE
-            }));
+            notifications.show({
+                title: "SUKCES",
+                message: DELETE_SUCCESS_MESSAGE,
+                color: "teaGreen.8",
+                icon: <IconCheck />
+            });
         } catch (error) {
-            dispatch(openInfoModal({
-                message: getApiErrorMessage(error)
-            }));
+            notifications.show({
+                title: "BŁĄD",
+                message: getApiErrorMessage(error),
+                color: "red",
+                icon: <IconX />
+            });
         }
     };
 
@@ -89,17 +93,19 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
                         <Text size="sm" c="dimmed">Czasy parzenia</Text>
 
                         <Group gap="xs" wrap="wrap">
-                            {props.brewingMethod.brewingTimes.map((brewingTime, index) => (
-                                <Group key={index} gap="xs">
-                                    <Text fw={500} c="teaGreen.9">
-                                        {brewingTime}s
-                                    </Text>
+                            {props.brewingMethod.brewingTimes.map((brewingTimeSeconds, index) => {
+                                return (
+                                    <Group key={index} gap="xs">
+                                        <Text fw={500} c="teaGreen.9">
+                                            {getSecondsStringVersion(brewingTimeSeconds)}
+                                        </Text>
 
-                                    {index < props.brewingMethod.brewingTimes.length - 1 && (
-                                        <IconArrowRight size={16} color="var(--mantine-color-dimmed)" />
-                                    )}
-                                </Group>
-                            ))}
+                                        {index < props.brewingMethod.brewingTimes.length - 1 && (
+                                            <IconArrowRight size={16} color="var(--mantine-color-dimmed)" />
+                                        )}
+                                    </Group>
+                                )
+                            })}
 
                             {isGongfu && (
                                 <>

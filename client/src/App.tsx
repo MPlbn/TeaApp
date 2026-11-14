@@ -8,12 +8,32 @@ import TeaAdditionView from './components/AdditionComponents/TeaAdditionView';
 import TeaListView from './components/TeaListComponents/TeaListView';
 import { Route, Routes, Navigate } from 'react-router';
 import TeaDetailsView from './components/TeaDetailsComponents/TeaDetailsView';
-import InfoModal from './components/InfoModal';
 import UserView from './components/UserComponents/UserView';
-import TeaListViewPrivate from './components/TeaListComponents/TeaListViewPrivate';
 import styles from './Styles/App.module.css';
+import { AnimatePresence, motion } from 'motion/react';
+import { useLocation, useNavigationType } from 'react-router';
+
+const pageVariants = {
+  initial: (direction: number) => ({
+    x: direction * 60,
+    opacity: 0
+  }),
+  animate: {
+    x: 0,
+    opacity: 1
+  },
+  exit: (direction: number) => ({
+    x: direction * -60,
+    opacity: 0
+  })
+};
 
 export default function App() {
+  const location = useLocation();
+
+  const navigationType = useNavigationType();
+
+  const direction = navigationType === "POP" ? -1 : 1;
 
   return (
     <AppShell
@@ -24,65 +44,78 @@ export default function App() {
       padding="xl"
       className={styles.appShell}
     >
-      <InfoModal />
-
       <AppShell.Navbar className={styles.navbar}>
         <Sidebar />
       </AppShell.Navbar>
 
-      <AppShell.Main>
-        <Routes>
-          <Route
-            path="/"
-            element={<Navigate to={ViewType.TeaListView} replace />}
-          />
+      <AppShell.Main className={styles.main}>
+        <AnimatePresence mode='wait' custom={direction}>
+          <motion.div
+            key={location.pathname}
+            custom={direction}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{
+              duration: 0.1,
+              ease: "easeInOut"
+            }}
+          >
+            <Routes location={location}>
+              <Route
+                path="/"
+                element={<Navigate to={ViewType.TeaListView} replace />}
+              />
 
-          <Route
-            path={ViewType.TeaListView}
-            element={
-              <TeaListView />
-            }
-          />
+              <Route
+                path={ViewType.TeaListView}
+                element={
+                  <TeaListView isPublic={true} />
+                }
+              />
 
-          <Route
-            path={`${ViewType.TeaListView}/:id`}
-            element={
-              <TeaDetailsView isPublic={true} />
-            }
-          />
+              <Route
+                path={`${ViewType.TeaListView}/:id`}
+                element={
+                  <TeaDetailsView isPublic={true} />
+                }
+              />
 
-          <Route
-            path={`${ViewType.PrivateTeaListView}/:id`}
-            element={
-              <TeaDetailsView isPublic={false} />
-            }
-          />
+              <Route
+                path={`${ViewType.PrivateTeaListView}/:id`}
+                element={
+                  <TeaDetailsView isPublic={false} />
+                }
+              />
 
-          <Route
-            path={ViewType.AddTeaView}
-            element={<TeaAdditionView />}
-          />
+              <Route
+                path={ViewType.AddTeaView}
+                element={<TeaAdditionView />}
+              />
 
-          <Route
-            path={ViewType.SettingsView}
-            element={<SettingsView />}
-          />
+              <Route
+                path={ViewType.SettingsView}
+                element={<SettingsView />}
+              />
 
-          <Route
-            path={ViewType.UserView}
-            element={<UserView />}
-          />
+              <Route
+                path={ViewType.UserView}
+                element={<UserView />}
+              />
 
-          <Route
-            path={ViewType.PrivateTeaListView}
-            element={<TeaListViewPrivate />}
-          />
+              <Route
+                path={ViewType.PrivateTeaListView}
+                element={<TeaListView isPublic={false} />}
+              />
 
-          <Route
-            path="*"
-            element={<Navigate to={ViewType.TeaListView} replace />}
-          />
-        </Routes>
+              <Route
+                path="*"
+                element={<Navigate to={ViewType.TeaListView} replace />}
+              />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
       </AppShell.Main>
 
     </AppShell>

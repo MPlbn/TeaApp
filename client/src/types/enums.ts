@@ -3,8 +3,8 @@ export enum ViewType {
     AddTeaView = '/add-tea',
     SettingsView = '/settings',
     UserView = '/user',
-    PrivateTeaListView = '/tea-list-private', // To change for private 
-    Teaware = '/teaware-list' // To change for teaware later
+    PrivateTeaListView = '/tea-list-private',
+    Teaware = '/teaware-list'
 }
 
 export enum TeaType {

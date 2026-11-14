@@ -16,7 +16,7 @@ type TeaEditorViewProps = {
     onFinish: () => void;
 };
 
-const TeaEditorView = (props: TeaEditorViewProps) => { 
+const TeaEditorView = (props: TeaEditorViewProps) => {
     const startingFormData = convertTeaToTeaFormData(props.tea);
 
     const {
@@ -26,19 +26,19 @@ const TeaEditorView = (props: TeaEditorViewProps) => {
         getData
     } = useForm<TeaFormData>(teaFormValidator, emptyTeaFormData, startingFormData);
 
-    const [editTea, {isLoading: isSaving}] = useEditTeaMutation();
+    const [editTea, { isLoading: isSaving }] = useEditTeaMutation();
 
     const handleSave = async () => {
-        const teaToEdit = convertTeaFormDataToNewTea(getData());
+        const teaToEdit = convertTeaFormDataToNewTea(getData(), props.tea.isPublic);
 
-        if(teaToEdit === null){
+        if (teaToEdit === null) {
             return;
         }
 
-        await editTea({teaId: props.tea.id, tea: teaToEdit}).unwrap();
+        await editTea({ teaId: props.tea.id, tea: teaToEdit }).unwrap();
     }
 
-    return(
+    return (
         <FormPanel
             title="Edytuj herbatę"
             description="Uzupełnij informacje o herbacie"
@@ -48,12 +48,15 @@ const TeaEditorView = (props: TeaEditorViewProps) => {
             isSaving={isSaving}
             onSave={handleSave}
             onFinish={props.onFinish}
-       >
+        >
             <TeaForm
                 formData={formData}
                 updateField={updateField}
+                collectionType={null}
+                setCollectionType={() => { }}
+                user={null}
             />
-       </FormPanel>
+        </FormPanel>
     );
 };
 export default TeaEditorView;
