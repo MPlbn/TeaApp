@@ -1,12 +1,13 @@
 import { Modal, Stack, Text, Group, Button, Paper, Divider, Badge, Blockquote, Rating } from "@mantine/core";
 import { Review } from "../../../types/Review";
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { useAppSelector } from "../../../store/hooks";
 import { useDeleteReviewMutation } from "../../../services/teaApi";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import ReviewEditorView from "../../EditorComponents/ReviewEditorView";
 import { isUserAuthorizedToModifyReview } from "../../../utils/utils";
 import { notifications } from "@mantine/notifications";
+import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
 
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto recenzję!";
 
@@ -15,8 +16,7 @@ type TeaDetailsReviewProps = {
 };
 
 const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
-    const dispatch = useAppDispatch();
-    const [isReviewEditorOpen, setIsReviewEditorOpen] = useState(false);
+    const [modalMode, setModalMode] = useState<"Delete" | "Edit" | null>(null);
     const [deleteReview, { isLoading: isDeleting }] = useDeleteReviewMutation();
     const user = useAppSelector((state) => state.auth.user);
     const canModifyReview = isUserAuthorizedToModifyReview(props.review, user)
@@ -42,7 +42,7 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
                 <Button
                     size="xs"
                     variant="subtle"
-                    onClick={() => setIsReviewEditorOpen(true)}
+                    onClick={() => setModalMode("Edit")}
                 >
                     Edytuj
                 </Button>
@@ -50,13 +50,31 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
                     size="xs"
                     color="red"
                     variant="subtle"
-                    onClick={handleDelete}
+                    onClick={() => setModalMode("Delete")}
                     loading={isDeleting}
                 >
                     Usuń
                 </Button>
             </Group>
         )
+    }
+
+    const renderModalInsides = () => {
+        if (modalMode === "Delete") {
+            return (
+                <DeleteConfirmationPanel
+                    deletedObjectName="recenzję"
+                    handleDelete={handleDelete}
+                    handleCancel={() => setModalMode(null)}
+                />
+            )
+        }
+
+        if (modalMode === "Edit") {
+            return <ReviewEditorView review={props.review} onFinish={() => setModalMode(null)} />
+        }
+
+        return <></>
     }
 
     return (
@@ -67,7 +85,6 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
                         <Badge color="white" p="md">
                             <Group justify="space-between" gap='xs'>
                                 <Text c="teaGreen.9">Ocena: </Text>
-                                {/* <RatingStars rating={props.review.rating} /> */}
                                 <Rating
                                     value={props.review.rating / 2}
                                     fractions={2}
@@ -85,14 +102,14 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
             </Blockquote >
 
             <Modal
-                opened={isReviewEditorOpen}
-                onClose={() => setIsReviewEditorOpen(false)}
+                opened={modalMode !== null}
+                onClose={() => setModalMode(null)}
                 title=""
                 centered
                 closeOnClickOutside={false}
                 closeOnEscape={false}
             >
-                <ReviewEditorView review={props.review} onFinish={() => setIsReviewEditorOpen(false)} />
+                {renderModalInsides()}
             </Modal>
         </>
     );

@@ -110,6 +110,21 @@ export default function App() {
               />
 
               <Route
+                path={ViewType.Teaware}
+                element={<>Nothing here yet - teaware</>}
+              />
+
+              <Route
+                path={ViewType.PublishRequestView}
+                element={<>Nothing here yet - publish request</>}
+              />
+
+              <Route
+                path={ViewType.AdminRequestResolutionView}
+                element={<>Nothing here yet - requestResolution</>}
+              />
+
+              <Route
                 path="*"
                 element={<Navigate to={ViewType.TeaListView} replace />}
               />

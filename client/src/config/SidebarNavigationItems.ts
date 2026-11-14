@@ -1,9 +1,11 @@
 import {
     IconCirclePlus,
     IconLayoutGrid,
+    IconProgressHelp,
     IconSettings,
     IconTeapot,
     IconUser,
+    IconUserShield,
 } from '@tabler/icons-react';
 import { UserRole, ViewType } from '../types/enums';
 import { SidebarItem } from '../components/Sidebar';
@@ -23,6 +25,16 @@ export const collectionsNavigationItems: SidebarItem[] = [
         availableToRoles: [UserRole.User, UserRole.Admin],
         childItems: null
     },
+]
+
+export const adminItems: SidebarItem[] = [
+    {
+        label: "Prośby o upublicznienie",
+        view: ViewType.AdminRequestResolutionView,
+        icon: null,
+        availableToRoles: [UserRole.Admin],
+        childItems: null
+    }
 ]
 
 export const navigationItems: SidebarItem[] = [
@@ -47,6 +59,20 @@ export const navigationItems: SidebarItem[] = [
         availableToRoles: [UserRole.User, UserRole.Admin],
         childItems: null
     },
+    {
+        label: "Moje prośby o upublicznienie",
+        icon: IconProgressHelp,
+        view: ViewType.PublishRequestView,
+        availableToRoles: [UserRole.User, UserRole.Admin],
+        childItems: null
+    },
+    {
+        label: "Opcje administracyjne",
+        icon: IconUserShield,
+        view: null,
+        availableToRoles: [UserRole.Admin],
+        childItems: adminItems
+    }
 ];
 
 export const bottomNavigationItems: SidebarItem[] = [

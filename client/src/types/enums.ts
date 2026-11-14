@@ -4,7 +4,9 @@ export enum ViewType {
     SettingsView = '/settings',
     UserView = '/user',
     PrivateTeaListView = '/tea-list-private',
-    Teaware = '/teaware-list'
+    Teaware = '/teaware-list',
+    PublishRequestView = '/publish-request',
+    AdminRequestResolutionView = '/admin-resolution-request'
 }
 
 export enum TeaType {
@@ -68,4 +70,10 @@ export enum UserRole {
 export enum CollectionType {
     Public = 0,
     Private = 1
+}
+
+export enum PublishRequestStatus {
+    Pending,
+    Accepted,
+    Rejected
 }

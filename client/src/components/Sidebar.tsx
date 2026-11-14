@@ -52,11 +52,20 @@ const Sidebar = () => {
     );
   }
 
+  const getTitleString = () => {
+    const prefix = "TeaApp"
+    if (userRoles.includes("Admin")) return `${prefix} - Admin`;
+
+    if (userRoles.includes("User")) return prefix;
+
+    return `${prefix} - Guest`;
+  }
+
   return (
     <Paper className={styles.sidebar}>
       <Stack gap="lg" h="100%">
         <Title order={3} fw={600} c="teaGreen.9">
-          TeaApp
+          {getTitleString()}
         </Title>
 
         <Stack className={styles.navigation}>

@@ -11,6 +11,7 @@ import { Tea } from "../../../types/Tea";
 import styles from "../../../Styles/TeaDetailsSection.module.css"
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
+import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
 
 const TEA_DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto herbatę!";
 
@@ -22,8 +23,8 @@ type TeaDetailsInfoSectionProps = {
 
 const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
 
-    const [isEditorOpen, setIsEditorOpen] = useState(false);
     const navigate = useNavigate();
+    const [modalMode, setModalMode] = useState<"Delete" | "Edit" | null>(null);
 
     const [deleteTea, { isLoading: isDeleting }] = useDeleteTeaMutation();
 
@@ -53,10 +54,28 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
 
         return (
             <>
-                <Button size="xs" color={"teaGreen"} variant="subtle" onClick={() => setIsEditorOpen(true)}>Edytuj</Button>
-                <Button size="xs" color="red" variant="subtle" onClick={handleDelete} loading={isDeleting}>Usuń</Button>
+                <Button size="xs" color={"teaGreen"} variant="subtle" onClick={() => setModalMode("Edit")}>Edytuj</Button>
+                <Button size="xs" color="red" variant="subtle" onClick={() => setModalMode("Delete")} loading={isDeleting}>Usuń</Button>
             </>
         )
+    }
+
+    const renderModalInsides = () => {
+        if (modalMode === "Delete") {
+            return (
+                <DeleteConfirmationPanel
+                    deletedObjectName={props.tea.name}
+                    handleDelete={handleDelete}
+                    handleCancel={() => setModalMode(null)}
+                />
+            )
+        }
+
+        if (modalMode === "Edit") {
+            return <TeaEditorView tea={props.tea} onFinish={() => setModalMode(null)} />
+        }
+
+        return <></>
     }
 
     return (
@@ -67,12 +86,12 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
             </Group>
             <TeaDetailsDetailField tea={props.tea} />
             <Modal
-                opened={isEditorOpen}
-                onClose={() => setIsEditorOpen(false)}
+                opened={modalMode !== null}
+                onClose={() => setModalMode(null)}
                 centered
                 size="lg"
             >
-                <TeaEditorView tea={props.tea} onFinish={() => setIsEditorOpen(false)} />
+                {renderModalInsides()}
             </Modal>
         </Stack>
     );

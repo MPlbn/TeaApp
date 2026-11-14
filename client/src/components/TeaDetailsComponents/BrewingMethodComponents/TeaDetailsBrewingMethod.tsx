@@ -9,6 +9,7 @@ import { MethodType } from "../../../types/enums";
 import { IconArrowRight, IconCheck, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { getSecondsStringVersion } from "../../../utils/brewingMethodUtils";
+import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
 
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto sposób parzenia";
 
@@ -18,7 +19,7 @@ type TeaDetailsBrewingMethodProps = {
 };
 
 const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
-    const [isBrewingMethodEditorOpen, setIsBrewingMethodEditorOpen] = useState(false);
+    const [modalMode, setModalMode] = useState<"Delete" | "Edit" | null>(null);
     const [deleteBrewingMethod, { isLoading: isDeleting }] = useDeleteBrewingMethodMutation();
     const isGongfu = props.brewingMethod.method === MethodType.Gongfu;
 
@@ -49,7 +50,7 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
                 <Button
                     size="xs"
                     variant="subtle"
-                    onClick={() => setIsBrewingMethodEditorOpen(true)}
+                    onClick={() => setModalMode("Edit")}
                 >
                     Edytuj
                 </Button>
@@ -58,13 +59,34 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
                     size="xs"
                     variant="subtle"
                     color="red"
-                    onClick={handleDelete}
+                    onClick={() => setModalMode("Delete")}
                     loading={isDeleting}
                 >
                     Usuń
                 </Button>
             </Group>
         )
+    }
+
+    const renderModalInsides = () => {
+        if (modalMode === "Delete") {
+            return (
+                <DeleteConfirmationPanel
+                    deletedObjectName="sposób parzenia"
+                    handleDelete={handleDelete}
+                    handleCancel={() => setModalMode(null)}
+                />
+            )
+        }
+
+        if (modalMode === "Edit") {
+            return <BrewingMethodEditorView
+                brewingMethod={props.brewingMethod}
+                onFinish={() => setModalMode(null)}
+            />
+        }
+
+        return <></>
     }
 
     return (
@@ -124,15 +146,12 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
             </Paper>
 
             <Modal
-                opened={isBrewingMethodEditorOpen}
-                onClose={() => setIsBrewingMethodEditorOpen(false)}
+                opened={modalMode !== null}
+                onClose={() => setModalMode(null)}
                 closeOnClickOutside={false}
                 closeOnEscape={false}
             >
-                <BrewingMethodEditorView
-                    brewingMethod={props.brewingMethod}
-                    onFinish={() => setIsBrewingMethodEditorOpen(false)}
-                />
+                {renderModalInsides()}
             </Modal>
         </>
     );

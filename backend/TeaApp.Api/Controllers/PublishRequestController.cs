@@ -123,7 +123,7 @@ public class PublishRequestController(TeaDbContext dbContext) : ControllerBase {
 
     [Authorize]
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> CancellPublishRequest(int id) {
+    public async Task<IActionResult> CancelPublishRequest(int id) {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         var request = await _dbContext.PublishRequestSet.FirstOrDefaultAsync(publishRequest => publishRequest.Id == id);
