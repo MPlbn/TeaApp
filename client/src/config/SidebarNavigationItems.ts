@@ -62,7 +62,7 @@ export const navigationItems: SidebarItem[] = [
     {
         label: "Moje prośby o upublicznienie",
         icon: IconProgressHelp,
-        view: ViewType.PublishRequestView,
+        view: ViewType.MyRequestsView,
         availableToRoles: [UserRole.User, UserRole.Admin],
         childItems: null
     },
@@ -76,6 +76,13 @@ export const navigationItems: SidebarItem[] = [
 ];
 
 export const bottomNavigationItems: SidebarItem[] = [
+    {
+        label: "TESTVIEW",
+        icon: null,
+        view: ViewType.TestView,
+        availableToRoles: [],
+        childItems: null
+    },
     {
         label: "Konto",
         icon: IconUser,

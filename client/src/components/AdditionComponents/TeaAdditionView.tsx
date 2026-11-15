@@ -43,8 +43,8 @@ const TeaAdditionView = () => {
 
     return (
         <FormPanel
-            title="Dodaj recenzję"
-            description="Uzupełnij informacje o recenzji"
+            title="Dodaj herbatę"
+            description="Uzupełnij informacje o herbacie"
             successMessage={TEA_ADD_SUCCESS_MESSAGE}
             submitLabel="Dodaj"
             isValid={isValid()}

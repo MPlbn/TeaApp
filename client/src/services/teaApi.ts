@@ -8,6 +8,7 @@ import { Mutex } from "async-mutex";
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { clearCredentials, setCredentials } from "../store/authSlice";
 import { PublishRequestResponse, ResolvePublishRequestRequest } from "../types/PublishRequest";
+import { TeaWare } from "../types/TeaWare";
 
 const BASE_URL = "http://localhost:8080/api";
 const PUBLIC_TEA_URL = "Tea/public";
@@ -32,6 +33,7 @@ const TAG_TEAWARE = "TeaWare";
 export type NewTea = Omit<Tea, "id">
 export type NewBrewingMethod = Omit<BrewingMethod, "id">
 export type NewReview = Omit<Review, "id">
+export type NewTeaWare = Omit<TeaWare, "id">
 
 const mutex = new Mutex();
 
@@ -333,7 +335,40 @@ export const teaApi = createApi({
                 method: "DELETE"
             }),
             invalidatesTags: [TAG_PUBLISH_REQUEST_PENDING, TAG_PUBLISH_REQUEST_USER]
+        }),
+
+        //TeaWare
+        getTeaWareList: build.query<TeaWare[], void>({
+            query: () => TEAWARE_URL,
+            providesTags: [TAG_TEAWARE]
+        }),
+
+        addTeaWare: build.mutation<void, NewTeaWare>({
+            query: (teaWare) => ({
+                url: TEAWARE_URL,
+                method: "POST",
+                body: teaWare
+            }),
+            invalidatesTags: [TAG_TEAWARE]
+        }),
+
+        editTeaWare: build.mutation<void, { id: number, teaWare: NewTeaWare }>({
+            query: ({ id: id, teaWare: teaWare }) => ({
+                url: `${TEAWARE_URL}/${id}`,
+                method: "PUT",
+                body: teaWare
+            }),
+            invalidatesTags: [TAG_TEAWARE]
+        }),
+
+        deleteTeaWare: build.mutation<void, number>({
+            query: (id) => ({
+                url: `${TEAWARE_URL}/${id}`,
+                method: "DELETE"
+            }),
+            invalidatesTags: [TAG_TEAWARE]
         })
+
     })
 });
 
@@ -368,5 +403,10 @@ export const {
     useGetUserPublishRequestsQuery,
     useCreatePublishRequestMutation,
     useResolvePublishRequestMutation,
-    useCancelPublishRequestMutation
+    useCancelPublishRequestMutation,
+
+    useGetTeaWareListQuery,
+    useAddTeaWareMutation,
+    useEditTeaWareMutation,
+    useDeleteTeaWareMutation
 } = teaApi;

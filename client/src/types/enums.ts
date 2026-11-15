@@ -5,8 +5,9 @@ export enum ViewType {
     UserView = '/user',
     PrivateTeaListView = '/tea-list-private',
     Teaware = '/teaware-list',
-    PublishRequestView = '/publish-request',
-    AdminRequestResolutionView = '/admin-resolution-request'
+    MyRequestsView = '/my-request-list',
+    AdminRequestResolutionView = '/admin-pending-request-list',
+    TestView = '/TEST'
 }
 
 export enum TeaType {

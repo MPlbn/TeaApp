@@ -12,6 +12,10 @@ import UserView from './components/UserComponents/UserView';
 import styles from './Styles/App.module.css';
 import { AnimatePresence, motion } from 'motion/react';
 import { useLocation, useNavigationType } from 'react-router';
+import TestView from './components/TestView';
+import PendingRequestsView from './components/PendingRequestsComponents/PendingRequestsView';
+import MyRequestsView from './components/MyRequestsComponents/MyRequestsView';
+import TeaWareListView from './components/TeaWareComponents/TeaWareListView';
 
 const pageVariants = {
   initial: (direction: number) => ({
@@ -111,17 +115,22 @@ export default function App() {
 
               <Route
                 path={ViewType.Teaware}
-                element={<>Nothing here yet - teaware</>}
+                element={<TeaWareListView />}
               />
 
               <Route
-                path={ViewType.PublishRequestView}
-                element={<>Nothing here yet - publish request</>}
+                path={ViewType.MyRequestsView}
+                element={<MyRequestsView />}
               />
 
               <Route
                 path={ViewType.AdminRequestResolutionView}
-                element={<>Nothing here yet - requestResolution</>}
+                element={<PendingRequestsView />}
+              />
+
+              <Route
+                path={ViewType.TestView}
+                element={<TestView />}
               />
 
               <Route

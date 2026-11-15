@@ -93,3 +93,13 @@ export const emptyUserChangeDataFormData = {
     userName: "",
     email: ""
 }
+
+export type TeaWareFormData = {
+    name: string,
+    capacity: number | string
+}
+
+export const emptyTeaWareFromData = {
+    name: "",
+    capacity: ""
+}

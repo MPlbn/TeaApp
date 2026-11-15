@@ -15,12 +15,13 @@ public class TeaWareController(TeaDbContext dbContext) : ControllerBase {
 
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TeaWareDTO>>> GetTeaWare() {
+    public async Task<ActionResult<IEnumerable<TeaWareResponseDTO>>> GetTeaWare() {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         var query = _dbContext.TeaWareSet.Where(teaWare => teaWare.OwnerId == userId);
 
-        var teaWares = await query.Select(teaWare => new TeaWareDTO {
+        var teaWares = await query.Select(teaWare => new TeaWareResponseDTO {
+            Id = teaWare.Id,
             Name = teaWare.Name,
             Capacity = teaWare.Capacity
         })

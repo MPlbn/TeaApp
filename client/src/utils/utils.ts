@@ -1,12 +1,13 @@
 import { BrewingMethod } from "../types/BrewingMethod";
 import { FlavorType, MethodType, UserRole, ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
-import { BrewingMethodFormData, ReviewFormData, TeaFormData, UserLoginFormData, UserRegisterFormData } from "../types/FormDatas";
+import { BrewingMethodFormData, ReviewFormData, TeaFormData, TeaWareFormData, UserLoginFormData, UserRegisterFormData } from "../types/FormDatas";
 import { Tea } from "../types/Tea";
-import { NewBrewingMethod, NewReview, NewTea } from "../services/teaApi";
+import { NewBrewingMethod, NewReview, NewTea, NewTeaWare } from "../services/teaApi";
 import { Review } from "../types/Review";
 import { flavorOptions } from "../config/FlavorOptions";
 import { User, UserLoginRequest, UserRegisterRequest } from "../types/User";
+import { TeaWare } from "../types/TeaWare";
 
 export function getTeaDetailsPath(teaID: number | string, isPublic: boolean): string {
     const path = isPublic ? `${ViewType.TeaListView}/${teaID}` : `${ViewType.PrivateTeaListView}/${teaID}`
@@ -172,6 +173,14 @@ export function convertUserRegisterFormDataToRegisterRequest(formData: UserRegis
         email: formData.email,
         password: formData.password
     } as UserRegisterRequest;
+}
+
+export function convertTeaWareFormDataToNewTeaWare(formData: TeaWareFormData): NewTeaWare | null {
+    if (formData.capacity === "") return null;
+    return {
+        name: formData.name,
+        capacity: formData.capacity
+    } as NewTeaWare;
 }
 
 export function isUserAuthorizedToEditTea(tea: Tea, user: User | null): boolean {
