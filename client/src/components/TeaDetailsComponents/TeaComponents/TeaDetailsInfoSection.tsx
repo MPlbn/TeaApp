@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Stack, Button, Group, Modal } from "@mantine/core";
 import { useNavigate } from "react-router";
 import { ViewType } from "../../../types/enums";
-import TeaEditorView from "../../EditorComponents/TeaEditorView";
 import { useDeleteTeaMutation, } from "../../../services/teaApi";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { Tea } from "../../../types/Tea";
@@ -12,6 +11,7 @@ import styles from "../../../Styles/TeaDetailsSection.module.css"
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
+import TeaForm from "../../FormComponents/TeaForm";
 
 const TEA_DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto herbatę!";
 
@@ -72,7 +72,7 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
         }
 
         if (modalMode === "Edit") {
-            return <TeaEditorView tea={props.tea} onFinish={() => setModalMode(null)} />
+            return <TeaForm initialTea={props.tea} onFinish={() => setModalMode(null)} />
         }
 
         return <></>

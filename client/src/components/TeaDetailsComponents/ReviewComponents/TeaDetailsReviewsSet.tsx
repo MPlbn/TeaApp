@@ -3,10 +3,10 @@ import { useState } from "react";
 import TeaDetailsReview from "./TeaDetailsReview";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { useGetReviewsByTeaIDQuery } from "../../../services/teaApi";
-import ReviewAdditionView from "../../AdditionComponents/ReviewAdditionView";
 import { useAppSelector } from "../../../store/hooks";
 import { doesUserOwnReviewInSet } from "../../../utils/utils";
 import sectionStyles from "../../../Styles/TeaDetailsSection.module.css"
+import ReviewForm from "../../FormComponents/ReviewForm";
 
 type TeaDetailsReviewsSetProps = {
     teaID: number;
@@ -75,14 +75,13 @@ const TeaDetailsReviewsSet = (props: TeaDetailsReviewsSetProps) => {
                 {renderReviews()}
             </Stack>
 
-
             <Modal
                 opened={isReviewAdditionOpen}
                 onClose={() => setIsReviewAdditionOpen(false)}
                 closeOnClickOutside={false}
                 closeOnEscape={false}
             >
-                <ReviewAdditionView teaID={props.teaID} onFinish={() => setIsReviewAdditionOpen(false)} />
+                <ReviewForm teaId={props.teaID} userId={user?.id} onFinish={() => setIsReviewAdditionOpen(false)} />
             </Modal>
         </>
     );

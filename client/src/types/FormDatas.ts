@@ -1,57 +1,3 @@
-import { FlavorType, MethodType, TeaType } from "./enums";
-
-export type TeaFormData = {
-    name: string;
-    type: TeaType | null;
-    origin: string;
-    price: string | number;
-    shop: string;
-    description: string;
-    flavors: FlavorType[];
-};
-
-export const emptyTeaFormData = {
-    name: "",
-    type: null,
-    origin: "",
-    price: "",
-    shop: "",
-    description: "",
-    flavors: []
-} as TeaFormData;
-
-export type BrewingMethodFormData = {
-    teaId: number | null;
-    method: MethodType | null;
-    temperature: string | number;
-    amountPerHundred: string | number;
-    brewingTimes: number[];
-    gongfuBrewingTimeIncrement: string | number;
-};
-
-export const emptyBrewingMethodFormData = {
-    teaId: null,
-    method: null,
-    temperature: "",
-    amountPerHundred: "",
-    brewingTimes: [],
-    gongfuBrewingTimeIncrement: ""
-} as BrewingMethodFormData;
-
-export type ReviewFormData = {
-    teaId: number;
-    userId: string;
-    review: string;
-    rating: number | null;
-};
-
-export const emptyReviewFormData = {
-    teaId: 0,
-    userId: "",
-    review: "",
-    rating: 0
-} as ReviewFormData;
-
 export type UserRegisterFormData = {
     userName: string;
     email: string;
@@ -94,12 +40,14 @@ export const emptyUserChangeDataFormData = {
     email: ""
 }
 
-export type TeaWareFormData = {
-    name: string,
-    capacity: number | string
+export enum FormMode {
+    Add,
+    Edit
 }
 
-export const emptyTeaWareFromData = {
-    name: "",
-    capacity: ""
+export type FormPanelDetails = {
+    title: string;
+    description: string;
+    successMessage: string;
+    submitLabel: string;
 }

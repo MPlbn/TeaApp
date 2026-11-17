@@ -1,6 +1,6 @@
 import useForm from '../../hooks/useForm';
 import { userFormValidator } from '../../validators/formValidators';
-import { emptyUserChangeDataFormData, UserChangeDataFormData } from '../../types/FormDatas';
+import { emptyUserChangeDataFormData, FormPanelDetails as formPanelDetails, UserChangeDataFormData } from '../../types/FormDatas';
 import { useUpdateUserProfileMutation } from '../../services/teaApi';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import FormPanel from '../FormComponents/FormPanel';
@@ -9,10 +9,23 @@ import { UpdateProfileRequest } from '../../types/User';
 import { setUser } from '../../store/authSlice';
 const UPDATE_PROFILE_SUCCESS_MESSAGE = "Poprawnie zaktualizowano dane!";
 
+const converter = (formData: UserChangeDataFormData) => {
+    return {
+        userName: formData.userName,
+        email: formData.email
+    } as UpdateProfileRequest;
+}
+
 type UserChangeDataPanelProps = {
     onFinish: () => void
 }
 
+const formPanelDetails = {
+    title: "Zmień dane",
+    description: "Zmień dane konta",
+    successMessage: UPDATE_PROFILE_SUCCESS_MESSAGE,
+    submitLabel: "Zmień dane konta"
+} as formPanelDetails;
 
 const UserChangeDataPanel = (props: UserChangeDataPanelProps) => {
 
@@ -28,7 +41,7 @@ const UserChangeDataPanel = (props: UserChangeDataPanelProps) => {
         updateField,
         isValid,
         getData
-    } = useForm<UserChangeDataFormData>(userFormValidator, emptyUserChangeDataFormData, filledData);
+    } = useForm<UserChangeDataFormData, UpdateProfileRequest>(userFormValidator, converter, emptyUserChangeDataFormData, filledData);
 
     const dispatch = useAppDispatch();
 
@@ -37,12 +50,9 @@ const UserChangeDataPanel = (props: UserChangeDataPanelProps) => {
     const handleUpdateProfile = async () => {
         const userDataToUpdate = getData();
 
-        const request = {
-            userName: userDataToUpdate.userName,
-            email: userDataToUpdate.email
-        } as UpdateProfileRequest;
+        if (userDataToUpdate === null) return;
 
-        const updatedUser = await updateProfile(request).unwrap();
+        const updatedUser = await updateProfile(userDataToUpdate).unwrap();
 
         if (user) {
             dispatch(setUser({
@@ -54,10 +64,7 @@ const UserChangeDataPanel = (props: UserChangeDataPanelProps) => {
 
     return (
         <FormPanel
-            title="Zmień dane"
-            description="Zmień dane konta"
-            successMessage={UPDATE_PROFILE_SUCCESS_MESSAGE}
-            submitLabel="Zmień dane konta"
+            details={formPanelDetails}
             isValid={isValid()}
             isSaving={isUpdating}
             onSave={handleUpdateProfile}

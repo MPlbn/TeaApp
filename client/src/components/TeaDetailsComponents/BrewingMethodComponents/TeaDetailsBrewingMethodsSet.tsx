@@ -1,12 +1,12 @@
 import { Button, Group, Loader, Modal, Paper, Stack, Tabs, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import TeaDetailsBrewingMethod from "./TeaDetailsBrewingMethod";
-import BrewingMethodAdditionView from "../../AdditionComponents/BrewingMethodAdditionView";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { useGetBrewingMethodsByTeaIDQuery } from "../../../services/teaApi";
 import { MethodType } from "../../../types/enums";
 import sectionStyles from "../../../Styles/TeaDetailsSection.module.css"
 import styles from "../../../Styles/BrewingMethod.module.css"
+import BrewingMethodForm from "../../FormComponents/BrewingMethodForm";
 
 type TeaDetailsBrewingMethodsSetProps = {
     teaID: number,
@@ -109,7 +109,7 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
                 closeOnClickOutside={false}
                 closeOnEscape={false}
             >
-                <BrewingMethodAdditionView teaID={props.teaID} onFinish={() => setIsBrewingMethodAdditionOpen(false)} />
+                <BrewingMethodForm teaId={props.teaID} onFinish={() => setIsBrewingMethodAdditionOpen(false)} />
             </Modal>
         </>
     );

@@ -1,16 +1,13 @@
-import { useAppDispatch } from "../../store/hooks"
 import { ReactNode, useState } from "react";
 import { Stack, Title, Text, Paper, Group, Button } from "@mantine/core";
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 import styles from "../../Styles/FormPanel.module.css"
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
+import { FormPanelDetails } from "../../types/FormDatas";
 
 type FormPanelProps = {
-    title: string;
-    description: string;
-    successMessage: string;
-    submitLabel: string;
+    details: FormPanelDetails;
     isValid: boolean;
     isSaving: boolean;
     onSave: () => Promise<void>;
@@ -20,25 +17,21 @@ type FormPanelProps = {
 }
 
 const FormPanel = (props: FormPanelProps) => {
-    const dispatch = useAppDispatch();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
     const handleSave = async () => {
-        if (!props.isValid || props.isSaving || isSubmitting) {
+        if (!props.isValid || props.isSaving) {
             return;
         }
-
-        setIsSubmitting(true);
 
         try {
             await props.onSave();
 
             notifications.show({
                 title: "SUKCES",
-                message: props.successMessage,
+                message: props.details.successMessage,
                 color: "teaGreen.8",
                 icon: <IconCheck />
             })
+            props.onFinish();
         } catch (error) {
             notifications.show({
                 title: "BŁĄD",
@@ -46,20 +39,16 @@ const FormPanel = (props: FormPanelProps) => {
                 color: "red",
                 icon: <IconX />
             });
-        } finally {
-            setIsSubmitting(false);
-            props.onFinish();
         }
-
     }
-    const isBusy = props.isSaving || isSubmitting;
+    const isBusy = props.isSaving;
 
     return (
         <Stack className={styles.panel} gap="lg">
             <Stack className={styles.header} gap="xs">
-                <Title order={1} ta="center">{props.title}</Title>
+                <Title order={1} ta="center">{props.details.title}</Title>
                 <Text c="dimmed" mt="xs">
-                    {props.description}
+                    {props.details.description}
                 </Text>
             </Stack>
 
@@ -88,7 +77,7 @@ const FormPanel = (props: FormPanelProps) => {
                             disabled={!props.isValid || isBusy}
                             loading={isBusy}
                         >
-                            {props.submitLabel}
+                            {props.details.submitLabel}
                         </Button>
                     </Group>
                 </Stack>

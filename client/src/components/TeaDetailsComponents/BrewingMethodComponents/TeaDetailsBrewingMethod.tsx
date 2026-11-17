@@ -1,8 +1,6 @@
 import { Button, Group, Paper, Stack, Text, Modal, Badge, SimpleGrid, Divider } from "@mantine/core";
 import { BrewingMethod } from "../../../types/BrewingMethod";
 import { useState } from "react";
-import BrewingMethodEditorView from "../../EditorComponents/BrewingMethodEditorView";
-import { useAppDispatch } from "../../../store/hooks";
 import { useDeleteBrewingMethodMutation } from "../../../services/teaApi";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { MethodType } from "../../../types/enums";
@@ -10,6 +8,7 @@ import { IconArrowRight, IconCheck, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { getSecondsStringVersion } from "../../../utils/brewingMethodUtils";
 import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
+import BrewingMethodForm from "../../FormComponents/BrewingMethodForm";
 
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto sposób parzenia";
 
@@ -80,8 +79,8 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
         }
 
         if (modalMode === "Edit") {
-            return <BrewingMethodEditorView
-                brewingMethod={props.brewingMethod}
+            return <BrewingMethodForm
+                initialBrewingMethod={props.brewingMethod}
                 onFinish={() => setModalMode(null)}
             />
         }

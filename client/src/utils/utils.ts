@@ -1,13 +1,10 @@
-import { BrewingMethod } from "../types/BrewingMethod";
 import { FlavorType, MethodType, UserRole, ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
-import { BrewingMethodFormData, ReviewFormData, TeaFormData, TeaWareFormData, UserLoginFormData, UserRegisterFormData } from "../types/FormDatas";
+import { UserLoginFormData, UserRegisterFormData } from "../types/FormDatas";
 import { Tea } from "../types/Tea";
-import { NewBrewingMethod, NewReview, NewTea, NewTeaWare } from "../services/teaApi";
 import { Review } from "../types/Review";
 import { flavorOptions } from "../config/FlavorOptions";
 import { User, UserLoginRequest, UserRegisterRequest } from "../types/User";
-import { TeaWare } from "../types/TeaWare";
 
 export function getTeaDetailsPath(teaID: number | string, isPublic: boolean): string {
     const path = isPublic ? `${ViewType.TeaListView}/${teaID}` : `${ViewType.PrivateTeaListView}/${teaID}`
@@ -51,115 +48,6 @@ export function getFlavorTypeStringVersion(flavor: FlavorType): string {
     return flavorOptions.find((option) => option.value === flavor)?.label ?? "Nieznana nuta";
 }
 
-export function convertTeaFormDataToNewTea(teaFormData: TeaFormData, isPublic: boolean): NewTea | null {
-    if (teaFormData.type === null) {
-        return null;
-    }
-
-    if (typeof teaFormData.price === "string") {
-        return null;
-    }
-
-    return {
-        name: teaFormData.name,
-        type: teaFormData.type,
-        origin: teaFormData.origin,
-        price: teaFormData.price,
-        shop: teaFormData.shop,
-        description: teaFormData.description,
-        flavors: teaFormData.flavors,
-        isPublic: isPublic
-    } as NewTea;
-}
-
-export function convertTeaToTeaFormData(tea: Tea): TeaFormData {
-    return {
-        name: tea.name,
-        type: tea.type,
-        origin: tea.origin,
-        price: tea.price ?? "",
-        shop: tea.shop,
-        description: tea.description,
-        flavors: tea.flavors
-    } as TeaFormData;
-}
-
-export function convertBrewingMethodFormDataToNewBrewingMethod(brewingMethodFormData: BrewingMethodFormData, teaID: number): NewBrewingMethod | null {
-    if (
-        brewingMethodFormData.method === null ||
-        brewingMethodFormData.temperature === "" ||
-        brewingMethodFormData.amountPerHundred === "" ||
-        !Number.isFinite(Number(brewingMethodFormData.temperature))
-    ) {
-        return null;
-    }
-
-    let gongfuIncrement: number | null = null;
-
-    if (brewingMethodFormData.method === MethodType.Gongfu) {
-        if (
-            brewingMethodFormData.gongfuBrewingTimeIncrement === "" ||
-            !Number.isFinite(Number(brewingMethodFormData.gongfuBrewingTimeIncrement)) ||
-            Number(brewingMethodFormData.gongfuBrewingTimeIncrement) <= 0
-        ) {
-            return null;
-        }
-
-        gongfuIncrement = Number(brewingMethodFormData.gongfuBrewingTimeIncrement); //Maybe this could be null, no need to check??
-    }
-
-    if (
-        brewingMethodFormData.brewingTimes.length === 0 ||
-        brewingMethodFormData.brewingTimes.some(
-            (time) => !Number.isFinite(time) || time <= 0
-        )
-    ) {
-        return null;
-    }
-
-    return {
-        teaId: teaID,
-        method: brewingMethodFormData.method,
-        temperature: Number(brewingMethodFormData.temperature),
-        amountPerHundred: Number(brewingMethodFormData.amountPerHundred),
-        brewingTimes: brewingMethodFormData.brewingTimes,
-        gongfuBrewingTimeIncrement: gongfuIncrement
-    } as NewBrewingMethod;
-}
-
-export function convertBrewingMethodToBrewingMethodFormData(brewingMethod: BrewingMethod): BrewingMethodFormData {
-    return {
-        teaId: brewingMethod.teaId,
-        method: brewingMethod.method,
-        temperature: brewingMethod.temperature,
-        amountPerHundred: brewingMethod.amountPerHundred,
-        brewingTimes: [...brewingMethod.brewingTimes],
-        gongfuBrewingTimeIncrement: brewingMethod.gongfuBrewingTimeIncrement ?? ""
-    } as BrewingMethodFormData;
-}
-
-export function convertReviewFormDataToNewReview(reviewFormData: ReviewFormData, teaID: number, userID: string): NewReview | null {
-    if (reviewFormData.rating === null) {
-        return null;
-    }
-
-    return {
-        teaId: teaID,
-        userId: userID,
-        review: reviewFormData.review,
-        rating: Number(reviewFormData.rating)
-    } as NewReview;
-}
-
-export function convertReviewToReviewFormData(review: Review): ReviewFormData {
-    return {
-        teaId: review.teaId,
-        userId: review.userId,
-        review: review.review,
-        rating: review.rating
-    } as ReviewFormData;
-}
-
 export function convertUserLoginFormDataToLoginRequest(formData: UserLoginFormData): UserLoginRequest {
     return {
         login: formData.login,
@@ -173,14 +61,6 @@ export function convertUserRegisterFormDataToRegisterRequest(formData: UserRegis
         email: formData.email,
         password: formData.password
     } as UserRegisterRequest;
-}
-
-export function convertTeaWareFormDataToNewTeaWare(formData: TeaWareFormData): NewTeaWare | null {
-    if (formData.capacity === "") return null;
-    return {
-        name: formData.name,
-        capacity: formData.capacity
-    } as NewTeaWare;
 }
 
 export function isUserAuthorizedToEditTea(tea: Tea, user: User | null): boolean {

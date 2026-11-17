@@ -1,10 +1,10 @@
-import { Button, Loader, Modal, SimpleGrid, Stack, Text, Title } from "@mantine/core"
+import { Button, Loader, Modal, Stack, Text, Title } from "@mantine/core"
 import { useGetTeaWareListQuery } from "../../services/teaApi"
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 import sectionStyles from "../../Styles/TeaDetailsSection.module.css";
 import TeaWareItem from "./TeaWareItem";
 import { useState } from "react";
-import TeaWareAdditionView from "../AdditionComponents/TeaWareAdditionView";
+import TeaWareForm from "../FormComponents/TeaWareForm";
 
 
 const TeaWareListView = () => {
@@ -51,7 +51,7 @@ const TeaWareListView = () => {
                 centered
                 size="lg"
             >
-                <TeaWareAdditionView onFinish={() => setIsAdditionModalOpen(false)} />
+                <TeaWareForm onFinish={() => setIsAdditionModalOpen(false)} />
             </Modal>
         </>
     )

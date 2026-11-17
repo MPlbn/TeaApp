@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useAppSelector } from "../../../store/hooks";
 import { useDeleteReviewMutation } from "../../../services/teaApi";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
-import ReviewEditorView from "../../EditorComponents/ReviewEditorView";
 import { isUserAuthorizedToModifyReview } from "../../../utils/utils";
 import { notifications } from "@mantine/notifications";
 import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
+import ReviewForm from "../../FormComponents/ReviewForm";
 
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto recenzję!";
 
@@ -71,7 +71,7 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
         }
 
         if (modalMode === "Edit") {
-            return <ReviewEditorView review={props.review} onFinish={() => setModalMode(null)} />
+            return <ReviewForm initialReview={props.review} onFinish={() => setModalMode(null)} />
         }
 
         return <></>
