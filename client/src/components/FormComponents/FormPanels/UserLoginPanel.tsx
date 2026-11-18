@@ -1,13 +1,12 @@
-import { userFormValidator } from '../../validators/formValidators';
-import { emptyUserLoginFormData, FormPanelDetails, UserLoginFormData } from '../../types/FormDatas';
-import useForm from '../../hooks/useForm';
-import FormPanel from '../FormComponents/FormPanel';
-import UserLoginForm from '../FormComponents/UserLoginForm';
-import { convertUserLoginFormDataToLoginRequest } from '../../utils/utils';
-import { useLoginUserMutation } from '../../services/teaApi';
-import { useAppDispatch } from '../../store/hooks';
-import { setCredentials } from '../../store/authSlice';
-import { UserLoginRequest } from '../../types/User';
+import { userFormValidator } from '../../../validators/formValidators';
+import { emptyUserLoginFormData, FormPanelDetails, UserLoginFormData } from '../../../types/FormDatas';
+import useForm from '../../../hooks/useForm';
+import FormPanel from './FormPanel';
+import UserLoginForm from '../Forms/UserLoginForm';
+import { useLoginUserMutation } from '../../../services/teaApi';
+import { useAppDispatch } from '../../../store/hooks';
+import { setCredentials } from '../../../store/authSlice';
+import { UserLoginRequest } from '../../../types/User';
 
 const LOGIN_SUCCESS_MESSAGE = "Poprawnie zalogowano!"
 

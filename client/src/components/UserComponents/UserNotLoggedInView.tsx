@@ -1,7 +1,7 @@
-import { Anchor, Button, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Anchor, Stack, Text } from "@mantine/core";
 import { useState } from "react";
-import UserLoginPanel from "./UserLoginPanel";
-import UserRegisterPanel from "./UserRegisterPanel";
+import UserLoginPanel from "../FormComponents/FormPanels/UserLoginPanel";
+import UserRegisterPanel from "../FormComponents/FormPanels/UserRegisterPanel";
 import styles from '../../Styles/UserNotLoggedInView.module.css'
 
 const UserNotLoggedInView = () => {

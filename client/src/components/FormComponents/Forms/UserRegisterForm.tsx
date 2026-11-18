@@ -1,4 +1,4 @@
-import { UserRegisterFormData } from "../../types/FormDatas";
+import { UserRegisterFormData } from "../../../types/FormDatas";
 import { PasswordInput, Stack, TextInput } from "@mantine/core";
 
 

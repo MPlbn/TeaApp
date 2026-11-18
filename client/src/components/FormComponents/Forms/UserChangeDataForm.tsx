@@ -1,5 +1,5 @@
 import { Stack, TextInput } from "@mantine/core";
-import { UserChangeDataFormData } from "../../types/FormDatas";
+import { UserChangeDataFormData } from "../../../types/FormDatas";
 
 type UserChangeDataFormProps = {
     formData: UserChangeDataFormData;

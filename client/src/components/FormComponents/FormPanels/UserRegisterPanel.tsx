@@ -1,11 +1,10 @@
-import useForm from "../../hooks/useForm";
-import { useRegisterUserMutation } from "../../services/teaApi";
-import { emptyUserRegisterFormData, FormPanelDetails, UserRegisterFormData } from "../../types/FormDatas";
-import { UserRegisterRequest } from "../../types/User";
-import { convertUserRegisterFormDataToRegisterRequest } from "../../utils/utils";
-import { userFormValidator } from "../../validators/formValidators";
-import FormPanel from "../FormComponents/FormPanel";
-import UserRegisterForm from "../FormComponents/UserRegisterForm";
+import useForm from "../../../hooks/useForm";
+import { useRegisterUserMutation } from "../../../services/teaApi";
+import { emptyUserRegisterFormData, FormPanelDetails, UserRegisterFormData } from "../../../types/FormDatas";
+import { UserRegisterRequest } from "../../../types/User";
+import { userFormValidator } from "../../../validators/formValidators";
+import FormPanel from "./FormPanel";
+import UserRegisterForm from "../Forms/UserRegisterForm";
 
 const REGISTER_SUCCESS_MESSAGE = "Poprawnie zarejestrowano! Można zalogować się na stworzone konto!"
 
@@ -23,7 +22,6 @@ const converter = (formData: UserRegisterFormData) => {
         password: formData.password
     } as UserRegisterRequest;
 }
-
 
 type UserRegisterPanelProps = {
     onFinish: () => void;

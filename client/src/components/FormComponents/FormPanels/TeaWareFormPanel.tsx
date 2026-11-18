@@ -1,11 +1,10 @@
-import { Grid, NumberInput, TextInput } from "@mantine/core";
-import { FormMode, FormPanelDetails } from "../../types/FormDatas";
-import FormPanel from "./FormPanel";
-import { NewTeaWare, useAddTeaWareMutation, useEditTeaWareMutation } from "../../services/teaApi";
-import useForm from "../../hooks/useForm";
-import { TeaWare } from "../../types/TeaWare";
+import useForm from '../../../hooks/useForm';
+import { NewTeaWare, useAddTeaWareMutation, useEditTeaWareMutation } from '../../../services/teaApi';
+import { FormMode, FormPanelDetails } from '../../../types/FormDatas';
+import { TeaWare } from '../../../types/TeaWare';
+import TeaWareForm from '../Forms/TeaWareForm';
+import FormPanel from './FormPanel';
 
-//CONSTS
 const ADD_FORM_PANEL_DETAILS = {
     title: "Dodaj naczynie",
     description: "Uzupełnij informacje o naczyniu",
@@ -20,9 +19,9 @@ const EDIT_FORM_PANEL_DETAILS = {
     submitLabel: "Zapisz zmiany"
 } as FormPanelDetails;
 
-type FormData = {
-    name: string,
-    capacity: number | string
+export type TeaWareFormData = {
+    name: string;
+    capacity: number | string;
 }
 
 const EMPTY_FORM_DATA = {
@@ -30,25 +29,25 @@ const EMPTY_FORM_DATA = {
     capacity: ""
 }
 
-const converter = (formData: FormData): NewTeaWare => {
+const converter = (formData: TeaWareFormData): NewTeaWare => {
     return {
         name: formData.name,
         capacity: formData.capacity as number
     } as NewTeaWare;
 }
 
-const validator = (formData: FormData): boolean => {
+const validator = (formData: TeaWareFormData): boolean => {
     if (formData.capacity === "" || typeof formData.capacity !== "number") return false;
     if (formData.name.trim() === "") return false;
     return true;
 }
 
-type TeaWareFormProps = {
+type TeaWareFormPanelProps = {
     onFinish?: () => void;
     initialTeaWare?: TeaWare;
 }
 
-const TeaWareForm = (props: TeaWareFormProps) => {
+const TeaWareFormPanel = (props: TeaWareFormPanelProps) => {
     const [addTeaWare, { isLoading: isAdding }] = useAddTeaWareMutation();
     const [editTeaWare, { isLoading: isEditing }] = useEditTeaWareMutation();
     const formMode = props.initialTeaWare ? FormMode.Edit : FormMode.Add
@@ -59,7 +58,7 @@ const TeaWareForm = (props: TeaWareFormProps) => {
         clearForm,
         isValid,
         getData
-    } = useForm<FormData, NewTeaWare>(validator, converter, EMPTY_FORM_DATA, props.initialTeaWare);
+    } = useForm<TeaWareFormData, NewTeaWare>(validator, converter, EMPTY_FORM_DATA, props.initialTeaWare);
 
     const handleSave = async () => {
         const teaWareToSave = getData();
@@ -105,35 +104,12 @@ const TeaWareForm = (props: TeaWareFormProps) => {
             onFinish={props.onFinish ?? clearForm}
             onClear={formMode === FormMode.Add ? clearForm : undefined}
         >
-
-            <Grid gap="md">
-                <Grid.Col span={{ base: 12, sm: 12 }}>
-                    <TextInput
-                        label="Nazwa naczynia"
-                        placeholder="Wpisz nazwę..."
-                        required
-                        value={formData.name}
-                        onChange={(event) => { updateField("name", event.currentTarget.value) }}
-                    />
-                </Grid.Col>
-
-                <Grid.Col span={{ base: 12, sm: 12 }}>
-                    <NumberInput
-                        label="Pojemność naczynia"
-                        placeholder="...ml"
-                        decimalScale={0}
-                        suffix="ml"
-                        min={1}
-                        hideControls
-                        required
-                        value={formData.capacity}
-                        onChange={(value) => { updateField("capacity", value) }}
-                    />
-                </Grid.Col>
-            </Grid>
+            <TeaWareForm
+                formData={formData}
+                updateField={updateField}
+            />
         </FormPanel>
-
     )
 }
 
-export default TeaWareForm
+export default TeaWareFormPanel

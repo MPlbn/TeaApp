@@ -1,5 +1,5 @@
 import { ActionIcon, Group, Title } from "@mantine/core";
-import { IconArrowLeft, IconUser, IconUsersGroup } from "@tabler/icons-react";
+import { IconArrowLeft, IconUsersGroup } from "@tabler/icons-react";
 
 type TeaDetailsTitleProps = {
     name: string;

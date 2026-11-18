@@ -4,7 +4,6 @@ import {
 import Sidebar from './components/Sidebar';
 import { ViewType } from './types/enums';
 import SettingsView from './components/SettingsComponents/SettingsView';
-import TeaAdditionView from './components/AdditionComponents/TeaAdditionView';
 import TeaListView from './components/TeaListComponents/TeaListView';
 import { Route, Routes, Navigate } from 'react-router';
 import TeaDetailsView from './components/TeaDetailsComponents/TeaDetailsView';
@@ -16,6 +15,7 @@ import TestView from './components/TestView';
 import PendingRequestsView from './components/PendingRequestsComponents/PendingRequestsView';
 import MyRequestsView from './components/MyRequestsComponents/MyRequestsView';
 import TeaWareListView from './components/TeaWareComponents/TeaWareListView';
+import TeaFormPanel from './components/FormComponents/FormPanels/TeaFormPanel';
 
 const pageVariants = {
   initial: (direction: number) => ({
@@ -95,7 +95,7 @@ export default function App() {
 
               <Route
                 path={ViewType.AddTeaView}
-                element={<TeaAdditionView />}
+                element={<TeaFormPanel />}
               />
 
               <Route

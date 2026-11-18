@@ -4,7 +4,8 @@ import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 import sectionStyles from "../../Styles/TeaDetailsSection.module.css";
 import TeaWareItem from "./TeaWareItem";
 import { useState } from "react";
-import TeaWareForm from "../FormComponents/TeaWareForm";
+import TeaWareForm from "../FormComponents/Forms/TeaWareForm";
+import TeaWareFormPanel from "../FormComponents/FormPanels/TeaWareFormPanel";
 
 
 const TeaWareListView = () => {
@@ -51,7 +52,7 @@ const TeaWareListView = () => {
                 centered
                 size="lg"
             >
-                <TeaWareForm onFinish={() => setIsAdditionModalOpen(false)} />
+                <TeaWareFormPanel onFinish={() => setIsAdditionModalOpen(false)} />
             </Modal>
         </>
     )

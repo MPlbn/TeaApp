@@ -1,12 +1,12 @@
-import useForm from '../../hooks/useForm';
-import { userFormValidator } from '../../validators/formValidators';
-import { emptyUserChangeDataFormData, FormPanelDetails as formPanelDetails, UserChangeDataFormData } from '../../types/FormDatas';
-import { useUpdateUserProfileMutation } from '../../services/teaApi';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import FormPanel from '../FormComponents/FormPanel';
-import UserChangeDataForm from '../FormComponents/UserChangeDataForm';
-import { UpdateProfileRequest } from '../../types/User';
-import { setUser } from '../../store/authSlice';
+import useForm from '../../../hooks/useForm';
+import { userFormValidator } from '../../../validators/formValidators';
+import { emptyUserChangeDataFormData, FormPanelDetails as formPanelDetails, UserChangeDataFormData } from '../../../types/FormDatas';
+import { useUpdateUserProfileMutation } from '../../../services/teaApi';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import FormPanel from './FormPanel';
+import UserChangeDataForm from '../Forms/UserChangeDataForm';
+import { UpdateProfileRequest } from '../../../types/User';
+import { setUser } from '../../../store/authSlice';
 const UPDATE_PROFILE_SUCCESS_MESSAGE = "Poprawnie zaktualizowano dane!";
 
 const converter = (formData: UserChangeDataFormData) => {

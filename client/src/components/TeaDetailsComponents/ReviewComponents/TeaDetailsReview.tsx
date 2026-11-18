@@ -7,7 +7,7 @@ import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { isUserAuthorizedToModifyReview } from "../../../utils/utils";
 import { notifications } from "@mantine/notifications";
 import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
-import ReviewForm from "../../FormComponents/ReviewForm";
+import ReviewFormPanel from "../../FormComponents/FormPanels/ReviewFormPanel";
 
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto recenzję!";
 
@@ -71,7 +71,7 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
         }
 
         if (modalMode === "Edit") {
-            return <ReviewForm initialReview={props.review} onFinish={() => setModalMode(null)} />
+            return <ReviewFormPanel initialReview={props.review} onFinish={() => setModalMode(null)} />
         }
 
         return <></>

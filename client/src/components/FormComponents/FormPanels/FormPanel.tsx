@@ -1,10 +1,11 @@
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { Stack, Title, Text, Paper, Group, Button } from "@mantine/core";
-import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
-import styles from "../../Styles/FormPanel.module.css"
+import styles from "../../../Styles/FormPanel.module.css"
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
-import { FormPanelDetails } from "../../types/FormDatas";
+import { FormPanelDetails } from "../../../types/FormDatas";
+import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
+
 
 type FormPanelProps = {
     details: FormPanelDetails;

@@ -1,11 +1,10 @@
-import useForm from "../../hooks/useForm";
-import { useChangeUserPasswordMutation } from "../../services/teaApi";
-import { emptyUserChangeDataFormData, emptyUserChangePasswordFormData, UserChangePasswordFormData } from "../../types/FormDatas";
-import { ChangePasswordRequest } from "../../types/User";
-import { convertUserRegisterFormDataToRegisterRequest } from "../../utils/utils";
-import { userFormValidator } from "../../validators/formValidators";
-import FormPanel from "../FormComponents/FormPanel";
-import UserChangePasswordForm from "../FormComponents/UserChangePasswordForm";
+import useForm from "../../../hooks/useForm";
+import { useChangeUserPasswordMutation } from "../../../services/teaApi";
+import { emptyUserChangePasswordFormData, UserChangePasswordFormData } from "../../../types/FormDatas";
+import { ChangePasswordRequest } from "../../../types/User";
+import { userFormValidator } from "../../../validators/formValidators";
+import FormPanel from "./FormPanel";
+import UserChangePasswordForm from "../Forms/UserChangePasswordForm";
 
 const CHANGE_PASSWORD_SUCCESS_MESSAGE = "Poprawnie zmieniono hasło!";
 

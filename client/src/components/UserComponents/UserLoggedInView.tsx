@@ -4,8 +4,8 @@ import { useState } from "react";
 import { teaApi, useLogoutUserMutation } from "../../services/teaApi";
 import { RefreshTokenRequest } from "../../types/User";
 import { clearCredentials } from "../../store/authSlice";
-import UserChangePasswordPanel from "./UserChangePasswordPanel";
-import UserChangeDataPanel from "./UserChangeDataPanel";
+import UserChangePasswordPanel from "../FormComponents/FormPanels/UserChangePasswordPanel";
+import UserChangeDataPanel from "../FormComponents/FormPanels/UserChangeDataPanel";
 import styles from '../../Styles/UserLoggedInView.module.css'
 import { IconCheck, IconChevronRight, IconLogout } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";

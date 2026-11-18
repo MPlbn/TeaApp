@@ -1,4 +1,4 @@
-import { UserLoginFormData } from "../../types/FormDatas";
+import { UserLoginFormData } from "../../../types/FormDatas";
 import { PasswordInput, Stack, TextInput } from "@mantine/core";
 
 type UserLoginFormProps = {

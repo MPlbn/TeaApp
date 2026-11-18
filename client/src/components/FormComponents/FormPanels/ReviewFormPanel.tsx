@@ -1,11 +1,10 @@
-import { FormMode, FormPanelDetails } from "../../types/FormDatas";
-import { Grid, Rating, Stack, Text, Textarea } from "@mantine/core";
-import { Review } from "../../types/Review";
-import { NewReview, useAddReviewMutation, useEditReviewMutation } from "../../services/teaApi";
-import useForm from "../../hooks/useForm";
-import FormPanel from "./FormPanel";
+import { FormMode, FormPanelDetails } from '../../../types/FormDatas';
+import { NewReview, useAddReviewMutation, useEditReviewMutation } from '../../../services/teaApi';
+import { Review } from '../../../types/Review';
+import useForm from '../../../hooks/useForm';
+import FormPanel from './FormPanel';
+import ReviewForm from '../Forms/ReviewForm';
 
-//CONSTS
 const ADD_FORM_PANEL_DETAILS = {
     title: "Dodaj recenzję",
     description: "Uzupełnij informacje o recenzji",
@@ -20,21 +19,21 @@ const EDIT_FORM_PANEL_DETAILS = {
     submitLabel: "Zapisz zmiany"
 } as FormPanelDetails;
 
-type FormData = {
+export type ReviewFormData = {
     teaId: number;
     userId: string;
     review: string;
     rating: number | null;
 }
 
-const getEmptyFormData = (teaId: number, userId: string): FormData => ({
+const getEmptyFormData = (teaId: number, userId: string): ReviewFormData => ({
     teaId: teaId,
     userId: userId,
     review: "",
     rating: 0
-} as FormData);
+} as ReviewFormData);
 
-const converter = (formData: FormData): NewReview => {
+const converter = (formData: ReviewFormData): NewReview => {
     return {
         teaId: formData.teaId,
         userId: formData.userId,
@@ -43,7 +42,7 @@ const converter = (formData: FormData): NewReview => {
     } as NewReview;
 }
 
-const validator = (formData: FormData): boolean => {
+const validator = (formData: ReviewFormData): boolean => {
     if (formData.review === "") return false;
 
     if (formData.rating === null) return false;
@@ -51,19 +50,20 @@ const validator = (formData: FormData): boolean => {
     return true
 }
 
-type ReviewFormProps = {
-    onFinish?: () => void;
+type ReviewFormPanelProps = {
     initialReview?: Review;
-    teaId?: number
-    userId?: string
-};
+    teaId?: number;
+    userId?: string;
+    onFinish?: () => void;
+}
 
-const ReviewForm = (props: ReviewFormProps) => {
+const ReviewFormPanel = (props: ReviewFormPanelProps) => {
     const [addReview, { isLoading: isAdding }] = useAddReviewMutation();
     const [editReview, { isLoading: isEditing }] = useEditReviewMutation();
 
     const teaId = props.initialReview?.teaId ?? props.teaId ?? null;
     const userId = props.initialReview?.userId ?? props.userId ?? null;
+
 
     if (teaId === null || userId === null) return <></>
 
@@ -76,7 +76,7 @@ const ReviewForm = (props: ReviewFormProps) => {
         clearForm,
         isValid,
         getData
-    } = useForm<FormData, NewReview>(validator, converter, emptyForm, props.initialReview ?? emptyForm);
+    } = useForm<ReviewFormData, NewReview>(validator, converter, emptyForm, props.initialReview ?? emptyForm);
 
     const handleSave = async () => {
         const reviewToSave = getData();
@@ -122,33 +122,12 @@ const ReviewForm = (props: ReviewFormProps) => {
             onFinish={props.onFinish ?? clearForm}
             onClear={formMode === FormMode.Add ? clearForm : undefined}
         >
-            <Grid gap="md">
-                <Grid.Col span={{ base: 12, sm: 12 }}>
-                    <Textarea
-                        label="Recenzja"
-                        placeholder="Wpisz treść recenzji..."
-                        value={formData.review}
-                        onChange={(event) => { updateField("review", event.currentTarget.value) }}
-                        required
-                    />
-                </Grid.Col>
-
-                <Grid.Col span={{ base: 12, sm: 12 }}>
-                    <Stack>
-                        <Text size="sm" c="dimmed">Ocena</Text>
-                        <Rating
-                            value={formData.rating === null ? 0 : formData.rating / 2}
-                            onChange={(value) => { updateField("rating", Math.floor(value * 2)) }}
-                            size="xl"
-                            count={5}
-                            fractions={2}
-                            allowClear
-                        />
-
-                    </Stack>
-                </Grid.Col>
-            </Grid>
-        </FormPanel>
-    );
+            <ReviewForm
+                formData={formData}
+                updateField={updateField}
+            />
+        </FormPanel >
+    )
 }
-export default ReviewForm
+
+export default ReviewFormPanel

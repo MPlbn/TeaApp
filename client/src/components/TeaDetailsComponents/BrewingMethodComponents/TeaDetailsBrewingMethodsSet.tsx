@@ -6,7 +6,7 @@ import { useGetBrewingMethodsByTeaIDQuery } from "../../../services/teaApi";
 import { MethodType } from "../../../types/enums";
 import sectionStyles from "../../../Styles/TeaDetailsSection.module.css"
 import styles from "../../../Styles/BrewingMethod.module.css"
-import BrewingMethodForm from "../../FormComponents/BrewingMethodForm";
+import BrewingMethodFormPanel from "../../FormComponents/FormPanels/BrewingMethodFormPanel";
 
 type TeaDetailsBrewingMethodsSetProps = {
     teaID: number,
@@ -109,7 +109,7 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
                 closeOnClickOutside={false}
                 closeOnEscape={false}
             >
-                <BrewingMethodForm teaId={props.teaID} onFinish={() => setIsBrewingMethodAdditionOpen(false)} />
+                <BrewingMethodFormPanel teaId={props.teaID} onFinish={() => setIsBrewingMethodAdditionOpen(false)} />
             </Modal>
         </>
     );

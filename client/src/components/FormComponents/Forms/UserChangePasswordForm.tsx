@@ -1,5 +1,5 @@
 import { PasswordInput, Stack } from "@mantine/core";
-import { UserChangePasswordFormData } from "../../types/FormDatas";
+import { UserChangePasswordFormData } from "../../../types/FormDatas";
 
 type UserChangePasswordFormProps = {
     formData: UserChangePasswordFormData;

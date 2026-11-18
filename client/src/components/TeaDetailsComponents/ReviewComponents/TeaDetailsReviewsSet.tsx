@@ -6,7 +6,7 @@ import { useGetReviewsByTeaIDQuery } from "../../../services/teaApi";
 import { useAppSelector } from "../../../store/hooks";
 import { doesUserOwnReviewInSet } from "../../../utils/utils";
 import sectionStyles from "../../../Styles/TeaDetailsSection.module.css"
-import ReviewForm from "../../FormComponents/ReviewForm";
+import ReviewFormPanel from "../../FormComponents/FormPanels/ReviewFormPanel";
 
 type TeaDetailsReviewsSetProps = {
     teaID: number;
@@ -81,7 +81,7 @@ const TeaDetailsReviewsSet = (props: TeaDetailsReviewsSetProps) => {
                 closeOnClickOutside={false}
                 closeOnEscape={false}
             >
-                <ReviewForm teaId={props.teaID} userId={user?.id} onFinish={() => setIsReviewAdditionOpen(false)} />
+                <ReviewFormPanel teaId={props.teaID} userId={user?.id} onFinish={() => setIsReviewAdditionOpen(false)} />
             </Modal>
         </>
     );

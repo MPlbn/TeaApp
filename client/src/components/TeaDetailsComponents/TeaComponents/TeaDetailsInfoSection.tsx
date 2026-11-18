@@ -11,7 +11,7 @@ import styles from "../../../Styles/TeaDetailsSection.module.css"
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
-import TeaForm from "../../FormComponents/TeaForm";
+import TeaFormPanel from "../../FormComponents/FormPanels/TeaFormPanel";
 
 const TEA_DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto herbatę!";
 
@@ -72,7 +72,7 @@ const TeaDetailsInfoSection = (props: TeaDetailsInfoSectionProps) => {
         }
 
         if (modalMode === "Edit") {
-            return <TeaForm initialTea={props.tea} onFinish={() => setModalMode(null)} />
+            return <TeaFormPanel initialTea={props.tea} onFinish={() => setModalMode(null)} />
         }
 
         return <></>
