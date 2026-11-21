@@ -1,8 +1,9 @@
 import { PublishRequestStatus } from "./enums";
+import { PublishRequestDetails } from "./RequestDetails";
 
-export type PublishRequestResponse = {
+export type RequestResponse = {
     id: number;
-    teaId: number;
+    details: PublishRequestDetails;
     createdAt: string;
     resolvedAt: string | null;
     resolverUsername: string | null;
@@ -13,5 +14,5 @@ export type PublishRequestResponse = {
 
 export type ResolvePublishRequestRequest = {
     status: PublishRequestStatus;
-    resolutionMessage: string | null;
+    resolutionMessage?: string;
 }

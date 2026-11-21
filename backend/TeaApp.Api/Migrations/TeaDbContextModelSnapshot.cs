@@ -276,24 +276,6 @@ namespace TeaApp.Api.Migrations
             modelBuilder.Entity("TeaApp.Api.Models.PublishRequest", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ResolutionMessage")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ResolvedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ResolvingAdminId")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.Property<int>("TeaId")
@@ -347,6 +329,45 @@ namespace TeaApp.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokenTable", (string)null);
+                });
+
+            modelBuilder.Entity("TeaApp.Api.Models.Request", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResolutionMessage")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ResolvingAdminId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("ResolvingAdminId");
+
+                    b.ToTable("RequestSet");
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.Tea", b =>
@@ -522,11 +543,19 @@ namespace TeaApp.Api.Migrations
 
             modelBuilder.Entity("TeaApp.Api.Models.PublishRequest", b =>
                 {
+                    b.HasOne("TeaApp.Api.Models.Request", "Request")
+                        .WithOne()
+                        .HasForeignKey("TeaApp.Api.Models.PublishRequest", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("TeaApp.Api.Models.Tea", "Tea")
                         .WithMany()
                         .HasForeignKey("TeaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Request");
 
                     b.Navigation("Tea");
                 });
@@ -540,6 +569,24 @@ namespace TeaApp.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TeaApp.Api.Models.Request", b =>
+                {
+                    b.HasOne("TeaApp.Api.Models.ApplicationUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TeaApp.Api.Models.ApplicationUser", "ResolvingAdmin")
+                        .WithMany()
+                        .HasForeignKey("ResolvingAdminId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("ResolvingAdmin");
                 });
 
             modelBuilder.Entity("TeaApp.Api.Models.TeaReview", b =>

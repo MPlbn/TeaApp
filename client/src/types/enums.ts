@@ -78,3 +78,7 @@ export enum PublishRequestStatus {
     Accepted,
     Rejected
 }
+
+export enum RequestType {
+    Publish
+}

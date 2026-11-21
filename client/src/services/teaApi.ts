@@ -7,8 +7,9 @@ import { RootState } from "../store/store";
 import { Mutex } from "async-mutex";
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { clearCredentials, setCredentials } from "../store/authSlice";
-import { PublishRequestResponse, ResolvePublishRequestRequest } from "../types/PublishRequest";
+import { RequestResponse, ResolvePublishRequestRequest } from "../types/PublishRequest";
 import { TeaWare } from "../types/TeaWare";
+import { RequestCreationData } from "../types/RequestCreationData";
 
 const BASE_URL = "http://localhost:8080/api";
 const PUBLIC_TEA_URL = "Tea/public";
@@ -17,7 +18,7 @@ const TEA_URL = "Tea";
 const BREWING_METHOD_URL = "BrewingMethod";
 const REVIEW_URL = "TeaReview";
 const AUTH_URL = "auth";
-const PUBLISH_REQUEST_URL = "PublishRequest";
+const REQUEST_URL = "Request";
 const TEAWARE_URL = "TeaWare";
 
 const TAG_TEA_PUBLIC = "Tea";
@@ -25,8 +26,8 @@ const TAG_TEA_PRIVATE = "TeaPrivate";
 const TAG_BREWING_METHOD = "BrewingMethod";
 const TAG_REVIEW = "TeaReview";
 const TAG_USER = "User";
-const TAG_PUBLISH_REQUEST_PENDING = "PublishRequestPending";
-const TAG_PUBLISH_REQUEST_USER = "PublishRequestUser";
+const TAG_REQUEST_PENDING = "RequestPending";
+const TAG_REQUEST_USER = "RequestUser";
 const TAG_TEAWARE = "TeaWare";
 
 
@@ -119,7 +120,7 @@ export const teaApi = createApi({
 
     baseQuery: baseQueryWithReauth,
 
-    tagTypes: [TAG_TEA_PUBLIC, TAG_BREWING_METHOD, TAG_REVIEW, TAG_USER, TAG_TEA_PRIVATE, TAG_PUBLISH_REQUEST_PENDING, TAG_PUBLISH_REQUEST_USER, TAG_TEAWARE],
+    tagTypes: [TAG_TEA_PUBLIC, TAG_BREWING_METHOD, TAG_REVIEW, TAG_USER, TAG_TEA_PRIVATE, TAG_REQUEST_PENDING, TAG_REQUEST_USER, TAG_TEAWARE],
 
     endpoints: (build) => ({
         //Tea
@@ -301,40 +302,41 @@ export const teaApi = createApi({
             })
         }),
 
-        // PublishRequest
-        getPendingPublishRequests: build.query<PublishRequestResponse[], void>({
-            query: () => `${PUBLISH_REQUEST_URL}/pending`,
-            providesTags: [TAG_PUBLISH_REQUEST_PENDING]
+        // Requests
+        getPendingRequests: build.query<RequestResponse[], void>({
+            query: () => `${REQUEST_URL}/pending`,
+            providesTags: [TAG_REQUEST_PENDING]
         }),
 
-        getUserPublishRequests: build.query<PublishRequestResponse[], void>({
-            query: () => `${PUBLISH_REQUEST_URL}/me`,
-            providesTags: [TAG_PUBLISH_REQUEST_USER]
+        getUserRequests: build.query<RequestResponse[], void>({
+            query: () => `${REQUEST_URL}/mine`,
+            providesTags: [TAG_REQUEST_USER]
         }),
 
-        createPublishRequest: build.mutation<void, number>({
-            query: (teaId) => ({
-                url: `${PUBLISH_REQUEST_URL}/${teaId}`,
-                method: "POST"
+        createRequest: build.mutation<void, RequestCreationData>({
+            query: (requestData) => ({
+                url: REQUEST_URL,
+                method: "POST",
+                body: requestData
             }),
-            invalidatesTags: [TAG_PUBLISH_REQUEST_PENDING, TAG_PUBLISH_REQUEST_USER]
+            invalidatesTags: [TAG_REQUEST_PENDING, TAG_REQUEST_USER]
         }),
 
-        resolvePublishRequest: build.mutation<void, { publishRequestId: number, request: ResolvePublishRequestRequest }>({
+        resolveRequest: build.mutation<void, { publishRequestId: number, request: ResolvePublishRequestRequest }>({
             query: ({ publishRequestId: id, request: request }) => ({
-                url: `${PUBLISH_REQUEST_URL}/resolve/${id}`,
+                url: `${REQUEST_URL}/resolve/${id}`,
                 method: "PATCH",
                 body: request
             }),
-            invalidatesTags: [TAG_PUBLISH_REQUEST_PENDING, TAG_PUBLISH_REQUEST_USER]
+            invalidatesTags: [TAG_REQUEST_PENDING, TAG_REQUEST_USER]
         }),
 
-        cancelPublishRequest: build.mutation<void, number>({
+        cancelRequest: build.mutation<void, number>({
             query: (id) => ({
-                url: `${PUBLISH_REQUEST_URL}/${id}`,
+                url: `${REQUEST_URL}/${id}`,
                 method: "DELETE"
             }),
-            invalidatesTags: [TAG_PUBLISH_REQUEST_PENDING, TAG_PUBLISH_REQUEST_USER]
+            invalidatesTags: [TAG_REQUEST_PENDING, TAG_REQUEST_USER]
         }),
 
         //TeaWare
@@ -399,11 +401,11 @@ export const {
     useUpdateUserProfileMutation,
     useRefreshTokenMutation,
 
-    useGetPendingPublishRequestsQuery,
-    useGetUserPublishRequestsQuery,
-    useCreatePublishRequestMutation,
-    useResolvePublishRequestMutation,
-    useCancelPublishRequestMutation,
+    useGetPendingRequestsQuery,
+    useGetUserRequestsQuery,
+    useCreateRequestMutation,
+    useResolveRequestMutation,
+    useCancelRequestMutation,
 
     useGetTeaWareListQuery,
     useAddTeaWareMutation,

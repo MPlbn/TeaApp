@@ -29,7 +29,7 @@ export const collectionsNavigationItems: SidebarItem[] = [
 
 export const adminItems: SidebarItem[] = [
     {
-        label: "Prośby o upublicznienie",
+        label: "Prośby użytkowników",
         view: ViewType.AdminRequestResolutionView,
         icon: null,
         availableToRoles: [UserRole.Admin],

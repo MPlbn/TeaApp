@@ -1,4 +1,4 @@
-import { Modal, Stack, Text, Group, Button, Paper, Divider, Badge, Blockquote, Rating } from "@mantine/core";
+import { Modal, Stack, Text, Group, Button, Paper, Divider, Badge, Blockquote, Rating, Box } from "@mantine/core";
 import { Review } from "../../../types/Review";
 import { useState } from "react";
 import { useAppSelector } from "../../../store/hooks";
@@ -8,6 +8,7 @@ import { isUserAuthorizedToModifyReview } from "../../../utils/utils";
 import { notifications } from "@mantine/notifications";
 import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
 import ReviewFormPanel from "../../FormComponents/FormPanels/ReviewFormPanel";
+import ItemModificationMenu from "../../ItemModificationMenu";
 
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto recenzję!";
 
@@ -34,31 +35,6 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
         }
     }
 
-    const renderModifyButtons = () => {
-        if (!canModifyReview) return <></>
-
-        return (
-            <Group justify="flex-end" gap="xs">
-                <Button
-                    size="xs"
-                    variant="subtle"
-                    onClick={() => setModalMode("Edit")}
-                >
-                    Edytuj
-                </Button>
-                <Button
-                    size="xs"
-                    color="red"
-                    variant="subtle"
-                    onClick={() => setModalMode("Delete")}
-                    loading={isDeleting}
-                >
-                    Usuń
-                </Button>
-            </Group>
-        )
-    }
-
     const renderModalInsides = () => {
         if (modalMode === "Delete") {
             return (
@@ -79,7 +55,12 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
 
     return (
         <>
-            <Blockquote cite={props.review.userName} textWrap="wrap">
+            <Blockquote cite={props.review.userName} textWrap="wrap" pos="relative">
+                {canModifyReview && (
+                    <Box pos="absolute" top={10} right={10} style={{ zIndex: 1 }}>
+                        <ItemModificationMenu setModalMode={setModalMode} />
+                    </Box>
+                )}
                 <Stack>
                     <Group justify="space-between" gap='xs'>
                         <Badge color="white" p="md">
@@ -92,8 +73,6 @@ const TeaDetailsReview = (props: TeaDetailsReviewProps) => {
                                 />
                             </Group>
                         </Badge>
-                        {renderModifyButtons()}
-
                     </Group>
 
                     <Text>{props.review.review}</Text>

@@ -2,14 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using TeaApp.Api.Data;
 using TeaApp.Api.Models;
 
-namespace TeaApp.Api.Services;
+namespace TeaApp.Api.Services.Requests;
 
-public class PublishRequestCleanupService(
+public class RequestCleanupService(
     IServiceScopeFactory scopeFactory,
-    ILogger<PublishRequestCleanupService> logger
+    ILogger<RequestCleanupService> logger
 ) : BackgroundService {
     private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
-    private readonly ILogger<PublishRequestCleanupService> _logger = logger;
+    private readonly ILogger<RequestCleanupService> _logger = logger;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
         using var timer = new PeriodicTimer(TimeSpan.FromHours(24));
@@ -17,7 +17,7 @@ public class PublishRequestCleanupService(
         do {
 
             try {
-                await CleanupPublishRequests(stoppingToken);
+                await CleanupRequests(stoppingToken);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) {
                 break;
@@ -29,19 +29,19 @@ public class PublishRequestCleanupService(
         } while (await timer.WaitForNextTickAsync(stoppingToken));
     }
 
-    private async Task CleanupPublishRequests(CancellationToken stoppingToken) {
+    private async Task CleanupRequests(CancellationToken stoppingToken) {
         await using var scope = _scopeFactory.CreateAsyncScope();
 
         var dbContext = scope.ServiceProvider.GetRequiredService<TeaDbContext>();
 
         var expirationDate = DateTime.UtcNow.AddDays(-14);
 
-        var deletedCount = await dbContext.PublishRequestSet
-        .Where(publishRequest => (publishRequest.Status == PublishRequestStatus.Accepted || publishRequest.Status == PublishRequestStatus.Rejected) &&
-        publishRequest.ResolvedAt != null &&
-        publishRequest.ResolvedAt < expirationDate)
+        var deletedCount = await dbContext.RequestSet
+        .Where(request => (request.Status == RequestStatus.Accepted || request.Status == RequestStatus.Rejected) &&
+        request.ResolvedAt != null &&
+        request.ResolvedAt < expirationDate)
         .ExecuteDeleteAsync(stoppingToken);
 
-        _logger.LogInformation("Publish request cleanup completed. Deleted {Count} requests.", deletedCount);
+        _logger.LogInformation("Request cleanup completed. Deleted {Count} requests.", deletedCount);
     }
 }

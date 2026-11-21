@@ -1,4 +1,4 @@
-import { Button, Loader, Modal, Stack, Text, Title } from "@mantine/core"
+import { Box, Button, Loader, Modal, SimpleGrid, Stack, Text, Title } from "@mantine/core"
 import { useGetTeaWareListQuery } from "../../services/teaApi"
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 import sectionStyles from "../../Styles/TeaDetailsSection.module.css";
@@ -6,6 +6,7 @@ import TeaWareItem from "./TeaWareItem";
 import { useState } from "react";
 import TeaWareForm from "../FormComponents/Forms/TeaWareForm";
 import TeaWareFormPanel from "../FormComponents/FormPanels/TeaWareFormPanel";
+import { IconPlus } from "@tabler/icons-react";
 
 
 const TeaWareListView = () => {
@@ -26,24 +27,34 @@ const TeaWareListView = () => {
     return (
         <>
             <Stack className={sectionStyles.section}>
-                <Title order={1} c="teaGreen.9">Lista naczyń</Title>
+                <Title mx="auto" order={1} c="teaGreen.9">Lista naczyń</Title>
 
                 <Button
                     onClick={() => setIsAdditionModalOpen(true)}
+                    maw={400}
+                    size="lg"
+                    mx="auto"
+                    radius="md"
+                    color="teaGreen.7"
+                    leftSection={<IconPlus size={16} />}
                 >
                     Dodaj naczynie
                 </Button>
 
-                <Text c="dimmed" size="sm">
+                <Text mx="auto" c="dimmed" size="sm">
                     Znalezionych naczyń: {teaWares.length}
                 </Text>
-
-                <Stack
-                    gap="md"
-                    align="flex-start"
-                >
-                    {teaWares.map((teaWare) => { return <TeaWareItem key={teaWare.id} teaWare={teaWare} /> })}
-                </Stack>
+                <>
+                    <SimpleGrid
+                        cols={1}
+                        spacing="md"
+                        maw={400}
+                        w="100%"
+                        mx="auto"
+                    >
+                        {teaWares.map((teaWare) => { return <TeaWareItem key={teaWare.id} teaWare={teaWare} /> })}
+                    </SimpleGrid>
+                </>
             </Stack>
 
             <Modal

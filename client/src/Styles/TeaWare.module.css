@@ -1,0 +1,15 @@
+.selectButton {
+    transition:
+        transform 150ms ease,
+        background-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.selectButton:hover {
+    transform: scale(1.08);
+    box-shadow: var(--mantine-shadow-sm);
+}
+
+.selectButton:active {
+    transform: scale(0.94);
+}

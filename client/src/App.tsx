@@ -12,8 +12,8 @@ import styles from './Styles/App.module.css';
 import { AnimatePresence, motion } from 'motion/react';
 import { useLocation, useNavigationType } from 'react-router';
 import TestView from './components/TestView';
-import PendingRequestsView from './components/PendingRequestsComponents/PendingRequestsView';
-import MyRequestsView from './components/MyRequestsComponents/MyRequestsView';
+import PendingRequestsView from './components/RequestsComponents/PendingRequestsComponents/PendingRequestsView';
+import MyRequestsView from './components/RequestsComponents/MyRequestsComponents/MyRequestsView';
 import TeaWareListView from './components/TeaWareComponents/TeaWareListView';
 import TeaFormPanel from './components/FormComponents/FormPanels/TeaFormPanel';
 

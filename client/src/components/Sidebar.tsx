@@ -34,7 +34,7 @@ const Sidebar = () => {
 
     return (
       <NavLink
-        key={item.view}
+        key={item.label}
         label={item.label}
         {...(item.icon !== null && {
           leftSection: <item.icon size={20} stroke={1.7} />

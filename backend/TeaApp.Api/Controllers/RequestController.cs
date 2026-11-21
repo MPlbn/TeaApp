@@ -1,0 +1,88 @@
+using System.Security.Claims;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using TeaApp.Api.DTOs.Request;
+using TeaApp.Api.Models;
+using TeaApp.Api.Services.Requests;
+
+namespace TeaApp.Api.Controllers;
+
+
+[ApiController]
+[Route("api/[controller]")]
+public class RequestController(RequestService requestService) : ControllerBase {
+    private readonly RequestService _requestService = requestService;
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("pending")]
+    public async Task<IActionResult> GetPendingRequests(CancellationToken cancellationToken) {
+        var requests = await _requestService.GetPendingRequestsAsync(cancellationToken);
+
+        return Ok(requests);
+    }
+
+    [Authorize]
+    [HttpGet("mine")]
+    public async Task<IActionResult> GetUserRequests(
+        RequestType? RequestType,
+        CancellationToken cancellationToken) {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId == null) return Unauthorized();
+
+        var requests = await _requestService.GetUserRequestsAsync(userId, RequestType, cancellationToken);
+
+        return Ok(requests);
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> CreateRequest(CreateRequestDTO DTO, CancellationToken cancellationToken) {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId == null) return Unauthorized();
+
+        var isAdmin = User.IsInRole("Admin");
+
+        await _requestService.CreateRequestAsync(
+            DTO.Type,
+            DTO.Details,
+            userId,
+            isAdmin,
+            cancellationToken
+        );
+
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPatch("{id:int}/resolve")]
+    public async Task<IActionResult> ResolveRequest(
+        int id,
+        ResolveRequestDTO DTO,
+        CancellationToken cancellationToken
+    ) {
+        var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (adminId == null) return Unauthorized();
+
+        var resolutionMessage = DTO.ResolutionMessage ?? "No message provided.";
+
+        await _requestService.ResolveRequestAsync(id, DTO.Status, adminId, resolutionMessage, cancellationToken);
+
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> CancelRequest(int id, CancellationToken cancellationToken) {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId == null) return Unauthorized();
+
+        await _requestService.DeleteRequestAsync(id, userId, cancellationToken);
+
+        return NoContent();
+    }
+}

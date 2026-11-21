@@ -1,4 +1,4 @@
-import { Button, Group, Paper, Stack, Text, Modal, SimpleGrid, Divider } from "@mantine/core";
+import { Button, Group, Paper, Stack, Text, Modal, SimpleGrid, Divider, Box } from "@mantine/core";
 import { BrewingMethod } from "../../../types/BrewingMethod";
 import { useState } from "react";
 import { useDeleteBrewingMethodMutation } from "../../../services/teaApi";
@@ -9,6 +9,8 @@ import { notifications } from "@mantine/notifications";
 import { getSecondsStringVersion } from "../../../utils/brewingMethodUtils";
 import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
 import BrewingMethodFormPanel from "../../FormComponents/FormPanels/BrewingMethodFormPanel";
+import ItemModificationMenu from "../../ItemModificationMenu";
+import { useAppSelector } from "../../../store/hooks";
 
 const DELETE_SUCCESS_MESSAGE = "Poprawnie usunięto sposób parzenia";
 
@@ -21,6 +23,8 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
     const [modalMode, setModalMode] = useState<"Delete" | "Edit" | null>(null);
     const [deleteBrewingMethod, { isLoading: isDeleting }] = useDeleteBrewingMethodMutation();
     const isGongfu = props.brewingMethod.method === MethodType.Gongfu;
+
+    const selectedTeaWare = useAppSelector((state) => state.teaWare.teaWare);
 
     const handleDelete = async () => {
         try {
@@ -40,32 +44,6 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
             });
         }
     };
-
-    const renderButtons = () => {
-        if (!props.canModify) return <></>
-
-        return (
-            <Group justify="flex-end" gap="xs">
-                <Button
-                    size="xs"
-                    variant="subtle"
-                    onClick={() => setModalMode("Edit")}
-                >
-                    Edytuj
-                </Button>
-
-                <Button
-                    size="xs"
-                    variant="subtle"
-                    color="red"
-                    onClick={() => setModalMode("Delete")}
-                    loading={isDeleting}
-                >
-                    Usuń
-                </Button>
-            </Group>
-        )
-    }
 
     const renderModalInsides = () => {
         if (modalMode === "Delete") {
@@ -88,9 +66,23 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
         return <></>
     }
 
+    const getAmountWithTeaWare = () => {
+        if (selectedTeaWare !== null) {
+            const amountForTeaWare = Math.round((props.brewingMethod.amountPerHundred / 100) * selectedTeaWare.capacity * 10) / 10; //rounds to 1 decimal point
+            return `${amountForTeaWare}g / ${selectedTeaWare.capacity}ml`
+        }
+
+        return `${props.brewingMethod.amountPerHundred}g / 100ml`
+    }
+
     return (
         <>
-            <Paper withBorder radius="md" p="lg" shadow="xs">
+            <Paper withBorder radius="md" p="lg" shadow="xs" pos="relative">
+                {props.canModify && (
+                    <Box pos="absolute" top={10} right={10} style={{ zIndex: 1 }}>
+                        <ItemModificationMenu setModalMode={setModalMode} />
+                    </Box>
+                )}
                 <Stack gap="lg">
                     <SimpleGrid cols={{ base: 1, sm: 2 }}>
                         <Stack gap={4}>
@@ -103,10 +95,11 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
                         <Stack gap={4}>
                             <Text size="sm" c="dimmed">Ilość herbaty</Text>
                             <Text fw={600} size="lg" c="teaGreen.9">
-                                {props.brewingMethod.amountPerHundred} g / 100 ml
+                                {getAmountWithTeaWare()}
                             </Text>
                         </Stack>
                     </SimpleGrid>
+
 
                     <Divider color="gray.2" />
 
@@ -139,8 +132,6 @@ const TeaDetailsBrewingMethod = (props: TeaDetailsBrewingMethodProps) => {
                             )}
                         </Group>
                     </Stack>
-
-                    {renderButtons()}
                 </Stack>
             </Paper>
 

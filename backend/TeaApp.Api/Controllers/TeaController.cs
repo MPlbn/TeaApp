@@ -152,7 +152,7 @@ public class TeaController(TeaDbContext dbContext) : ControllerBase {
         if (!CanManageTea(tea)) return Forbid();
 
         var hasPendingRequest = await _dbContext.PublishRequestSet
-        .AnyAsync(publishRequest => publishRequest.TeaId == id && publishRequest.Status == PublishRequestStatus.Pending);
+        .AnyAsync(publishRequest => publishRequest.TeaId == id && publishRequest.Request.Status == RequestStatus.Pending);
 
         if (hasPendingRequest) return Conflict("Tea has a pending publish request.");
 

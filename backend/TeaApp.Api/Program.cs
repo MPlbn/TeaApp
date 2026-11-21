@@ -8,6 +8,9 @@ using TeaApp.Api.Models;
 using TeaApp.Api.Services;
 using Microsoft.AspNetCore.DataProtection;
 using System.Security.Cryptography.X509Certificates;
+using TeaApp.Api.Services.Requests;
+using TeaApp.Api.Services.Requests.Handlers;
+using TeaApp.Api.Services.Requests.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,19 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<TokenService>();
+
+//Here all Request handlers to be added
+builder.Services.AddScoped<IRequestHandler, PublishRequestHandler>();
+builder.Services.AddScoped<IRequestCreationHandler, PublishRequestCreationHandler>();
+
+//Here all Request mappers to be added
+builder.Services.AddScoped<IRequestResponseMapper, PublishRequestResponseMapper>();
+builder.Services.AddScoped<RequestService>();
+
+//Hosted services
+builder.Services.AddHostedService<RefreshTokenCleanupService>();
+
+builder.Services.AddHostedService<RequestCleanupService>();
 
 builder.Services.AddDbContext<TeaDbContext>
 (options => options.UseNpgsql(
@@ -58,8 +74,6 @@ builder.Services.AddCors(options => {
     });
 });
 
-builder.Services.AddHostedService<RefreshTokenCleanupService>();
-builder.Services.AddHostedService<PublishRequestCleanupService>();
 
 if (builder.Environment.IsEnvironment("Testing")) {
     builder.Services.AddDataProtection().SetApplicationName("TeaApp.Tests");

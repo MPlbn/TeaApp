@@ -53,8 +53,12 @@ public enum FlavorType {
     NO_NOTES = 34
 }
 
-public enum PublishRequestStatus {
+public enum RequestStatus {
     Pending,
     Accepted,
     Rejected
+}
+
+public enum RequestType {
+    Publish
 }
