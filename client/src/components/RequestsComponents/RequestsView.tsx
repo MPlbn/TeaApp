@@ -1,15 +1,19 @@
 import { Loader, SimpleGrid, Stack, Tabs, Text, Title } from "@mantine/core";
-import { useGetPendingRequestsQuery } from "../../../services/teaApi";
-import { useAppSelector } from "../../../store/hooks"
+import { useGetPendingRequestsQuery, useGetUserRequestsQuery } from "../../services/teaApi";
+import { useAppSelector } from "../../store/hooks"
 import { useState } from "react";
-import { UserRole } from "../../../types/enums";
-import PublishRequest from "../RequestItems/PublishRequest";
+import { UserRole } from "../../types/enums";
+import PublishRequest from "./RequestItems/PublishRequest";
 
 enum RequestType {
     PublishRequest = "publishRequest"
 }
 
-const PendingRequestsView = () => {
+type RequestsViewProps = {
+    isViewPending: boolean
+}
+
+const RequestsView = (props: RequestsViewProps) => {
     //FOR ADDING NEW REQUEST TYPE
     //Add to enum
     //Add new query -> add it to switch
@@ -20,14 +24,14 @@ const PendingRequestsView = () => {
 
     const [activeTab, setActiveTab] = useState<RequestType>(RequestType.PublishRequest);
 
-    const pendingRequestQuery = useGetPendingRequestsQuery(undefined, { skip: activeTab !== RequestType.PublishRequest });
+    const pendingRequestQuery = useGetPendingRequestsQuery(undefined, { skip: activeTab !== RequestType.PublishRequest || !props.isViewPending }); //TODO FUTURE remember to make it more universal
 
-    if (!user || !user.roles.includes(UserRole.Admin)) return <>UNAUTHORIZED</>
+    const userRequestQuery = useGetUserRequestsQuery(undefined, { skip: activeTab !== RequestType.PublishRequest || props.isViewPending })
 
     const renderRequests = (type: RequestType) => {
         switch (type) {
             case RequestType.PublishRequest:
-                const data = pendingRequestQuery.data;
+                const data = props.isViewPending ? pendingRequestQuery.data : userRequestQuery.data;
                 const isLoading = pendingRequestQuery.isLoading;
                 const isError = pendingRequestQuery.isError;
 
@@ -40,7 +44,7 @@ const PendingRequestsView = () => {
                 return (
                     <>
                         {data.map((request) => {
-                            return <PublishRequest key={request.id} publishRequestData={request} />
+                            return <PublishRequest key={request.id} publishRequestData={request} isViewPending={props.isViewPending} />
                         })}
                     </>
                 );
@@ -52,17 +56,16 @@ const PendingRequestsView = () => {
 
     return (
         <Stack>
-            <Title order={3}>Rozwiązywanie requestów</Title>
+            <Title order={3}>{props.isViewPending ? "Rozwiązywanie próśb" : "Moje prośby"}</Title>
 
             <Tabs defaultValue={RequestType.PublishRequest} variant="default" color="teaGreen">
                 <Tabs.List grow>
                     <Tabs.Tab value={RequestType.PublishRequest}>Upublicznienie herbat</Tabs.Tab>
-
                 </Tabs.List>
 
                 <Tabs.Panel value={RequestType.PublishRequest} pt="lg">
                     <SimpleGrid
-                        cols={2}
+                        cols={1}
                         spacing="sm"
                         verticalSpacing="md"
                     >
@@ -75,4 +78,4 @@ const PendingRequestsView = () => {
     )
 }
 
-export default PendingRequestsView
+export default RequestsView

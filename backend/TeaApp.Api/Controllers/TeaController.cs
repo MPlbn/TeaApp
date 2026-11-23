@@ -75,7 +75,8 @@ public class TeaController(TeaDbContext dbContext) : ControllerBase {
             Flavors = tea.Flavors
             .Select(flavor => flavor.FlavorType)
             .ToList(),
-            OwnerId = tea.OwnerId
+            OwnerId = tea.OwnerId,
+            IsPublic = tea.IsPublic
         })
         .FirstOrDefaultAsync();
 
@@ -89,8 +90,9 @@ public class TeaController(TeaDbContext dbContext) : ControllerBase {
     public async Task<ActionResult<TeaResponseDTO>> GetPrivateTea(int id) {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var isAdmin = User.IsInRole("Admin");
+
         var tea = await _dbContext.TeaDbSet
-        .Where(tea => tea.Id == id && tea.OwnerId == userId)
+        .Where(tea => tea.Id == id)
         .Select(tea => new TeaResponseDTO {
             Id = tea.Id,
             Name = tea.Name,
@@ -102,11 +104,16 @@ public class TeaController(TeaDbContext dbContext) : ControllerBase {
             Flavors = tea.Flavors
             .Select(flavor => flavor.FlavorType)
             .ToList(),
-            OwnerId = tea.OwnerId
+            OwnerId = tea.OwnerId,
+            IsPublic = tea.IsPublic
         })
         .FirstOrDefaultAsync();
 
         if (tea == null) return NotFound();
+
+        if (userId != tea.OwnerId && !isAdmin) {
+            return Unauthorized();
+        }
 
         return Ok(tea);
     }
@@ -179,9 +186,29 @@ public class TeaController(TeaDbContext dbContext) : ControllerBase {
     }
 
     [Authorize]
-    [HttpDelete("{uID:int}")]
-    public async Task<IActionResult> DeleteTea(int uID) {
-        var tea = await _dbContext.TeaDbSet.FindAsync(uID);
+    [HttpPatch("{id:int}/unpublish")]
+    public async Task<IActionResult> UnpublishTea(int id) {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var tea = await _dbContext.TeaDbSet.FindAsync(id);
+
+        if (tea == null) return NotFound();
+
+        if (tea.OwnerId == null) return BadRequest();
+
+        if (tea.OwnerId != userId) return Forbid();
+
+        tea.IsPublic = false;
+
+        await _dbContext.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteTea(int id) {
+        var tea = await _dbContext.TeaDbSet.FindAsync(id);
 
         if (tea == null) return NotFound();
         if (!CanManageTea(tea)) return Forbid();

@@ -12,8 +12,7 @@ import styles from './Styles/App.module.css';
 import { AnimatePresence, motion } from 'motion/react';
 import { useLocation, useNavigationType } from 'react-router';
 import TestView from './components/TestView';
-import PendingRequestsView from './components/RequestsComponents/PendingRequestsComponents/PendingRequestsView';
-import MyRequestsView from './components/RequestsComponents/MyRequestsComponents/MyRequestsView';
+import RequestsView from './components/RequestsComponents/RequestsView';
 import TeaWareListView from './components/TeaWareComponents/TeaWareListView';
 import TeaFormPanel from './components/FormComponents/FormPanels/TeaFormPanel';
 
@@ -82,14 +81,14 @@ export default function App() {
               <Route
                 path={`${ViewType.TeaListView}/:id`}
                 element={
-                  <TeaDetailsView isPublic={true} />
+                  <TeaDetailsView isPublicView={true} />
                 }
               />
 
               <Route
                 path={`${ViewType.PrivateTeaListView}/:id`}
                 element={
-                  <TeaDetailsView isPublic={false} />
+                  <TeaDetailsView isPublicView={false} />
                 }
               />
 
@@ -120,12 +119,12 @@ export default function App() {
 
               <Route
                 path={ViewType.MyRequestsView}
-                element={<MyRequestsView />}
+                element={<RequestsView isViewPending={false} />}
               />
 
               <Route
                 path={ViewType.AdminRequestResolutionView}
-                element={<PendingRequestsView />}
+                element={<RequestsView isViewPending={true} />}
               />
 
               <Route

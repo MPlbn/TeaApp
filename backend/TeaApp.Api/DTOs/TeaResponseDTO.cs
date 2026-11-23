@@ -12,4 +12,5 @@ public class TeaResponseDTO {
     public string Description { get; set; } = "";
     public List<FlavorType> Flavors { get; set; } = [];
     public string? OwnerId { get; set; }
+    public bool IsPublic { get; set; }
 }

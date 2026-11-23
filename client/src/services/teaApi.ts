@@ -7,9 +7,10 @@ import { RootState } from "../store/store";
 import { Mutex } from "async-mutex";
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { clearCredentials, setCredentials } from "../store/authSlice";
-import { RequestResponse, ResolvePublishRequestRequest } from "../types/PublishRequest";
+import { RequestResponse, ResolveRequestDTO } from "../types/PublishRequestTypes";
 import { TeaWare } from "../types/TeaWare";
 import { RequestCreationData } from "../types/RequestCreationData";
+import { RequestType } from "../types/enums";
 
 const BASE_URL = "http://localhost:8080/api";
 const PUBLIC_TEA_URL = "Tea/public";
@@ -29,6 +30,7 @@ const TAG_USER = "User";
 const TAG_REQUEST_PENDING = "RequestPending";
 const TAG_REQUEST_USER = "RequestUser";
 const TAG_TEAWARE = "TeaWare";
+const TAG_REQUEST_PRESENT = "RequestPresent";
 
 
 export type NewTea = Omit<Tea, "id">
@@ -120,7 +122,7 @@ export const teaApi = createApi({
 
     baseQuery: baseQueryWithReauth,
 
-    tagTypes: [TAG_TEA_PUBLIC, TAG_BREWING_METHOD, TAG_REVIEW, TAG_USER, TAG_TEA_PRIVATE, TAG_REQUEST_PENDING, TAG_REQUEST_USER, TAG_TEAWARE],
+    tagTypes: [TAG_TEA_PUBLIC, TAG_BREWING_METHOD, TAG_REVIEW, TAG_USER, TAG_TEA_PRIVATE, TAG_REQUEST_PENDING, TAG_REQUEST_USER, TAG_TEAWARE, TAG_REQUEST_PRESENT],
 
     endpoints: (build) => ({
         //Tea
@@ -175,6 +177,14 @@ export const teaApi = createApi({
             query: (id) => ({
                 url: `${TEA_URL}/${id}`,
                 method: "DELETE",
+            }),
+            invalidatesTags: [TAG_TEA_PUBLIC, TAG_TEA_PRIVATE]
+        }),
+
+        unpublishTea: build.mutation<void, number>({
+            query: (id) => ({
+                url: `${TEA_URL}/${id}/unpublish`,
+                method: "PATCH"
             }),
             invalidatesTags: [TAG_TEA_PUBLIC, TAG_TEA_PRIVATE]
         }),
@@ -319,16 +329,23 @@ export const teaApi = createApi({
                 method: "POST",
                 body: requestData
             }),
-            invalidatesTags: [TAG_REQUEST_PENDING, TAG_REQUEST_USER]
+            invalidatesTags: [TAG_REQUEST_PENDING, TAG_REQUEST_USER, TAG_REQUEST_PRESENT, TAG_TEA_PRIVATE, TAG_TEA_PUBLIC]
         }),
 
-        resolveRequest: build.mutation<void, { publishRequestId: number, request: ResolvePublishRequestRequest }>({
+        resolveRequest: build.mutation<void, { publishRequestId: number, request: ResolveRequestDTO }>({
             query: ({ publishRequestId: id, request: request }) => ({
                 url: `${REQUEST_URL}/resolve/${id}`,
                 method: "PATCH",
                 body: request
             }),
-            invalidatesTags: [TAG_REQUEST_PENDING, TAG_REQUEST_USER]
+            invalidatesTags: [TAG_REQUEST_PENDING, TAG_REQUEST_USER, TAG_TEA_PUBLIC, TAG_TEA_PRIVATE, TAG_REQUEST_PRESENT]
+        }),
+
+        isPendingRequestPresent: build.query<boolean, { type: RequestType, targetId: string }>({
+            query: ({ type, targetId }) => ({
+                url: `${REQUEST_URL}/pending/is-present-check/${type}/${targetId}`
+            }),
+            providesTags: [TAG_REQUEST_PRESENT]
         }),
 
         cancelRequest: build.mutation<void, number>({
@@ -336,7 +353,7 @@ export const teaApi = createApi({
                 url: `${REQUEST_URL}/${id}`,
                 method: "DELETE"
             }),
-            invalidatesTags: [TAG_REQUEST_PENDING, TAG_REQUEST_USER]
+            invalidatesTags: [TAG_REQUEST_PENDING, TAG_REQUEST_USER, TAG_REQUEST_PRESENT]
         }),
 
         //TeaWare
@@ -382,6 +399,7 @@ export const {
     useAddTeaMutation,
     useEditTeaMutation,
     useDeleteTeaMutation,
+    useUnpublishTeaMutation,
 
     useGetBrewingMethodsByTeaIDQuery,
     useAddBrewingMethodMutation,
@@ -405,6 +423,7 @@ export const {
     useGetUserRequestsQuery,
     useCreateRequestMutation,
     useResolveRequestMutation,
+    useIsPendingRequestPresentQuery,
     useCancelRequestMutation,
 
     useGetTeaWareListQuery,

@@ -3,7 +3,7 @@ import { TeaWare } from "../../types/TeaWare"
 import { IconCheck, IconDroplets, IconTeapot, IconX } from "@tabler/icons-react";
 import TeaWareFormPanel from "../FormComponents/FormPanels/TeaWareFormPanel";
 import { useState } from "react";
-import DeleteConfirmationPanel from "../DeleteConfirmationPanel";
+import DeleteConfirmationPanel from "../ConfirmationPanels/DeleteConfirmationPanel";
 import { notifications } from "@mantine/notifications";
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 import { useDeleteTeaWareMutation } from "../../services/teaApi";

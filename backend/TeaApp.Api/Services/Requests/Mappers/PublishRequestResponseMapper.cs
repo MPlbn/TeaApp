@@ -14,11 +14,7 @@ public class PublishRequestResponseMapper(TeaDbContext dbContext) : IRequestResp
            .FirstOrDefaultAsync(
                xRequest => xRequest.Id == request.Id,
                cancellationToken
-           );
-
-        if (publishRequest == null) {
-            throw new InvalidOperationException("Publish request details not found.");
-        }
+           ) ?? throw new InvalidOperationException("Publish request details not found.");
 
         return new PublishRequestDetailsDTO {
             TeaId = publishRequest.TeaId,

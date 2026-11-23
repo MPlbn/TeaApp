@@ -3,7 +3,7 @@ import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 
 type ItemModificationMenuProps = {
-    setModalMode?: React.Dispatch<React.SetStateAction<"Edit" | "Delete" | null>>;
+    setModalMode?: React.Dispatch<React.SetStateAction<"Delete" | "Edit" | "Publish" | "Unpublish" | null>>;
 }
 
 const ItemModificationMenu = (props: ItemModificationMenuProps) => {

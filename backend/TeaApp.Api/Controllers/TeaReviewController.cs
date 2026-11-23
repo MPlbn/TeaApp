@@ -35,6 +35,7 @@ public class TeaReviewController(TeaDbContext uDbContext) : ControllerBase {
 
         return Ok(reviews);
     }
+
     [Authorize]
     [HttpPost]
     public async Task<ActionResult<TeaReviewResponseDTO>> CreateTeaReview(TeaReviewDTO DTO) {

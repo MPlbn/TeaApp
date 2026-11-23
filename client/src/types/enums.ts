@@ -73,7 +73,7 @@ export enum CollectionType {
     Private = 1
 }
 
-export enum PublishRequestStatus {
+export enum RequestStatus {
     Pending,
     Accepted,
     Rejected

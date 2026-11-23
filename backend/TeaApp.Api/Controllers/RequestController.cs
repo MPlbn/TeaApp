@@ -23,6 +23,22 @@ public class RequestController(RequestService requestService) : ControllerBase {
     }
 
     [Authorize]
+    [HttpGet("pending/is-present-check/{type}/{targetId}")]
+    public async Task<IActionResult> GetIsPendingRequestAlreadyPresent(
+        string targetId,
+        RequestType type,
+        CancellationToken cancellationToken) {
+
+        if (!Enum.IsDefined<RequestType>(type)) {
+            return BadRequest("Invalid request type.");
+        }
+
+        var result = await _requestService.IsPendingRequestAlreadyPresent(type, targetId, cancellationToken);
+
+        return Ok(result);
+    }
+
+    [Authorize]
     [HttpGet("mine")]
     public async Task<IActionResult> GetUserRequests(
         RequestType? RequestType,
@@ -57,7 +73,7 @@ public class RequestController(RequestService requestService) : ControllerBase {
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPatch("{id:int}/resolve")]
+    [HttpPatch("resolve/{id:int}")]
     public async Task<IActionResult> ResolveRequest(
         int id,
         ResolveRequestDTO DTO,

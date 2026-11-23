@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TeaApp.Api.Data;
@@ -9,12 +11,8 @@ namespace TeaApp.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 
-public class BrewingMethodController : ControllerBase {
-    private readonly TeaDbContext _dbContext;
-
-    public BrewingMethodController(TeaDbContext dbContext) {
-        _dbContext = dbContext;
-    }
+public class BrewingMethodController(TeaDbContext dbContext) : ControllerBase {
+    private readonly TeaDbContext _dbContext = dbContext;
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BrewingMethodResponseDTO>>> GetBrewingMethods(
@@ -40,13 +38,20 @@ public class BrewingMethodController : ControllerBase {
         return Ok(brewingMethods);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<BrewingMethodResponseDTO>> CreateBrewingMethod(BrewingMethodDTO DTO) {
-        var teaExists = await _dbContext.TeaDbSet.AnyAsync(tea => tea.Id == DTO.TeaId!.Value);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (!teaExists) {
+        var isAdmin = User.IsInRole("Admin");
+
+        var tea = await _dbContext.TeaDbSet.FirstOrDefaultAsync(tea => tea.Id == DTO.TeaId!.Value);
+
+        if (tea == null) {
             return BadRequest("The specified tea does not exist.");
         }
+
+        if (userId != tea.OwnerId && !isAdmin) return Unauthorized();
 
         var brewingMethod = new BrewingMethod {
             TeaId = DTO.TeaId!.Value,
@@ -73,8 +78,13 @@ public class BrewingMethodController : ControllerBase {
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
+    [Authorize]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateBrewingMethod(int id, BrewingMethodDTO DTO) {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var isAdmin = User.IsInRole("Admin");
+
         var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(id);
 
         if (brewingMethod == null) {
@@ -86,6 +96,8 @@ public class BrewingMethodController : ControllerBase {
         if (!teaExists) {
             return BadRequest("The specified tea does not exist.");
         }
+
+        if (userId != brewingMethod.Tea.OwnerId && !isAdmin) return Unauthorized();
 
         brewingMethod.TeaId = DTO.TeaId!.Value;
         brewingMethod.Method = DTO.Method!.Value;
@@ -99,13 +111,18 @@ public class BrewingMethodController : ControllerBase {
         return NoContent();
     }
 
+    [Authorize]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteBrewingMethod(int id) {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var isAdmin = User.IsInRole("Admin");
+
         var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(id);
 
-        if (brewingMethod == null) {
-            return NotFound();
-        }
+        if (brewingMethod == null) return NotFound();
+
+        if (userId != brewingMethod.Tea.OwnerId && !isAdmin) return Unauthorized();
 
         _dbContext.BrewingMethodDbSet.Remove(brewingMethod);
 

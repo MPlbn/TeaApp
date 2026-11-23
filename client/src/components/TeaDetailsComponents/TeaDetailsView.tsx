@@ -6,14 +6,14 @@ import TeaDetailsInfoSection from "./TeaComponents/TeaDetailsInfoSection";
 import { useAppSelector } from "../../store/hooks";
 import { useGetTeaByIDPrivateQuery, useGetTeaByIDQuery } from "../../services/teaApi";
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
-import { isUserAuthorizedToAddReview, isUserAuthorizedToEditTea } from "../../utils/utils";
+import { isUserAuthorizedToAddReview, isUserAuthorizedToEditTea, isUserAuthorizedToModifyBrewingMethods } from "../../utils/utils";
 import styles from "../../Styles/UserNotLoggedInView.module.css"
 
 const TEA_NOT_FOUND_MESSAGE = "Nie znaleziono herbaty.";
 
 
 type TeaDetailsViewProps = {
-    isPublic: boolean;
+    isPublicView: boolean;
 }
 
 const TeaDetailsView = (props: TeaDetailsViewProps) => {
@@ -24,15 +24,15 @@ const TeaDetailsView = (props: TeaDetailsViewProps) => {
 
     const shouldSkipQuery = !id || !Number.isInteger(teaID) || teaID <= 0;
 
-    const publicTeaQuery = useGetTeaByIDQuery(teaID, { skip: shouldSkipQuery || !props.isPublic });
+    const publicTeaQuery = useGetTeaByIDQuery(teaID, { skip: shouldSkipQuery || !props.isPublicView });
 
-    const privateTeaQuery = useGetTeaByIDPrivateQuery(teaID, { skip: shouldSkipQuery || props.isPublic });
+    const privateTeaQuery = useGetTeaByIDPrivateQuery(teaID, { skip: shouldSkipQuery || props.isPublicView });
 
     const {
         data: tea,
         error: fetchingError,
         isLoading
-    } = props.isPublic ? publicTeaQuery : privateTeaQuery;
+    } = props.isPublicView ? publicTeaQuery : privateTeaQuery;
 
     if (shouldSkipQuery) {
         return <Text c="red">Nieprawidłowe ID herbaty.</Text>;
@@ -52,13 +52,15 @@ const TeaDetailsView = (props: TeaDetailsViewProps) => {
 
     const isUserAuthorized = isUserAuthorizedToEditTea(tea, user);
 
+    const canUserManageBrewingMethods = isUserAuthorizedToModifyBrewingMethods(tea, user);
+
     const canUserAddReview = isUserAuthorizedToAddReview(tea, user);
 
     return (
         <>
             <Stack gap="lg" maw={700} className={styles.page}>
-                <TeaDetailsInfoSection tea={tea} canModifyTea={isUserAuthorized} isPublic={props.isPublic} />
-                <TeaDetailsBrewingMethodsSet teaID={teaID} canModifyBrewingMethods={isUserAuthorized} />
+                <TeaDetailsInfoSection tea={tea} canModifyTea={isUserAuthorized} isPublicView={props.isPublicView} />
+                <TeaDetailsBrewingMethodsSet teaID={teaID} canModifyBrewingMethods={canUserManageBrewingMethods} />
                 <TeaDetailsReviewsSet teaID={teaID} canAddReview={canUserAddReview} />
             </Stack>
         </>

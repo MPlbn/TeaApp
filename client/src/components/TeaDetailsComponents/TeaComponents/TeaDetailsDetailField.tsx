@@ -48,6 +48,13 @@ const TeaDetailsDetailField = (props: TeaDetailsDetailFieldProps) => {
                             </Group>
                         </Stack>
                     </Grid.Col>
+
+                    <Grid.Col span={{ base: 12, sm: 6 }}>
+                        <Stack gap={4}>
+                            <Text size="sm" c="dimmed">Sklep</Text>
+                            <Text fw={500} c="teaGreen.9">{props.tea.shop}</Text>
+                        </Stack>
+                    </Grid.Col>
                 </Grid>
 
                 <Divider color="gray.2" />

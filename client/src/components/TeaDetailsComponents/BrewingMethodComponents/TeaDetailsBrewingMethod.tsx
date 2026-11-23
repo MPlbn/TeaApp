@@ -7,7 +7,7 @@ import { MethodType } from "../../../types/enums";
 import { IconArrowRight, IconCheck, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { getSecondsStringVersion } from "../../../utils/brewingMethodUtils";
-import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
+import DeleteConfirmationPanel from "../../ConfirmationPanels/DeleteConfirmationPanel";
 import BrewingMethodFormPanel from "../../FormComponents/FormPanels/BrewingMethodFormPanel";
 import ItemModificationMenu from "../../ItemModificationMenu";
 import { useAppSelector } from "../../../store/hooks";

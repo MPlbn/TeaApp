@@ -6,7 +6,7 @@ import { useDeleteReviewMutation } from "../../../services/teaApi";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
 import { isUserAuthorizedToModifyReview } from "../../../utils/utils";
 import { notifications } from "@mantine/notifications";
-import DeleteConfirmationPanel from "../../DeleteConfirmationPanel";
+import DeleteConfirmationPanel from "../../ConfirmationPanels/DeleteConfirmationPanel";
 import ReviewFormPanel from "../../FormComponents/FormPanels/ReviewFormPanel";
 import ItemModificationMenu from "../../ItemModificationMenu";
 

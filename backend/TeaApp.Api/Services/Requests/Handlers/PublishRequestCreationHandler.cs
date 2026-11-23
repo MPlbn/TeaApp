@@ -35,4 +35,32 @@ public class PublishRequestCreationHandler(TeaDbContext dbContext) : IRequestCre
         await _dbContext.PublishRequestSet.AddAsync(publishRequest, cancellationToken);
 
     }
+
+    public async Task IsRequestForThisResourceAlreadyCreated(JsonElement details, CancellationToken cancellationToken) {
+        var publishRequestDTO = details.Deserialize<PublishRequestDetailsDTO>(
+            new JsonSerializerOptions(JsonSerializerDefaults.Web)
+        ) ?? throw new ArgumentException("Invalid PublishRequest details.");
+
+        var tea = await _dbContext.TeaDbSet
+            .Where(xTea => xTea.Id == publishRequestDTO.TeaId)
+            .FirstOrDefaultAsync(cancellationToken)
+            ?? throw new KeyNotFoundException("Tea not found.");
+
+        if (tea.IsPublic) {
+            throw new InvalidOperationException("Tea is already public.");
+        }
+
+        var hasPendingRequest = await _dbContext.PublishRequestSet
+            .AnyAsync(xRequest =>
+                    xRequest.TeaId == tea.Id &&
+                    xRequest.Request.Status == RequestStatus.Pending,
+                    cancellationToken
+            );
+
+        if (hasPendingRequest) {
+            throw new InvalidOperationException(
+                "There is already a pending request for this tea."
+            );
+        }
+    }
 }

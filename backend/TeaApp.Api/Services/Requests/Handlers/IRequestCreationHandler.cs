@@ -11,4 +11,9 @@ public interface IRequestCreationHandler {
         JsonElement details,
         CancellationToken cancellationToken
     );
+
+    Task IsRequestForThisResourceAlreadyCreated(
+        JsonElement details,
+        CancellationToken cancellationToken
+    );
 }

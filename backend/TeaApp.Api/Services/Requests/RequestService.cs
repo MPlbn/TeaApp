@@ -69,13 +69,14 @@ public class RequestService(
 
         var query = _dbContext.RequestSet
             .Include(request => request.Owner)
+            .Include(request => request.ResolvingAdmin)
             .Where(request => request.OwnerId == ownerId);
 
         if (requestType.HasValue) {
             query = query.Where(request => request.Type == requestType.Value);
         }
 
-        var requests = await _dbContext.RequestSet
+        var requests = await query
             .OrderByDescending(request => request.CreatedAt)
             .ToListAsync(cancellationToken);
 
@@ -96,6 +97,8 @@ public class RequestService(
 
         var handler = _creationHandlers.FirstOrDefault(xHandler => xHandler.Type == type)
         ?? throw new InvalidOperationException($"No creation handler registered for request type {type}");
+
+        await handler.IsRequestForThisResourceAlreadyCreated(details, cancellationToken);
 
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -142,12 +145,20 @@ public class RequestService(
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task<RequestListResponseDTO> MapRequestToDTOAsync(Request request, CancellationToken cancellationToken = default) {
-        var mapper = _mappers.FirstOrDefault(xRequest => xRequest.Type == request.Type);
+    public async Task<bool> IsPendingRequestAlreadyPresent(
+        RequestType type,
+        string targetId,
+        CancellationToken cancellationToken) {
 
-        if (mapper == null) {
-            throw new InvalidOperationException($"Mapper for requested type {request.Type} not found.");
-        }
+        var handler = _handlers.FirstOrDefault(xHandler => xHandler.Type == type)
+        ?? throw new InvalidOperationException($"No handler registered for request type {type}");
+
+        return await handler.IsPendingRequestAlreadyPresent(targetId, cancellationToken);
+    }
+
+    private async Task<RequestListResponseDTO> MapRequestToDTOAsync(Request request, CancellationToken cancellationToken = default) {
+        var mapper = _mappers.FirstOrDefault(xRequest => xRequest.Type == request.Type)
+        ?? throw new InvalidOperationException($"Mapper for requested type {request.Type} not found.");
 
         var details = await mapper.MapAsync(request, cancellationToken);
 
@@ -156,11 +167,12 @@ public class RequestService(
             Type = request.Type,
             Status = request.Status,
             OwnerId = request.OwnerId,
-            OwnerUserName = request.Owner.UserName!,
+            OwnerUserName = request.Owner?.UserName ?? "Unknown",
             CreatedAt = request.CreatedAt,
             ResolvedAt = request.ResolvedAt,
             ResolutionMessage = request.ResolutionMessage,
-            Details = details
+            Details = details,
+            ResolverUserName = request.ResolvingAdmin?.UserName ?? "Unknown"
         };
     }
 

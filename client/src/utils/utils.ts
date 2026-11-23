@@ -1,10 +1,11 @@
-import { FlavorType, MethodType, UserRole, ViewType } from "../types/enums";
+import { FlavorType, MethodType, RequestStatus, UserRole, ViewType } from "../types/enums";
 import { TeaType } from "../types/enums";
 import { UserLoginFormData, UserRegisterFormData } from "../types/FormDatas";
 import { Tea } from "../types/Tea";
 import { Review } from "../types/Review";
 import { flavorOptions } from "../config/FlavorOptions";
 import { User, UserLoginRequest, UserRegisterRequest } from "../types/User";
+import { stat } from "original-fs";
 
 export function getTeaDetailsPath(teaID: number | string, isPublic: boolean): string {
     const path = isPublic ? `${ViewType.TeaListView}/${teaID}` : `${ViewType.PrivateTeaListView}/${teaID}`
@@ -82,4 +83,27 @@ export function doesUserOwnReviewInSet(reviews: Review[], user: User | null): bo
 
 export function isUserAuthorizedToModifyReview(review: Review, user: User | null): boolean {
     return user !== null && review.userId === user.id;
+}
+
+export function isUserAuthorizedToModifyBrewingMethods(tea: Tea, user: User | null): boolean {
+    if (!user) return false;
+    else if (tea.ownerId === user.id || (user.roles.includes(UserRole.Admin) && tea.isPublic)) return true;
+
+    return false;
+}
+
+export function getRequestStatusStringVersion(status: RequestStatus): string {
+    switch (status) {
+        case RequestStatus.Accepted: return "Accepted";
+        case RequestStatus.Pending: return "Pending";
+        case RequestStatus.Rejected: return "Rejected";
+    }
+}
+
+export function getRequestStatusColor(status: RequestStatus): string {
+    switch (status) {
+        case RequestStatus.Accepted: return "#0c9225";
+        case RequestStatus.Pending: return "#0c6abc";
+        case RequestStatus.Rejected: return "#a30b0b";
+    }
 }

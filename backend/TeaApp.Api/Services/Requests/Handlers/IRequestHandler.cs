@@ -9,4 +9,8 @@ public interface IRequestHandler {
         RequestStatus status,
         CancellationToken cancellationToken = default
         );
+    Task<bool> IsPendingRequestAlreadyPresent(
+        string targetId,
+        CancellationToken cancellationToken
+    );
 }

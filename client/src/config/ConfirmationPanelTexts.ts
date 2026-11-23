@@ -1,0 +1,3 @@
+export const CONFIRMATION_PUBLISH = "Czy na pewno chcesz zgłosić herbatę do publikacji? Herbata będzie niemożliwa do edycji aż do rozpatrzenia wniosku. Zaakceptowanie wniosku spowoduje pojawienie się herbaty w publicznej kolekcji oraz uniemożliwi edycję jej detali aż do wycofania jej z publcznej kolekcji. Dodatkowo, taką herbatą będą mogli zarządzać administratorzy."
+
+export const CONFIRMATION_UNPUBLISH = "Czy na pewno chcesz wycofać herbatę z publcznej kolekcji? Inni użytkownicy nie będą już jej widzieć i móc publikować swoich recenzji."

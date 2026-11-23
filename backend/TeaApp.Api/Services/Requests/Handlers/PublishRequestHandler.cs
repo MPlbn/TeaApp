@@ -17,11 +17,8 @@ public class PublishRequestHandler(TeaDbContext dbContext) : IRequestHandler {
     ) {
         var publishRequest = await _dbContext.PublishRequestSet
         .Include(publishRequest => publishRequest.Tea)
-        .FirstOrDefaultAsync(publishRequest => publishRequest.Id == request.Id, cancellationToken);
-
-        if (publishRequest == null) {
-            throw new InvalidOperationException("Publish request details not found.");
-        }
+        .FirstOrDefaultAsync(publishRequest => publishRequest.Id == request.Id, cancellationToken)
+        ?? throw new InvalidOperationException("Publish request details not found.");
 
         switch (status) {
             case RequestStatus.Accepted:
@@ -33,5 +30,17 @@ public class PublishRequestHandler(TeaDbContext dbContext) : IRequestHandler {
             default:
                 throw new ArgumentException("Invalid request status.");
         }
+    }
+
+    public async Task<bool> IsPendingRequestAlreadyPresent(
+        string targetId,
+        CancellationToken cancellationToken
+    ) {
+        if (!int.TryParse(targetId, out var teaId)) {
+            throw new ArgumentException("Invalid tea ID.");
+        }
+
+        return await _dbContext.PublishRequestSet
+            .AnyAsync(request => request.TeaId == teaId && request.Request.Status == RequestStatus.Pending, cancellationToken);
     }
 }
