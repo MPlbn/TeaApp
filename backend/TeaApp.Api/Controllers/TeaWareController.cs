@@ -12,6 +12,7 @@ namespace TeaApp.Api.Controllers;
 [Route("api/[controller]")]
 public class TeaWareController(TeaDbContext dbContext) : ControllerBase {
     private readonly TeaDbContext _dbContext = dbContext;
+    private const int MAX_TEAWARE_PER_USER = 50;
 
     [Authorize]
     [HttpGet]
@@ -36,6 +37,10 @@ public class TeaWareController(TeaDbContext dbContext) : ControllerBase {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (userId == null) return Forbid();
+
+        var userTeaWareCount = await _dbContext.TeaWareSet.CountAsync(teaware => teaware.OwnerId == userId);
+
+        if (userTeaWareCount >= MAX_TEAWARE_PER_USER) return Conflict("You have reached the maximum number of teaware items.");
 
         var teaWare = new TeaWare {
             OwnerId = userId,

@@ -16,8 +16,10 @@ public class TeaController(TeaDbContext dbContext) : ControllerBase {
     private readonly TeaDbContext _dbContext = dbContext;
 
     [HttpGet("public")]
-    public async Task<ActionResult<IEnumerable<TeaListItemResponseDTO>>> GetPublicTeas(
-        TeaType? Type
+    public async Task<ActionResult<PagintatedResponseDTO<TeaListItemResponseDTO>>> GetPublicTeas(
+        [FromQuery(Name = "Page")] int Page,
+        [FromQuery(Name = "PageSize")] int PageSize,
+        [FromQuery(Name = "Type")] TeaType? Type
     ) {
         var query = _dbContext.TeaDbSet.Where(tea => tea.IsPublic);
 
@@ -25,21 +27,39 @@ public class TeaController(TeaDbContext dbContext) : ControllerBase {
             query = query.Where(tea => tea.Type == Type.Value);
         }
 
-        var teas = await query.Select(tea => new TeaListItemResponseDTO {
-            Id = tea.Id,
-            Name = tea.Name,
-            Type = tea.Type,
-            Origin = tea.Origin,
-        })
-        .ToListAsync();
+        var totalCount = await query.CountAsync();
 
-        return Ok(teas);
+        var pageSize = Math.Clamp(PageSize, 1, 50);
+        var page = Math.Max(Page, 1);
+
+        var teas = await query
+            .OrderBy(tea => tea.Name)
+            .ThenBy(tea => tea.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(tea => new TeaListItemResponseDTO {
+                Id = tea.Id,
+                Name = tea.Name,
+                Type = tea.Type,
+                Origin = tea.Origin
+            })
+            .ToListAsync();
+
+        return Ok(new PagintatedResponseDTO<TeaListItemResponseDTO> {
+            Items = teas,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+        });
     }
 
     [Authorize]
     [HttpGet("private")]
-    public async Task<ActionResult<IEnumerable<TeaListItemResponseDTO>>> GetPrivateTeas(
-        TeaType? Type
+    public async Task<ActionResult<PagintatedResponseDTO<TeaListItemResponseDTO>>> GetPrivateTeas(
+        [FromQuery(Name = "Page")] int Page,
+        [FromQuery(Name = "PageSize")] int PageSize,
+        [FromQuery(Name = "Type")] TeaType? Type
     ) {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -49,15 +69,31 @@ public class TeaController(TeaDbContext dbContext) : ControllerBase {
             query = query.Where(tea => tea.Type == Type.Value);
         }
 
-        var teas = await query.Select(tea => new TeaListItemResponseDTO {
-            Id = tea.Id,
-            Name = tea.Name,
-            Type = tea.Type,
-            Origin = tea.Origin,
-        })
-        .ToListAsync();
+        var totalCount = await query.CountAsync();
 
-        return Ok(teas);
+        var pageSize = Math.Clamp(PageSize, 1, 50);
+        var page = Math.Max(Page, 1);
+
+        var teas = await query
+            .OrderBy(tea => tea.Name)
+            .ThenBy(tea => tea.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(tea => new TeaListItemResponseDTO {
+                Id = tea.Id,
+                Name = tea.Name,
+                Type = tea.Type,
+                Origin = tea.Origin
+            })
+            .ToListAsync();
+
+        return Ok(new PagintatedResponseDTO<TeaListItemResponseDTO> {
+            Items = teas,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+        });
     }
 
     [HttpGet("public/{id:int}")]

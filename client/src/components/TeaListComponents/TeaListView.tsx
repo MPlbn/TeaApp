@@ -2,7 +2,8 @@ import {
     Stack,
     Title,
     Text,
-    SimpleGrid
+    SimpleGrid,
+    Pagination
 } from "@mantine/core";
 import { TeaType } from "../../types/enums";
 import { Loader } from "@mantine/core";
@@ -12,6 +13,9 @@ import { useGetAllTeasForListQuery, useGetAllTeasPrivateForListQuery } from "../
 import { useState } from "react";
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 import sectionStyles from "../../Styles/TeaDetailsSection.module.css"
+import { TeaListQueryParams } from "../../types/Tea";
+
+const PAGE_SIZE = 50;
 
 type TeaListViewProps = {
     isPublic: boolean;
@@ -19,16 +23,27 @@ type TeaListViewProps = {
 
 const TeaListView = (props: TeaListViewProps) => {
     const [selectedTeaType, setSelectedTeaType] = useState<TeaType | null>(null);
+    const [currentPage, setCurrentPage] = useState<number>(1);
 
-    const publicQuery = useGetAllTeasForListQuery(undefined, { skip: !props.isPublic });
-    const privateQuery = useGetAllTeasPrivateForListQuery(undefined, { skip: props.isPublic });
+    const queryParams = {
+        page: currentPage,
+        pageSize: PAGE_SIZE,
+        type: selectedTeaType
+    } as TeaListQueryParams;
+
+    const publicQuery = useGetAllTeasForListQuery(queryParams, { skip: !props.isPublic });
+    const privateQuery = useGetAllTeasPrivateForListQuery(queryParams, { skip: props.isPublic });
 
     const {
-        data: teas,
+        data: teasPage,
         error: fetchingError,
         isLoading
     } = props.isPublic ? publicQuery : privateQuery;
 
+    const handleTeaTypeChange = (type: TeaType | null) => {
+        setSelectedTeaType(type);
+        setCurrentPage(1);
+    }
 
     if (isLoading) {
         return <Loader />;
@@ -38,20 +53,19 @@ const TeaListView = (props: TeaListViewProps) => {
         return <Text c="red">Błąd: {getApiErrorMessage(fetchingError)}</Text>
     }
 
-
-    const filteredTeas = (teas ?? []).filter((tea) => selectedTeaType === null ? true : tea.type === selectedTeaType);
+    const teas = teasPage?.items ?? [];
 
     return (
         <Stack className={sectionStyles.section}>
-            <Title order={1} c="teaGreen.9">Lista herbat</Title>
+            <Title order={1} c="teaGreen.9">{props.isPublic ? "Publiczna" : "Prywatna"} kolekcja herbat</Title>
 
             <TeaListFilter
                 selectedTeaType={selectedTeaType}
-                onTeaTypeChange={setSelectedTeaType}
+                onTeaTypeChange={handleTeaTypeChange}
             />
 
             <Text c="dimmed" size="sm">
-                Znalezionych herbat: {filteredTeas.length}
+                Znalezionych herbat: {teasPage?.totalCount ?? 0}
             </Text>
 
             <SimpleGrid
@@ -59,8 +73,25 @@ const TeaListView = (props: TeaListViewProps) => {
                 spacing="sm"
                 verticalSpacing="md"
             >
-                {filteredTeas.map((tea) => { return <TeaListItem key={tea.id} shortTea={tea} isPublic={props.isPublic} /> })}
+                {teas.map((tea) => (
+                    <TeaListItem
+                        key={tea.id}
+                        shortTea={tea}
+                        isPublic={props.isPublic}
+                    />
+                ))}
             </SimpleGrid>
+
+            {teasPage && teasPage.totalPages > 1 && (
+                <Pagination
+                    value={currentPage}
+                    onChange={setCurrentPage}
+                    total={teasPage.totalPages}
+                    color="teaGreen.7"
+                    mt="md"
+                    mx="auto"
+                />
+            )}
 
         </Stack>
     );

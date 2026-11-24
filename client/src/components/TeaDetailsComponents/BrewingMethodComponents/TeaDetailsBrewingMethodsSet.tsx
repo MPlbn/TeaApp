@@ -1,4 +1,4 @@
-import { Button, Group, Loader, Modal, Paper, Stack, Tabs, Text, Title } from "@mantine/core";
+import { Button, Group, Loader, Modal, Paper, ScrollArea, Stack, Tabs, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import TeaDetailsBrewingMethod from "./TeaDetailsBrewingMethod";
 import { getApiErrorMessage } from "../../../utils/getApiErrorMessage";
@@ -51,16 +51,39 @@ const TeaDetailsBrewingMethodsSet = (props: TeaDetailsBrewingMethodsSetProps) =>
             );
         }
 
+        else if (filteredMethods.length === 1) {
+            return (
+
+                <Stack gap="md">
+                    {filteredMethods.map((brewingMethod) => (
+                        <TeaDetailsBrewingMethod
+                            key={brewingMethod.id}
+                            brewingMethod={brewingMethod}
+                            canModify={props.canModifyBrewingMethods}
+                        />
+                    ))}
+                </Stack>
+            )
+        }
+
         return (
-            <Stack gap="md">
-                {filteredMethods.map((brewingMethod) => (
-                    <TeaDetailsBrewingMethod
-                        key={brewingMethod.id}
-                        brewingMethod={brewingMethod}
-                        canModify={props.canModifyBrewingMethods}
-                    />
-                ))}
-            </Stack>
+            <ScrollArea
+                h={300}
+                type="hover"
+                overscrollBehavior="contain"
+                offsetScrollbars
+                scrollbarSize={4}
+            >
+                <Stack gap="md">
+                    {filteredMethods.map((brewingMethod) => (
+                        <TeaDetailsBrewingMethod
+                            key={brewingMethod.id}
+                            brewingMethod={brewingMethod}
+                            canModify={props.canModifyBrewingMethods}
+                        />
+                    ))}
+                </Stack>
+            </ScrollArea>
         )
     }
 

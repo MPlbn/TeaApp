@@ -13,6 +13,7 @@ namespace TeaApp.Api.Controllers;
 
 public class BrewingMethodController(TeaDbContext dbContext) : ControllerBase {
     private readonly TeaDbContext _dbContext = dbContext;
+    private const int MAX_BREWINGMETHODS_PER_TEA = 50;
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BrewingMethodResponseDTO>>> GetBrewingMethods(
@@ -52,6 +53,10 @@ public class BrewingMethodController(TeaDbContext dbContext) : ControllerBase {
         }
 
         if (userId != tea.OwnerId && !isAdmin) return Unauthorized();
+
+        var brewingMethodCount = await _dbContext.BrewingMethodDbSet.CountAsync(brewingMethod => brewingMethod.TeaId == tea.Id);
+
+        if (brewingMethodCount >= MAX_BREWINGMETHODS_PER_TEA) return Conflict("Tea already has maximum amount of brewing methods");
 
         var brewingMethod = new BrewingMethod {
             TeaId = DTO.TeaId!.Value,

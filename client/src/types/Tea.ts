@@ -19,3 +19,9 @@ export type ShortTea = { // Naming to change probs. used for fetching data to fi
     type: TeaType;
     origin: string;
 }
+
+export type TeaListQueryParams = {
+    page: number;
+    pageSize: number;
+    type: TeaType | null;
+}

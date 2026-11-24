@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BrewingMethod } from "../types/BrewingMethod";
 import { Review } from "../types/Review";
-import { Tea, ShortTea } from "../types/Tea";
+import { Tea, ShortTea, TeaListQueryParams } from "../types/Tea";
 import { AuthResponse, ChangePasswordRequest, RefreshTokenRequest, UpdateProfileRequest, UpdateProfileResponse, User, UserLoginRequest, UserRegisterRequest } from "../types/User";
 import { RootState } from "../store/store";
 import { Mutex } from "async-mutex";
@@ -11,6 +11,7 @@ import { RequestResponse, ResolveRequestDTO } from "../types/PublishRequestTypes
 import { TeaWare } from "../types/TeaWare";
 import { RequestCreationData } from "../types/RequestCreationData";
 import { RequestType } from "../types/enums";
+import { PaginatedResponse } from "../types/PaginatedResponse";
 
 const BASE_URL = "http://localhost:8080/api";
 const PUBLIC_TEA_URL = "Tea/public";
@@ -136,13 +137,27 @@ export const teaApi = createApi({
 
     endpoints: (build) => ({
         //Tea
-        getAllTeasForList: build.query<ShortTea[], void>({
-            query: () => PUBLIC_TEA_URL,
+        getAllTeasForList: build.query<PaginatedResponse<ShortTea>, TeaListQueryParams>({
+            query: ({ page, pageSize, type }) => ({
+                url: PUBLIC_TEA_URL,
+                params: {
+                    page,
+                    pageSize,
+                    type: type ?? undefined
+                }
+            }),
             providesTags: [TAG_TEA_PUBLIC]
         }),
 
-        getAllTeasPrivateForList: build.query<ShortTea[], void>({
-            query: () => PRIVATE_TEA_URL,
+        getAllTeasPrivateForList: build.query<PaginatedResponse<ShortTea>, TeaListQueryParams>({
+            query: ({ page, pageSize, type }) => ({
+                url: PRIVATE_TEA_URL,
+                params: {
+                    page,
+                    pageSize,
+                    type: type ?? undefined
+                }
+            }),
             providesTags: [TAG_TEA_PRIVATE]
         }),
 
