@@ -2,7 +2,6 @@ import { Badge, Button, Divider, Group, Modal, Paper, Stack, Text, Title, Unstyl
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { useState } from "react";
 import { teaApi, useLogoutUserMutation } from "../../services/teaApi";
-import { RefreshTokenRequest } from "../../types/User";
 import { clearCredentials } from "../../store/authSlice";
 import UserChangePasswordPanel from "../FormComponents/FormPanels/UserChangePasswordPanel";
 import UserChangeDataPanel from "../FormComponents/FormPanels/UserChangeDataPanel";
@@ -14,7 +13,6 @@ const LOGOUT_SUCCESS_MESSAGE = "Poprawnie wylogowano!";
 
 const UserLoggedInView = () => {
     const user = useAppSelector((state) => state.auth.user);
-    const refreshToken = useAppSelector((state) => state.auth.refreshToken);
 
     const dispatch = useAppDispatch();
 
@@ -37,19 +35,34 @@ const UserLoggedInView = () => {
 
     const handleLogout = async () => {
         try {
-            if (refreshToken) {
-                const request = { refreshToken: refreshToken } as RefreshTokenRequest;
-                await logoutUser(request).unwrap();
+            const storedRefreshToken = await window.authStorage.get();
+
+            if (storedRefreshToken) {
+                await logoutUser({
+                    refreshToken: storedRefreshToken
+                }).unwrap();
             }
+        }
+        catch (uError) {
+            console.error('Logout request failed:', uError);
+        }
+        finally {
+            try {
+                await window.authStorage.clear();
+            }
+            catch (uError) {
+                console.error('Failed to clear stored refresh token:', uError);
+            }
+
+            dispatch(clearCredentials());
+            dispatch(teaApi.util.resetApiState());
+
             notifications.show({
                 title: "SUKCES",
                 message: LOGOUT_SUCCESS_MESSAGE,
                 color: "teaGreen.8",
                 icon: <IconCheck />
             });
-        } finally {
-            dispatch(clearCredentials());
-            dispatch(teaApi.util.resetApiState());
         }
     }
 

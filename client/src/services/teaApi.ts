@@ -61,14 +61,14 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 
     const requestUrl = typeof args === "string" ? args : args.url;
     const isLoginRequest = requestUrl.endsWith("auth/login");
+    const isRefreshRequest = requestUrl.endsWith("auth/refresh");
 
-    if (result.error?.status === 401 && !isLoginRequest) {
+    if (result.error?.status === 401 && !isLoginRequest && !isRefreshRequest) {
         if (!mutex.isLocked()) {
             const release = await mutex.acquire();
 
             try {
-                const state = api.getState() as RootState;
-                const refreshToken = state.auth.refreshToken;
+                const refreshToken = await window.authStorage.get();
 
                 if (refreshToken) {
                     const refreshResult = await baseQuery(
@@ -88,20 +88,30 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
                             expiresAt: string;
                         };
 
+                        await window.authStorage.save(data.refreshToken);
+
                         api.dispatch(setCredentials({
                             accessToken: data.accessToken,
-                            refreshToken: data.refreshToken,
                             expiresAt: data.expiresAt
                         }));
 
                         result = await baseQuery(args, api, extraOptions);
                     }
                     else {
+                        await window.authStorage.clear();
                         api.dispatch(clearCredentials());
                     }
                 }
                 else {
                     api.dispatch(clearCredentials());
+                }
+            } catch (error) {
+                api.dispatch(clearCredentials());
+
+                try {
+                    await window.authStorage.clear();
+                } catch {
+                    //ignore
                 }
             } finally {
                 release();
@@ -415,6 +425,7 @@ export const {
     useLoginUserMutation,
     useLogoutUserMutation,
     useGetCurrentUserQuery,
+    useLazyGetCurrentUserQuery,
     useChangeUserPasswordMutation,
     useUpdateUserProfileMutation,
     useRefreshTokenMutation,

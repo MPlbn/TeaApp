@@ -7,7 +7,6 @@ export enum ViewType {
     Teaware = '/teaware-list',
     MyRequestsView = '/my-request-list',
     AdminRequestResolutionView = '/admin-pending-request-list',
-    TestView = '/TEST'
 }
 
 export enum TeaType {

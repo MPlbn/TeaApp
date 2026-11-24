@@ -48,9 +48,10 @@ const UserLoginPanel = (props: UserLoginPanelProps) => {
 
         const response = await loginUser(userToLogin).unwrap()
 
+        await window.authStorage.save(response.refreshToken);
+
         dispatch(setCredentials({
             accessToken: response.token,
-            refreshToken: response.refreshToken,
             expiresAt: response.expiresAt
         }));
     }

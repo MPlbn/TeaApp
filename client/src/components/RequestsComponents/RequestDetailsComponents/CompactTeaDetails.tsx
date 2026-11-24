@@ -1,4 +1,3 @@
-
 import { Badge, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { Tea } from "../../../types/Tea";
 import { getFlavorTypeStringVersion, getTeaTypeColor, getTeaTypeStringVersion } from "../../../utils/utils";

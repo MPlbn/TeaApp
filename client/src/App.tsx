@@ -11,7 +11,6 @@ import UserView from './components/UserComponents/UserView';
 import styles from './Styles/App.module.css';
 import { AnimatePresence, motion } from 'motion/react';
 import { useLocation, useNavigationType } from 'react-router';
-import TestView from './components/TestView';
 import RequestsView from './components/RequestsComponents/RequestsView';
 import TeaWareListView from './components/TeaWareComponents/TeaWareListView';
 import TeaFormPanel from './components/FormComponents/FormPanels/TeaFormPanel';
@@ -125,11 +124,6 @@ export default function App() {
               <Route
                 path={ViewType.AdminRequestResolutionView}
                 element={<RequestsView isViewPending={true} />}
-              />
-
-              <Route
-                path={ViewType.TestView}
-                element={<TestView />}
               />
 
               <Route

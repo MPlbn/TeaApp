@@ -11,6 +11,7 @@ import { theme } from './Styles/theme';
 import "./index.css"
 import "@mantine/notifications/styles.css";
 import { Notifications } from '@mantine/notifications';
+import AuthInitializer from './components/AuthComponents/AuthInitializer';
 
 const rootElement = document.getElementById('root');
 
@@ -29,7 +30,9 @@ createRoot(rootElement).render(
       />
       <BrowserRouter>
         <Provider store={store}>
-          <App />
+          <AuthInitializer>
+            <App />
+          </AuthInitializer>
         </Provider>
       </BrowserRouter>
     </MantineProvider>

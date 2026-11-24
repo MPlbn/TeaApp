@@ -77,13 +77,6 @@ export const navigationItems: SidebarItem[] = [
 
 export const bottomNavigationItems: SidebarItem[] = [
     {
-        label: "TESTVIEW",
-        icon: null,
-        view: ViewType.TestView,
-        availableToRoles: [],
-        childItems: null
-    },
-    {
         label: "Konto",
         icon: IconUser,
         view: ViewType.UserView,
