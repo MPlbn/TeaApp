@@ -25,6 +25,10 @@ public class PublishRequestCreationHandler(TeaDbContext dbContext) : IRequestCre
             throw new InvalidOperationException("Tea is already public.");
         }
 
+        if (tea.OwnerId != request.OwnerId) {
+            throw new InvalidOperationException("You cannot publish another user's tea");
+        }
+
         var publishRequest = new PublishRequest {
             Id = request.Id,
             Request = request,

@@ -41,10 +41,11 @@ public class TeaReviewController(TeaDbContext uDbContext) : ControllerBase {
     public async Task<ActionResult<TeaReviewResponseDTO>> CreateTeaReview(TeaReviewDTO DTO) {
         var teaExists = await _dbContext.TeaDbSet.AnyAsync(tea => tea.Id == DTO.TeaId!.Value);
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var userName = await _dbContext.Users.Where(user => user.Id == userId).Select(user => user.UserName).FirstAsync(); // that may be not needed in the future
 
         if (userId == null)
             return Unauthorized();
+
+        var userName = await _dbContext.Users.Where(user => user.Id == userId).Select(user => user.UserName).FirstAsync(); // that may be not needed in the future
 
         if (!teaExists)
             return BadRequest("The specified tea does not exist.");

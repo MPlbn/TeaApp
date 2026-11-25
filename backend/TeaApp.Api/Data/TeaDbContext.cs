@@ -82,7 +82,7 @@ public class TeaDbContext(DbContextOptions<TeaDbContext> options) : IdentityDbCo
         .HasOne(request => request.Owner)
         .WithMany()
         .HasForeignKey(request => request.OwnerId)
-        .OnDelete(DeleteBehavior.Restrict);
+        .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Request>()
         .HasOne(request => request.ResolvingAdmin)

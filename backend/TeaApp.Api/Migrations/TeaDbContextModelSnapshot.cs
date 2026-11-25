@@ -576,7 +576,7 @@ namespace TeaApp.Api.Migrations
                     b.HasOne("TeaApp.Api.Models.ApplicationUser", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TeaApp.Api.Models.ApplicationUser", "ResolvingAdmin")

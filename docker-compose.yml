@@ -11,6 +11,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
 
+  tea-test-database:
+    image: postgres:18
+    container_name: teaapp-test-postgres
+    environment:
+      POSTGRES_DB: ${TEST_DB_NAME}
+      POSTGRES_USER: ${TEST_DB_USER}
+      POSTGRES_PASSWORD: ${TEST_DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql
   api:
     build:
       context: ./backend/TeaApp.Api
@@ -36,3 +47,4 @@ services:
 volumes:
   postgres_data:
   teaapp-dataprotection-keys:
+  postgres_test_data:

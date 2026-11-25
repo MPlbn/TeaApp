@@ -12,7 +12,7 @@ public class AuthTestHelper(HttpClient uClient, TeaAppFactory uFactory) {
     private readonly HttpClient _client = uClient;
     private readonly TeaAppFactory _factory = uFactory;
 
-    public async Task<TestUser> CreateAuthenticatedTestUserAsync() {
+    public async Task<TestUser> CreateAuthenticatedTestUserAsync(bool isAdmin = false) {
         var testUser = new TestUser {
             UserName = $"test_{Guid.NewGuid()}",
             Email = $"test_{Guid.NewGuid()}@test.test",
@@ -28,18 +28,6 @@ public class AuthTestHelper(HttpClient uClient, TeaAppFactory uFactory) {
 
             Assert.Equal(HttpStatusCode.OK, registerResponse.StatusCode);
 
-            using var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginRequestDTO {
-                Login = testUser.UserName,
-                Password = testUser.Password
-            });
-
-            Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
-
-            using var loginJson = await loginResponse.Content.ReadFromJsonAsync<JsonDocument>();
-
-            testUser.AccessToken = loginJson!.RootElement.GetProperty("token").GetString()!;
-            testUser.RefreshToken = loginJson.RootElement.GetProperty("refreshToken").GetString()!;
-
             using var scope = _factory.Services.CreateScope();
 
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -47,7 +35,23 @@ public class AuthTestHelper(HttpClient uClient, TeaAppFactory uFactory) {
 
             Assert.NotNull(user);
 
+            if (isAdmin) {
+                var roleResult = await userManager.AddToRoleAsync(user, "Admin");
+            }
+
+            using var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", new LoginRequestDTO {
+                Login = testUser.UserName,
+                Password = testUser.Password
+            });
+
             testUser.UserId = user.Id;
+
+            Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+
+            using var loginJson = await loginResponse.Content.ReadFromJsonAsync<JsonDocument>();
+
+            testUser.AccessToken = loginJson!.RootElement.GetProperty("token").GetString()!;
+            testUser.RefreshToken = loginJson.RootElement.GetProperty("refreshToken").GetString()!;
 
             return testUser;
         }

@@ -90,7 +90,9 @@ public class BrewingMethodController(TeaDbContext dbContext) : ControllerBase {
 
         var isAdmin = User.IsInRole("Admin");
 
-        var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(id);
+        var brewingMethod = await _dbContext.BrewingMethodDbSet
+            .Include(brewingMethod => brewingMethod.Tea)
+            .FirstOrDefaultAsync(brewingMethod => brewingMethod.Id == id);
 
         if (brewingMethod == null) {
             return NotFound();
@@ -104,7 +106,6 @@ public class BrewingMethodController(TeaDbContext dbContext) : ControllerBase {
 
         if (userId != brewingMethod.Tea.OwnerId && !isAdmin) return Unauthorized();
 
-        brewingMethod.TeaId = DTO.TeaId!.Value;
         brewingMethod.Method = DTO.Method!.Value;
         brewingMethod.Temperature = DTO.Temperature!.Value;
         brewingMethod.AmountPerHundred = DTO.AmountPerHundred!.Value;
@@ -123,7 +124,9 @@ public class BrewingMethodController(TeaDbContext dbContext) : ControllerBase {
 
         var isAdmin = User.IsInRole("Admin");
 
-        var brewingMethod = await _dbContext.BrewingMethodDbSet.FindAsync(id);
+        var brewingMethod = await _dbContext.BrewingMethodDbSet
+            .Include(brewingMethod => brewingMethod.Tea)
+            .FirstOrDefaultAsync(brewingMethod => brewingMethod.Id == id);
 
         if (brewingMethod == null) return NotFound();
 

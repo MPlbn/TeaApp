@@ -175,3 +175,6 @@ api-logs.txt
 
 # secrets
 /secrets/
+
+# viewer for failed tests
+failed-test-viewer.sh

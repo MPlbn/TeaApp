@@ -61,15 +61,23 @@ public class RequestController(RequestService requestService) : ControllerBase {
 
         var isAdmin = User.IsInRole("Admin");
 
-        await _requestService.CreateRequestAsync(
-            DTO.Type,
-            DTO.Details,
-            userId,
-            isAdmin,
-            cancellationToken
-        );
+        try {
+            await _requestService.CreateRequestAsync(
+                DTO.Type,
+                DTO.Details,
+                userId,
+                isAdmin,
+                cancellationToken
+            );
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (InvalidOperationException exception) {
+            return BadRequest(exception.Message);
+        }
+        catch (KeyNotFoundException exception) {
+            return NotFound(exception.Message);
+        }
     }
 
     [Authorize(Roles = "Admin")]
@@ -88,6 +96,8 @@ public class RequestController(RequestService requestService) : ControllerBase {
         await _requestService.ResolveRequestAsync(id, DTO.Status, adminId, resolutionMessage, cancellationToken);
 
         return NoContent();
+
+
     }
 
     [Authorize]
@@ -96,9 +106,16 @@ public class RequestController(RequestService requestService) : ControllerBase {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (userId == null) return Unauthorized();
+        try {
+            await _requestService.DeleteRequestAsync(id, userId, cancellationToken);
+            return NoContent();
 
-        await _requestService.DeleteRequestAsync(id, userId, cancellationToken);
-
-        return NoContent();
+        }
+        catch (KeyNotFoundException exception) {
+            return NotFound(exception.Message);
+        }
+        catch (InvalidOperationException exception) {
+            return BadRequest(exception.Message);
+        }
     }
 }
